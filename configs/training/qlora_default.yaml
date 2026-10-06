@@ -1,0 +1,57 @@
+# NEXUS-SLM Default QLoRA Training Configuration
+experiment_name: "nexus-qlora-default"
+seed: 42
+
+model:
+  pretrained_model_name_or_path: "Qwen/Qwen2.5-1.5B-Instruct"
+  torch_dtype: "float16"
+  device_map: "auto"
+  use_auth_token: false
+  trust_remote_code: true
+
+quantization:
+  load_in_4bit: true
+  bnb_4bit_quant_type: "nf4"
+  bnb_4bit_use_double_quant: true
+  bnb_4bit_compute_dtype: "float16"
+
+lora:
+  r: 16
+  lora_alpha: 32
+  lora_dropout: 0.05
+  bias: "none"
+  task_type: "CAUSAL_LM"
+  target_modules:
+    - "q_proj"
+    - "k_proj"
+    - "v_proj"
+    - "o_proj"
+    - "gate_proj"
+    - "up_proj"
+    - "down_proj"
+
+training:
+  output_dir: "./models/checkpoints/qlora-default"
+  num_train_epochs: 3
+  per_device_train_batch_size: 2
+  per_device_eval_batch_size: 2
+  gradient_accumulation_steps: 4
+  learning_rate: 0.0002
+  weight_decay: 0.01
+  warmup_ratio: 0.05
+  lr_scheduler_type: "cosine"
+  max_seq_length: 512
+  gradient_checkpointing: true
+  logging_steps: 10
+  eval_strategy: "epoch"
+  save_strategy: "epoch"
+  save_total_limit: 2
+  load_best_model_at_end: true
+  metric_for_best_model: "eval_loss"
+  greater_is_better: false
+  dataloader_num_workers: 0
+
+export:
+  export_dir: "./models/nexus-v1.0"
+  save_merged_model: false
+  save_adapter_only: true

@@ -1,0 +1,482 @@
+[
+  {
+    "version": "nexus-v1.0",
+    "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
+    "adapter_path": "models\\nexus-v1.0",
+    "model_hash": "simulated_sha256_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "dataset_version": "dataset_v1",
+    "quantization": "4bit_nf4",
+    "training_config": {},
+    "evaluation_results": {
+      "model_name": "Base-SLM",
+      "timestamp": "2026-10-06T11:27:19.072827",
+      "test_sample_count": 42,
+      "macro_f1": 0.5881,
+      "weighted_f1": 0.5881,
+      "category_accuracy": 0.5952,
+      "priority_accuracy": 0.5952,
+      "language_accuracy": 0.9524,
+      "human_escalation_accuracy": 0.7381,
+      "json_validity_rate": 1.0,
+      "field_level_accuracy": 0.7202,
+      "exact_match_accuracy": 0.4048,
+      "latency_p50_ms": 85.0,
+      "latency_p95_ms": 85.0,
+      "latency_p99_ms": 85.0,
+      "throughput_req_per_sec": 11.76,
+      "ram_mb": 14606.18,
+      "vram_mb": 0.0,
+      "detailed_category_metrics": {
+        "accuracy": 0.5952,
+        "macro_precision": 0.7024,
+        "macro_recall": 0.5952,
+        "macro_f1": 0.5881,
+        "weighted_f1": 0.5881,
+        "per_class": {
+          "payment_failure": {
+            "precision": 0.5,
+            "recall": 0.6667,
+            "f1": 0.5714,
+            "support": 3
+          },
+          "refund_request": {
+            "precision": 1.0,
+            "recall": 0.6667,
+            "f1": 0.8,
+            "support": 3
+          },
+          "account_access": {
+            "precision": 1.0,
+            "recall": 0.3333,
+            "f1": 0.5,
+            "support": 3
+          },
+          "password_reset": {
+            "precision": 0.75,
+            "recall": 1.0,
+            "f1": 0.8571,
+            "support": 3
+          },
+          "order_cancel": {
+            "precision": 0.5,
+            "recall": 0.6667,
+            "f1": 0.5714,
+            "support": 3
+          },
+          "order_tracking": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667,
+            "support": 3
+          },
+          "subscription": {
+            "precision": 1.0,
+            "recall": 0.3333,
+            "f1": 0.5,
+            "support": 3
+          },
+          "billing": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 3
+          },
+          "technical_issue": {
+            "precision": 0.5,
+            "recall": 0.3333,
+            "f1": 0.4,
+            "support": 3
+          },
+          "fraud_report": {
+            "precision": 1.0,
+            "recall": 0.6667,
+            "f1": 0.8,
+            "support": 3
+          },
+          "delivery_issue": {
+            "precision": 0.6667,
+            "recall": 0.6667,
+            "f1": 0.6667,
+            "support": 3
+          },
+          "account_closure": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 3
+          },
+          "product_complaint": {
+            "precision": 1.0,
+            "recall": 0.3333,
+            "f1": 0.5,
+            "support": 3
+          },
+          "general_query": {
+            "precision": 0.25,
+            "recall": 1.0,
+            "f1": 0.4,
+            "support": 3
+          }
+        },
+        "labels": [
+          "payment_failure",
+          "refund_request",
+          "account_access",
+          "password_reset",
+          "order_cancel",
+          "order_tracking",
+          "subscription",
+          "billing",
+          "technical_issue",
+          "fraud_report",
+          "delivery_issue",
+          "account_closure",
+          "product_complaint",
+          "general_query"
+        ],
+        "confusion_matrix": [
+          [
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            1,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            2
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3
+          ]
+        ]
+      },
+      "priority_metrics": {
+        "accuracy": 0.5952,
+        "macro_precision": 0.7083,
+        "macro_recall": 0.5662,
+        "macro_f1": 0.606,
+        "weighted_f1": 0.5901,
+        "per_class": {
+          "low": {
+            "precision": 0.6667,
+            "recall": 0.2857,
+            "f1": 0.4,
+            "support": 7
+          },
+          "medium": {
+            "precision": 0.5,
+            "recall": 0.6875,
+            "f1": 0.5789,
+            "support": 16
+          },
+          "high": {
+            "precision": 0.6667,
+            "recall": 0.625,
+            "f1": 0.6452,
+            "support": 16
+          },
+          "critical": {
+            "precision": 1.0,
+            "recall": 0.6667,
+            "f1": 0.8,
+            "support": 3
+          }
+        },
+        "labels": [
+          "low",
+          "medium",
+          "high",
+          "critical"
+        ],
+        "confusion_matrix": [
+          [
+            2,
+            4,
+            1,
+            0
+          ],
+          [
+            1,
+            11,
+            4,
+            0
+          ],
+          [
+            0,
+            6,
+            10,
+            0
+          ],
+          [
+            0,
+            1,
+            0,
+            2
+          ]
+        ]
+      },
+      "language_metrics": {
+        "accuracy": 0.9524,
+        "macro_precision": 0.9583,
+        "macro_recall": 0.9524,
+        "macro_f1": 0.9521,
+        "weighted_f1": 0.9521,
+        "per_class": {
+          "english": {
+            "precision": 0.875,
+            "recall": 1.0,
+            "f1": 0.9333,
+            "support": 14
+          },
+          "hindi": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 14
+          },
+          "hinglish": {
+            "precision": 1.0,
+            "recall": 0.8571,
+            "f1": 0.9231,
+            "support": 14
+          }
+        },
+        "labels": [
+          "english",
+          "hindi",
+          "hinglish"
+        ],
+        "confusion_matrix": [
+          [
+            14,
+            0,
+            0
+          ],
+          [
+            0,
+            14,
+            0
+          ],
+          [
+            2,
+            0,
+            12
+          ]
+        ]
+      }
+    },
+    "deployment_status": "ACTIVE",
+    "registered_at": "2026-10-06T11:27:19.109776"
+  }
+]

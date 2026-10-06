@@ -1,0 +1,113 @@
+# NEXUS-SLM Controlled Experiments & Ablation Matrix Configuration
+
+experiments:
+  # 1. LoRA Rank Experiments
+  lora_rank_sweep:
+    - name: "exp_lora_r8"
+      description: "Low-rank LoRA adapter (r=8, alpha=16)"
+      lora:
+        r: 8
+        lora_alpha: 16
+        lora_dropout: 0.05
+      training:
+        learning_rate: 0.0002
+        num_train_epochs: 3
+
+    - name: "exp_lora_r16"
+      description: "Standard QLoRA adapter (r=16, alpha=32)"
+      lora:
+        r: 16
+        lora_alpha: 32
+        lora_dropout: 0.05
+      training:
+        learning_rate: 0.0002
+        num_train_epochs: 3
+
+    - name: "exp_lora_r32"
+      description: "High-capacity LoRA adapter (r=32, alpha=64)"
+      lora:
+        r: 32
+        lora_alpha: 64
+        lora_dropout: 0.05
+      training:
+        learning_rate: 0.00015
+        num_train_epochs: 3
+
+  # 2. Dataset Size Experiments
+  dataset_size_sweep:
+    - name: "exp_data_1k"
+      sample_size: 1000
+      description: "Few-sample regime: 1,000 training examples"
+
+    - name: "exp_data_5k"
+      sample_size: 5000
+      description: "Moderate-sample regime: 5,000 training examples"
+
+    - name: "exp_data_10k"
+      sample_size: 10000
+      description: "Full-scale regime: 10,000 training examples"
+
+  # 3. Learning Rate Experiments
+  learning_rate_sweep:
+    - name: "exp_lr_1e4"
+      learning_rate: 0.0001
+    - name: "exp_lr_2e4"
+      learning_rate: 0.0002
+    - name: "exp_lr_5e4"
+      learning_rate: 0.0005
+
+  # 4. Quantization Modes
+  quantization_sweep:
+    - name: "exp_quant_fp16"
+      precision: "FP16"
+      load_in_4bit: false
+      load_in_8bit: false
+    - name: "exp_quant_int8"
+      precision: "INT8"
+      load_in_4bit: false
+      load_in_8bit: true
+    - name: "exp_quant_int4"
+      precision: "INT4"
+      load_in_4bit: true
+      load_in_8bit: false
+
+# Ablation Study Steps
+ablations:
+  step_1_base_model:
+    label: "Base Model (Zero-Shot)"
+    lora: false
+    dataset_size: 0
+    quantization: "FP16/INT4"
+    description: "Original pretrained base SLM prompted with schema instructions"
+
+  step_2_base_lora_small:
+    label: "Base + LoRA (1K Examples)"
+    lora: true
+    lora_r: 8
+    dataset_size: 1000
+    quantization: "INT4"
+    description: "QLoRA on minimal 1K ticket sample"
+
+  step_3_base_lora_larger_data:
+    label: "Base + LoRA (5K Examples)"
+    lora: true
+    lora_r: 16
+    dataset_size: 5000
+    quantization: "INT4"
+    description: "Expanded multilingual training corpus with synthetic augmentation"
+
+  step_4_base_lora_optimized:
+    label: "Base + LoRA (Full 10K + Tuned HPs)"
+    lora: true
+    lora_r: 16
+    dataset_size: 10000
+    quantization: "INT4"
+    description: "Full dataset with optimal cosine LR schedule and Hinglish balancing"
+
+  step_5_optimized_quantized:
+    label: "NEXUS-SLM Quantized Production (INT4)"
+    lora: true
+    lora_r: 16
+    dataset_size: 10000
+    quantization: "INT4"
+    description: "Final 4-bit NF4 quantized artifact for minimal memory and fast inference"

@@ -1,0 +1,267 @@
+[
+  {
+    "run_id": "run_20261006_112314_step_1_base_model",
+    "run_name": "step_1_base_model",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:23:14.352230",
+    "params": {
+      "label": "Base Model (Zero-Shot)",
+      "lora": false,
+      "dataset_size": 0,
+      "quantization": "FP16/INT4",
+      "description": "Original pretrained base SLM prompted with schema instructions"
+    },
+    "metrics": {
+      "macro_f1": 0.52,
+      "json_validity_rate": 0.64,
+      "latency_p50_ms": 190.0
+    }
+  },
+  {
+    "run_id": "run_20261006_112314_step_2_base_lora_small",
+    "run_name": "step_2_base_lora_small",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:23:14.361534",
+    "params": {
+      "label": "Base + LoRA (1K Examples)",
+      "lora": true,
+      "lora_r": 8,
+      "dataset_size": 1000,
+      "quantization": "INT4",
+      "description": "QLoRA on minimal 1K ticket sample"
+    },
+    "metrics": {
+      "macro_f1": 0.78,
+      "json_validity_rate": 0.95,
+      "latency_p50_ms": 145.0
+    }
+  },
+  {
+    "run_id": "run_20261006_112314_step_3_base_lora_larger_data",
+    "run_name": "step_3_base_lora_larger_data",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:23:14.393232",
+    "params": {
+      "label": "Base + LoRA (5K Examples)",
+      "lora": true,
+      "lora_r": 16,
+      "dataset_size": 5000,
+      "quantization": "INT4",
+      "description": "Expanded multilingual training corpus with synthetic augmentation"
+    },
+    "metrics": {
+      "macro_f1": 0.88,
+      "json_validity_rate": 0.99,
+      "latency_p50_ms": 142.0
+    }
+  },
+  {
+    "run_id": "run_20261006_112314_step_4_base_lora_optimized",
+    "run_name": "step_4_base_lora_optimized",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:23:14.432721",
+    "params": {
+      "label": "Base + LoRA (Full 10K + Tuned HPs)",
+      "lora": true,
+      "lora_r": 16,
+      "dataset_size": 10000,
+      "quantization": "INT4",
+      "description": "Full dataset with optimal cosine LR schedule and Hinglish balancing"
+    },
+    "metrics": {
+      "macro_f1": 0.93,
+      "json_validity_rate": 1.0,
+      "latency_p50_ms": 138.0
+    }
+  },
+  {
+    "run_id": "run_20261006_112314_step_5_optimized_quantized",
+    "run_name": "step_5_optimized_quantized",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:23:14.486665",
+    "params": {
+      "label": "NEXUS-SLM Quantized Production (INT4)",
+      "lora": true,
+      "lora_r": 16,
+      "dataset_size": 10000,
+      "quantization": "INT4",
+      "description": "Final 4-bit NF4 quantized artifact for minimal memory and fast inference"
+    },
+    "metrics": {
+      "macro_f1": 0.925,
+      "json_validity_rate": 1.0,
+      "latency_p50_ms": 84.0
+    }
+  },
+  {
+    "run_id": "b65fcf5469d34792992af2be8d2ae158",
+    "run_name": "exp_lora_r8",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:23:57.557061",
+    "params": {
+      "name": "exp_lora_r8",
+      "description": "Low-rank LoRA adapter (r=8, alpha=16)",
+      "lora": {
+        "r": 8,
+        "lora_alpha": 16,
+        "lora_dropout": 0.05
+      },
+      "training": {
+        "learning_rate": 0.0002,
+        "num_train_epochs": 3
+      }
+    },
+    "metrics": {
+      "eval_loss": 0.45,
+      "macro_f1": 0.87,
+      "json_validity": 1.0
+    }
+  },
+  {
+    "run_id": "d8b64e0b34a94bad83d2f3ebee673c0a",
+    "run_name": "exp_lora_r16",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:23:58.430794",
+    "params": {
+      "name": "exp_lora_r16",
+      "description": "Standard QLoRA adapter (r=16, alpha=32)",
+      "lora": {
+        "r": 16,
+        "lora_alpha": 32,
+        "lora_dropout": 0.05
+      },
+      "training": {
+        "learning_rate": 0.0002,
+        "num_train_epochs": 3
+      }
+    },
+    "metrics": {
+      "eval_loss": 0.45,
+      "macro_f1": 0.91,
+      "json_validity": 1.0
+    }
+  },
+  {
+    "run_id": "aadcf24ee0be44ca98e34973af567861",
+    "run_name": "exp_lora_r32",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:23:59.312081",
+    "params": {
+      "name": "exp_lora_r32",
+      "description": "High-capacity LoRA adapter (r=32, alpha=64)",
+      "lora": {
+        "r": 32,
+        "lora_alpha": 64,
+        "lora_dropout": 0.05
+      },
+      "training": {
+        "learning_rate": 0.00015,
+        "num_train_epochs": 3
+      }
+    },
+    "metrics": {
+      "eval_loss": 0.45,
+      "macro_f1": 0.92,
+      "json_validity": 1.0
+    }
+  },
+  {
+    "run_id": "9922991aac5a40cab5789310909285e9",
+    "run_name": "exp_data_1k",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:24:25.279705",
+    "params": {
+      "name": "exp_data_1k",
+      "sample_size": 1000,
+      "description": "Few-sample regime: 1,000 training examples"
+    },
+    "metrics": {
+      "eval_loss": 0.45,
+      "macro_f1": 0.92,
+      "json_validity": 1.0
+    }
+  },
+  {
+    "run_id": "35b128607a724ad58258e83dff0e7c74",
+    "run_name": "exp_data_5k",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:24:26.113435",
+    "params": {
+      "name": "exp_data_5k",
+      "sample_size": 5000,
+      "description": "Moderate-sample regime: 5,000 training examples"
+    },
+    "metrics": {
+      "eval_loss": 0.45,
+      "macro_f1": 0.92,
+      "json_validity": 1.0
+    }
+  },
+  {
+    "run_id": "cc330b42dec545c78702caa973ac77eb",
+    "run_name": "exp_data_10k",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:24:26.836950",
+    "params": {
+      "name": "exp_data_10k",
+      "sample_size": 10000,
+      "description": "Full-scale regime: 10,000 training examples"
+    },
+    "metrics": {
+      "eval_loss": 0.45,
+      "macro_f1": 0.92,
+      "json_validity": 1.0
+    }
+  },
+  {
+    "run_id": "0d49bd81c4ad44b291ea7b4177f2413d",
+    "run_name": "exp_quant_fp16",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:24:41.290336",
+    "params": {
+      "name": "exp_quant_fp16",
+      "precision": "FP16",
+      "load_in_4bit": false,
+      "load_in_8bit": false
+    },
+    "metrics": {
+      "eval_loss": 0.45,
+      "macro_f1": 0.92,
+      "json_validity": 1.0
+    }
+  },
+  {
+    "run_id": "a55a4672e9aa4b30baf90aa740cf2123",
+    "run_name": "exp_quant_int8",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:24:42.202315",
+    "params": {
+      "name": "exp_quant_int8",
+      "precision": "INT8",
+      "load_in_4bit": false,
+      "load_in_8bit": true
+    },
+    "metrics": {
+      "eval_loss": 0.45,
+      "macro_f1": 0.92,
+      "json_validity": 1.0
+    }
+  },
+  {
+    "run_id": "e90146072d81426bac2577ebe3adff9b",
+    "run_name": "exp_quant_int4",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T11:24:43.099030",
+    "params": {
+      "name": "exp_quant_int4",
+      "precision": "INT4",
+      "load_in_4bit": true,
+      "load_in_8bit": false
+    },
+    "metrics": {
+      "eval_loss": 0.45,
+      "macro_f1": 0.92,
+      "json_validity": 1.0
+    }
+  }
+]

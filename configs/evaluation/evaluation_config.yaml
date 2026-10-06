@@ -1,0 +1,71 @@
+# NEXUS-SLM Evaluation Framework Configuration
+test_dataset_path: "data/test/test.jsonl"
+baseline_output_dir: "experiments/baseline"
+evaluation_output_dir: "experiments/evaluations"
+confusion_matrix_dir: "experiments/artifacts/confusion_matrices"
+
+metrics:
+  classification:
+    - accuracy
+    - macro_precision
+    - macro_recall
+    - macro_f1
+    - weighted_f1
+    - per_class_report
+  structured:
+    - json_validity_rate
+    - category_accuracy
+    - priority_accuracy
+    - language_accuracy
+    - human_escalation_accuracy
+    - field_level_accuracy
+    - exact_match_accuracy
+  performance:
+    - latency_p50_ms
+    - latency_p95_ms
+    - latency_p99_ms
+    - throughput_req_per_sec
+    - ram_mb
+    - vram_mb
+    - model_size_mb
+
+robustness_suite:
+  categories_tested:
+    - english_canonical
+    - hindi_devanagari
+    - hinglish_roman
+    - typos_and_misspellings
+    - informal_slang_emojis
+    - ultra_short_queries
+    - noisy_punctuation_caps
+    - complex_multisentence_long
+    - mixed_script_code_switched
+
+adversarial_suite:
+  test_cases:
+    - prompt_injection
+    - ignore_instructions
+    - schema_hijack
+    - system_prompt_extraction
+    - jailbreak_roleplay
+
+cost_parameters:
+  self_hosted:
+    gpu_type: "NVIDIA T4 / RTX 4000 (Cloud equivalent g4dn.xlarge)"
+    cost_per_hour_usd: 0.526
+    tokens_per_second: 60.0
+    average_tokens_per_request: 120
+    monthly_server_cost_usd: 378.72
+  large_llm_api:
+    provider: "OpenAI GPT-4o-mini / Gemini 1.5 Flash tier"
+    cost_per_million_input_tokens_usd: 0.15
+    cost_per_million_output_tokens_usd: 0.60
+    premium_tier_input_usd: 2.50
+    premium_tier_output_usd: 10.00
+
+large_llm_adapter:
+  default_provider: "openai"
+  model_name: "gpt-4o-mini"
+  temperature: 0.0
+  max_tokens: 150
+  timeout_seconds: 15

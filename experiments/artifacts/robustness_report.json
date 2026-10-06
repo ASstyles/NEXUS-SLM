@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-10-06T11:25:53.218793",
+  "overall_accuracy": 0.84,
+  "overall_json_validity": 1.0,
+  "canonical_accuracy": 1.0,
+  "subsets": {
+    "complex_multisentence_long": {
+      "test_count": 2,
+      "category_accuracy": 1.0,
+      "json_validity_rate": 1.0
+    },
+    "english_canonical": {
+      "test_count": 3,
+      "category_accuracy": 1.0,
+      "json_validity_rate": 1.0
+    },
+    "hindi_devanagari": {
+      "test_count": 3,
+      "category_accuracy": 1.0,
+      "json_validity_rate": 1.0
+    },
+    "hinglish_roman": {
+      "test_count": 3,
+      "category_accuracy": 1.0,
+      "json_validity_rate": 1.0
+    },
+    "informal_slang_emojis": {
+      "test_count": 3,
+      "category_accuracy": 1.0,
+      "json_validity_rate": 1.0
+    },
+    "mixed_script_code_switched": {
+      "test_count": 2,
+      "category_accuracy": 0.5,
+      "json_validity_rate": 1.0
+    },
+    "noisy_punctuation_caps": {
+      "test_count": 3,
+      "category_accuracy": 0.6667,
+      "json_validity_rate": 1.0
+    },
+    "typos_and_misspellings": {
+      "test_count": 3,
+      "category_accuracy": 0.3333,
+      "json_validity_rate": 1.0
+    },
+    "ultra_short_queries": {
+      "test_count": 3,
+      "category_accuracy": 1.0,
+      "json_validity_rate": 1.0
+    }
+  }
+}

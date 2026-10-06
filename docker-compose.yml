@@ -1,0 +1,51 @@
+version: '3.8'
+
+services:
+  nexus-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: nexus-slm-api
+    ports:
+      - "8000:8000"
+    environment:
+      - API_PORT=8000
+      - API_HOST=0.0.0.0
+      - MLFLOW_TRACKING_URI=http://mlflow-server:5000
+      - MLFLOW_EXPERIMENT_NAME=nexus-slm-triage
+    volumes:
+      - ./data:/app/data
+      - ./models:/app/models
+      - ./experiments:/app/experiments
+      - ./monitoring:/app/monitoring
+    restart: unless-stopped
+
+  nexus-dashboard:
+    build:
+      context: ./dashboard
+      dockerfile: Dockerfile
+    container_name: nexus-slm-dashboard
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+    depends_on:
+      - nexus-api
+    restart: unless-stopped
+
+  mlflow-server:
+    image: ghcr.io/mlflow/mlflow:v2.15.0
+    container_name: nexus-slm-mlflow
+    ports:
+      - "5000:5000"
+    command: >
+      mlflow server
+      --backend-store-uri sqlite:///mlflow.db
+      --default-artifact-root ./mlruns
+      --host 0.0.0.0
+      --port 5000
+    volumes:
+      - ./mlruns:/mlruns
+      - ./mlflow.db:/mlflow.db
+    restart: unless-stopped

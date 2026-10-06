@@ -1,0 +1,58 @@
+# NEXUS-SLM Dataset & Taxonomy Configuration
+version: "dataset_v1"
+
+taxonomy:
+  categories:
+    - payment_failure
+    - refund_request
+    - account_access
+    - password_reset
+    - order_cancel
+    - order_tracking
+    - subscription
+    - billing
+    - technical_issue
+    - fraud_report
+    - delivery_issue
+    - account_closure
+    - product_complaint
+    - general_query
+
+  priorities:
+    - low
+    - medium
+    - high
+    - critical
+
+  languages:
+    - english
+    - hindi
+    - hinglish
+
+  requires_human_options:
+    - true
+    - false
+
+split_ratios:
+  train: 0.80
+  validation: 0.10
+  test: 0.10
+
+deterministic_seed: 42
+
+leakage_prevention:
+  similarity_threshold: 0.85
+  ngram_size: 3
+  normalize_transliteration: true
+  prevent_template_overlap: true
+
+paths:
+  raw_dir: "data/raw"
+  interim_dir: "data/interim"
+  processed_dir: "data/processed"
+  train_file: "data/train/train.jsonl"
+  validation_file: "data/validation/validation.jsonl"
+  test_file: "data/test/test.jsonl"
+  metadata_dir: "data/metadata"
+  leakage_report: "data/metadata/leakage_report.json"
+  quality_report: "data/metadata/dataset_quality_report.json"

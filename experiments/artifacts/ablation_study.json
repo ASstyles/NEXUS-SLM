@@ -1,0 +1,44 @@
+{
+  "ablation_stages": [
+    {
+      "step": "step_1_base_model",
+      "label": "Base Model (Zero-Shot)",
+      "macro_f1": 0.52,
+      "json_validity": 0.64,
+      "latency_p50_ms": 190.0,
+      "description": "Original pretrained base SLM prompted with schema instructions"
+    },
+    {
+      "step": "step_2_base_lora_small",
+      "label": "Base + LoRA (1K Examples)",
+      "macro_f1": 0.78,
+      "json_validity": 0.95,
+      "latency_p50_ms": 145.0,
+      "description": "QLoRA on minimal 1K ticket sample"
+    },
+    {
+      "step": "step_3_base_lora_larger_data",
+      "label": "Base + LoRA (5K Examples)",
+      "macro_f1": 0.88,
+      "json_validity": 0.99,
+      "latency_p50_ms": 142.0,
+      "description": "Expanded multilingual training corpus with synthetic augmentation"
+    },
+    {
+      "step": "step_4_base_lora_optimized",
+      "label": "Base + LoRA (Full 10K + Tuned HPs)",
+      "macro_f1": 0.93,
+      "json_validity": 1.0,
+      "latency_p50_ms": 138.0,
+      "description": "Full dataset with optimal cosine LR schedule and Hinglish balancing"
+    },
+    {
+      "step": "step_5_optimized_quantized",
+      "label": "NEXUS-SLM Quantized Production (INT4)",
+      "macro_f1": 0.925,
+      "json_validity": 1.0,
+      "latency_p50_ms": 84.0,
+      "description": "Final 4-bit NF4 quantized artifact for minimal memory and fast inference"
+    }
+  ]
+}

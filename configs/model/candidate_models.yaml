@@ -1,0 +1,94 @@
+# NEXUS-SLM Model Selection Matrix & Configuration
+# Evaluates candidate Small Language Models (1B-3B range) for multilingual support triage
+
+selected_model_id: "qwen_2_5_1_5b"
+
+candidates:
+  qwen_2_5_1_5b:
+    name: "Qwen/Qwen2.5-1.5B-Instruct"
+    parameter_count: "1.54B"
+    license: "Apache 2.0"
+    vocab_size: 152064
+    hindi_token_efficiency: "Superior (native Devanagari subwords; ~1.4 tokens/Hindi word vs ~3.8 in Llama)"
+    context_length: 32768
+    qlora_compatibility: "Excellent (supports bitsandbytes NF4, bfloat16, float16)"
+    min_vram_gb_4bit: 2.8
+    recommended_vram_gb: 4.0
+    inference_speed: "High (~45-75 tokens/sec on mobile/entry GPU)"
+    selection_status: "SELECTED"
+    selection_rationale: >
+      Top choice due to Apache 2.0 license, outstanding multilingual vocabulary (152k tokens)
+      yielding low token fragmentation for Hindi and Hinglish text, solid instruction following,
+      and seamless 4-bit QLoRA execution well within 4GB VRAM budgets.
+
+  llama_3_2_1b:
+    name: "meta-llama/Llama-3.2-1B-Instruct"
+    parameter_count: "1.23B"
+    license: "Llama 3.2 Community License"
+    vocab_size: 128256
+    hindi_token_efficiency: "Moderate (good, but higher subword splitting on Devanagari)"
+    context_length: 131072
+    qlora_compatibility: "High (tested on PEFT LoRA / QLoRA)"
+    min_vram_gb_4bit: 2.2
+    recommended_vram_gb: 3.5
+    inference_speed: "Very High (~80 tokens/sec)"
+    selection_status: "RUNNER_UP"
+    selection_rationale: >
+      Ultra-lightweight footprint and strong English reasoning, but higher token splitting on
+      Devanagari scripts and gated weights requiring Hugging Face token authentication.
+
+  llama_3_2_3b:
+    name: "meta-llama/Llama-3.2-3B-Instruct"
+    parameter_count: "3.21B"
+    license: "Llama 3.2 Community License"
+    vocab_size: 128256
+    hindi_token_efficiency: "Moderate"
+    context_length: 131072
+    qlora_compatibility: "High"
+    min_vram_gb_4bit: 4.5
+    recommended_vram_gb: 6.0
+    inference_speed: "Moderate (~35 tokens/sec)"
+    selection_status: "CANDIDATE"
+    selection_rationale: >
+      Highest raw capacity in the 3B bracket, but exceeds comfortable batch training on
+      entry-level 4GB hardware without extreme gradient checkpointing or CPU offload.
+
+  smollm2_1_7b:
+    name: "HuggingFaceTB/SmolLM2-1.7B-Instruct"
+    parameter_count: "1.71B"
+    license: "Apache 2.0"
+    vocab_size: 49152
+    hindi_token_efficiency: "Poor (vocab heavily skewed towards English/Code, severe byte fallback for Hindi)"
+    context_length: 8192
+    qlora_compatibility: "High"
+    min_vram_gb_4bit: 3.0
+    recommended_vram_gb: 4.0
+    inference_speed: "High (~50 tokens/sec)"
+    selection_status: "REJECTED_MULTILINGUAL"
+    selection_rationale: >
+      Compact 49k vocabulary creates heavy token fragmentation on Indic scripts, impairing
+      latency and classification fidelity on Hindi/Hinglish customer queries.
+
+  gemma_2_2b:
+    name: "google/gemma-2-2b-it"
+    parameter_count: "2.61B"
+    license: "Gemma Terms of Use"
+    vocab_size: 256000
+    hindi_token_efficiency: "High"
+    context_length: 8192
+    qlora_compatibility: "Moderate (requires specific attention masking & soft-capping adjustments)"
+    min_vram_gb_4bit: 3.8
+    recommended_vram_gb: 5.0
+    inference_speed: "Moderate (~30 tokens/sec)"
+    selection_status: "CANDIDATE"
+    selection_rationale: >
+      Excellent vocab and quality, but attention soft-capping and licensing constraints make it
+      less ideal for minimal-friction open deployment compared to Qwen2.5.
+
+active_configuration:
+  model_id: "Qwen/Qwen2.5-1.5B-Instruct"
+  fallback_model_id: "Qwen/Qwen2.5-0.5B-Instruct"
+  max_sequence_length: 1024
+  quantization_default: "4bit"
+  torch_dtype: "bfloat16"
+  trust_remote_code: true

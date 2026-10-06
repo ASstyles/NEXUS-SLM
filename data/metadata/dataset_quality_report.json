@@ -1,0 +1,42 @@
+{
+  "dataset_version": "dataset_v1",
+  "total_examples": 402,
+  "examples_per_category": {
+    "technical_issue": 21,
+    "account_access": 30,
+    "password_reset": 28,
+    "delivery_issue": 28,
+    "payment_failure": 39,
+    "account_closure": 34,
+    "billing": 24,
+    "refund_request": 34,
+    "order_tracking": 27,
+    "subscription": 25,
+    "fraud_report": 26,
+    "order_cancel": 36,
+    "general_query": 24,
+    "product_complaint": 26
+  },
+  "examples_per_language": {
+    "hinglish": 137,
+    "english": 129,
+    "hindi": 136
+  },
+  "examples_per_priority": {
+    "medium": 156,
+    "high": 145,
+    "critical": 31,
+    "low": 70
+  },
+  "synthetic_count": 360,
+  "synthetic_percentage": 89.55,
+  "human_reviewed_count": 42,
+  "human_reviewed_percentage": 10.45,
+  "curated_count": 42,
+  "duplicate_count": 796,
+  "invalid_record_count": 0,
+  "mean_char_length": 74.3,
+  "min_char_length": 15,
+  "max_char_length": 170,
+  "generated_at": "2026-10-06T11:22:19.429414"
+}

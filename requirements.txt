@@ -1,0 +1,39 @@
+# Core Deep Learning & NLP
+torch>=2.2.0
+transformers>=4.44.0
+datasets>=2.20.0
+peft>=0.12.0
+trl>=0.9.6
+accelerate>=0.33.0
+bitsandbytes>=0.43.0; sys_platform != "win32"
+# Windows bitsandbytes note: on Windows, bitsandbytes-windows or prebuilt wheel is used if GPU 4-bit is active.
+# The codebase includes native fallbacks to 8-bit / FP16 / dynamic quantization when bitsandbytes C-libraries are unavailable.
+
+# Scientific & ML Evaluation
+scikit-learn>=1.4.0
+numpy>=1.26.0,<2.1.0
+pandas>=2.2.0
+scipy>=1.12.0
+matplotlib>=3.8.0
+seaborn>=0.13.0
+
+# Experiment Tracking
+mlflow>=2.15.0
+
+# API & Schemas
+fastapi>=0.112.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.8.0
+python-dotenv>=1.0.1
+requests>=2.32.0
+httpx>=0.27.0
+
+# Utilities & CLI
+rich>=13.7.1
+pyyaml>=6.0.1
+tqdm>=4.66.4
+
+# Testing & Quality
+pytest>=8.3.0
+pytest-asyncio>=0.23.8
+httpx>=0.27.0

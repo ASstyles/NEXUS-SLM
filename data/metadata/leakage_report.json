@@ -1,0 +1,13 @@
+{
+  "dataset_version": "dataset_v1",
+  "train_count": 316,
+  "val_count": 44,
+  "test_count": 42,
+  "exact_duplicates_across_splits": 0,
+  "near_duplicates_flagged": 0,
+  "max_similarity_score": 0.5238,
+  "template_leakages": [],
+  "leakage_detected": false,
+  "status": "PASSED_ZERO_LEAKAGE",
+  "inspected_at": "2026-10-06T11:22:19.411273"
+}

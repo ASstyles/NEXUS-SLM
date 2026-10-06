@@ -1,0 +1,29 @@
+# NEXUS-SLM Deployment Configuration
+api:
+  host: "0.0.0.0"
+  port: 8000
+  workers: 1
+  timeout: 60
+  cors_origins:
+    - "http://localhost:3000"
+    - "http://127.0.0.1:3000"
+    - "*"
+
+dashboard:
+  host: "0.0.0.0"
+  port: 3000
+  api_base_url: "http://localhost:8000"
+
+model:
+  active_version: "nexus-v1.0"
+  model_id: "Qwen/Qwen2.5-1.5B-Instruct"
+  adapter_dir: "./models/nexus-v1.0"
+  quantization: "4bit"
+  max_length: 512
+  confidence_temperature: 0.7
+
+telemetry:
+  enabled: true
+  file_path: "./monitoring/telemetry.jsonl"
+  log_ticket_text: false  # Privacy: do not log raw ticket text
+  max_buffer_size: 100
