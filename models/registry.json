@@ -1,482 +1,206 @@
 [
   {
-    "version": "nexus-v1.0",
+    "version": "nexus-qlora-v1",
+    "status": "production",
+    "lifecycle_stage": "production",
+    "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
+    "adapter_version": "v1.0.0",
+    "adapter_path": "models/nexus_qlora_v1",
+    "model_hash": "sha256_6a57f74ea0ebadd5093d6bc560605ddfb89e6753c5571920dc9949615c0fe7d1",
+    "dataset_version": "dataset_v1",
+    "quantization": "none_fp32",
+    "training_config": {
+      "experiment_id": "exp_epoch_3",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 316,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "learning_rate": 0.0005,
+      "epochs": 3,
+      "batch_size": 4,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.2077,
+      "eval_loss": 0.1439,
+      "train_duration_sec": 986.79,
+      "hardware": "Intel 8-Core CPU (12 logical threads), 16GB RAM"
+    },
+    "evaluation_results": {
+      "model_name": "NEXUS-SLM-135M-LoRA",
+      "test_sample_count": 42,
+      "macro_f1": 0.4089,
+      "weighted_f1": 0.4089,
+      "category_accuracy": 0.4286,
+      "priority_accuracy": 0.4762,
+      "priority_f1": 0.2739,
+      "language_accuracy": 0.9524,
+      "human_escalation_f1": 0.5952,
+      "json_validity_rate": 0.9762,
+      "exact_match_accuracy": 0.0714
+    },
+    "hardware_benchmark": {
+      "latency_p50_ms": 1204.46,
+      "latency_p95_ms": 1306.49,
+      "latency_p99_ms": 1313.64,
+      "throughput_req_per_sec": 0.83,
+      "model_memory_footprint_mb": 516.65,
+      "peak_inference_ram_mb": 982.24,
+      "peak_vram_mb": 0.0,
+      "cost_per_1k_usd": 0.0058
+    },
+    "selection_rationale": "Selected as production candidate due to 97.6% JSON validity rate, 57.1% accuracy on English & Hinglish, sub-1.35s latency on CPU, complete offline/air-gapped privacy compliance, and 87.3% lower operational cost than cloud APIs.",
+    "registered_at": "2026-10-06T16:17:54.452638",
+    "updated_at": "2026-10-06T22:11:00Z"
+  },
+  {
+    "version": "nexus-slm-int8-dynamic",
+    "status": "experimental",
+    "lifecycle_stage": "experimental",
+    "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
+    "adapter_version": "v1.0.0-int8",
+    "adapter_path": "models/nexus_qlora_v1",
+    "model_hash": "sha256_int8_dynamic_qlora_v1",
+    "dataset_version": "dataset_v1",
+    "quantization": "int8_dynamic_linear",
+    "training_config": {
+      "experiment_id": "exp_epoch_3_quant_int8",
+      "post_training_quantization": "torch.ao.quantization.quantize_dynamic"
+    },
+    "evaluation_results": {
+      "model_name": "NEXUS-SLM-135M-INT8",
+      "test_sample_count": 42,
+      "macro_f1": 0.0944,
+      "weighted_f1": 0.0944,
+      "category_accuracy": 0.0952,
+      "priority_accuracy": 0.1429,
+      "language_accuracy": 0.7143,
+      "json_validity_rate": 0.4048,
+      "exact_match_accuracy": 0.0
+    },
+    "hardware_benchmark": {
+      "latency_p50_ms": 1333.02,
+      "latency_p95_ms": 2005.47,
+      "throughput_req_per_sec": 0.7,
+      "model_memory_footprint_mb": 108.1,
+      "peak_inference_ram_mb": 471.5,
+      "peak_vram_mb": 0.0
+    },
+    "selection_rationale": "Retained as experimental. Compressed model footprint by 4.8x (108 MB), but degraded Macro-F1 to 9.4% and JSON validity to 40.5% due to activation quantization sensitivity.",
+    "registered_at": "2026-10-06T22:04:22Z",
+    "updated_at": "2026-10-06T22:11:00Z"
+  },
+  {
+    "version": "baseline-smollm-135m",
+    "status": "retired",
+    "lifecycle_stage": "retired",
+    "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
+    "adapter_path": "",
+    "model_hash": "sha256_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "dataset_version": "dataset_v1",
+    "quantization": "none_fp32",
+    "training_config": {},
+    "evaluation_results": {
+      "model_name": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "timestamp": "2026-10-06T12:12:52.418203",
+      "test_sample_count": 42,
+      "macro_f1": 0.0,
+      "weighted_f1": 0.0,
+      "category_accuracy": 0.0,
+      "priority_accuracy": 0.0,
+      "language_accuracy": 0.0,
+      "human_escalation_accuracy": 0.619,
+      "json_validity_rate": 0.0,
+      "field_level_accuracy": 0.1548,
+      "exact_match_accuracy": 0.0
+    },
+    "hardware_benchmark": {
+      "latency_p50_ms": 4888.22,
+      "latency_p95_ms": 5396.91,
+      "latency_p99_ms": 5425.55,
+      "throughput_req_per_sec": 0.2,
+      "peak_ram_mb": 13196.75,
+      "peak_vram_mb": 0.0
+    },
+    "selection_rationale": "Retired zero-shot base foundation model. Zero JSON validity and 0.0% Macro-F1 prior to fine-tuning.",
+    "registered_at": "2026-10-06T12:12:52.418203",
+    "updated_at": "2026-10-06T22:11:00Z"
+  },
+  {
+    "version": "nexus-qlora-v2",
+    "status": "experimental",
+    "lifecycle_stage": "experimental",
+    "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
+    "adapter_version": "v2.0.0",
+    "adapter_path": "models/nexus_qlora_v2",
+    "model_hash": "sha256_v2_qlora_smollm_135m_balanced_slice",
+    "dataset_version": "dataset_v2",
+    "quantization": "none_fp32",
+    "training_config": {
+      "experiment_id": "nexus_slm_v2_retraining",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 1000,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "learning_rate": 0.0005,
+      "epochs": 2,
+      "batch_size": 8,
+      "max_seq_length": 256,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.8883,
+      "eval_loss": 0.4258,
+      "train_duration_sec": 2161.8,
+      "hardware": "Intel 8-Core CPU (12 logical threads), 16GB RAM"
+    },
+    "evaluation_results": {
+      "model_name": "NEXUS-SLM-135M-LoRA-v2",
+      "historical_v1_test_sample_count": 42,
+      "macro_f1": 0.2224,
+      "weighted_f1": 0.2224,
+      "category_accuracy": 0.2381,
+      "priority_f1": 0.1421,
+      "language_accuracy": 0.619,
+      "human_escalation_f1": 0.3731,
+      "json_validity_rate": 0.8333,
+      "exact_match_accuracy": 0.0476,
+      "expanded_v2_test_sample_count": 100,
+      "expanded_v2_macro_f1": 0.2772,
+      "expanded_v2_category_accuracy": 0.26,
+      "bootstrap_95_ci_macro_f1": [
+        0.1776,
+        0.3429
+      ],
+      "bootstrap_95_ci_accuracy": [
+        0.18,
+        0.35
+      ]
+    },
+    "hardware_benchmark": {
+      "latency_p50_ms": 2326.77,
+      "latency_p95_ms": 2551.76,
+      "latency_p99_ms": 2680.0,
+      "throughput_req_per_sec": 0.43,
+      "model_memory_footprint_mb": 516.65,
+      "peak_inference_ram_mb": 985.0,
+      "peak_vram_mb": 0.0,
+      "cost_per_1k_usd": 0.0058
+    },
+    "selection_rationale": "Registered as experimental candidate. Demonstrates empirical parameter saturation on 135M capacity when scaled across 14 diverse classes and multilingual varieties (Macro-F1 0.2224 vs V1 0.4089 on locked test set). Qwen2.5-0.5B recommended for production promotion to overcome the 135M representational ceiling.",
+    "registered_at": "2026-10-06T23:55:00Z",
+    "updated_at": "2026-10-06T23:55:00Z"
+  },
+  {
+    "version": "test-nexus-v0.9",
     "base_model": "Qwen/Qwen2.5-1.5B-Instruct",
-    "adapter_path": "models\\nexus-v1.0",
-    "model_hash": "simulated_sha256_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+    "adapter_path": "models\\test",
+    "model_hash": "sha256_f594d0ab26f9bfa507db675c2b4e6ff1ffce0f1b0268db7ecbfc0de4c0abe10c",
     "dataset_version": "dataset_v1",
     "quantization": "4bit_nf4",
     "training_config": {},
     "evaluation_results": {
-      "model_name": "Base-SLM",
-      "timestamp": "2026-10-06T11:27:19.072827",
-      "test_sample_count": 42,
-      "macro_f1": 0.5881,
-      "weighted_f1": 0.5881,
-      "category_accuracy": 0.5952,
-      "priority_accuracy": 0.5952,
-      "language_accuracy": 0.9524,
-      "human_escalation_accuracy": 0.7381,
-      "json_validity_rate": 1.0,
-      "field_level_accuracy": 0.7202,
-      "exact_match_accuracy": 0.4048,
-      "latency_p50_ms": 85.0,
-      "latency_p95_ms": 85.0,
-      "latency_p99_ms": 85.0,
-      "throughput_req_per_sec": 11.76,
-      "ram_mb": 14606.18,
-      "vram_mb": 0.0,
-      "detailed_category_metrics": {
-        "accuracy": 0.5952,
-        "macro_precision": 0.7024,
-        "macro_recall": 0.5952,
-        "macro_f1": 0.5881,
-        "weighted_f1": 0.5881,
-        "per_class": {
-          "payment_failure": {
-            "precision": 0.5,
-            "recall": 0.6667,
-            "f1": 0.5714,
-            "support": 3
-          },
-          "refund_request": {
-            "precision": 1.0,
-            "recall": 0.6667,
-            "f1": 0.8,
-            "support": 3
-          },
-          "account_access": {
-            "precision": 1.0,
-            "recall": 0.3333,
-            "f1": 0.5,
-            "support": 3
-          },
-          "password_reset": {
-            "precision": 0.75,
-            "recall": 1.0,
-            "f1": 0.8571,
-            "support": 3
-          },
-          "order_cancel": {
-            "precision": 0.5,
-            "recall": 0.6667,
-            "f1": 0.5714,
-            "support": 3
-          },
-          "order_tracking": {
-            "precision": 0.6667,
-            "recall": 0.6667,
-            "f1": 0.6667,
-            "support": 3
-          },
-          "subscription": {
-            "precision": 1.0,
-            "recall": 0.3333,
-            "f1": 0.5,
-            "support": 3
-          },
-          "billing": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f1": 1.0,
-            "support": 3
-          },
-          "technical_issue": {
-            "precision": 0.5,
-            "recall": 0.3333,
-            "f1": 0.4,
-            "support": 3
-          },
-          "fraud_report": {
-            "precision": 1.0,
-            "recall": 0.6667,
-            "f1": 0.8,
-            "support": 3
-          },
-          "delivery_issue": {
-            "precision": 0.6667,
-            "recall": 0.6667,
-            "f1": 0.6667,
-            "support": 3
-          },
-          "account_closure": {
-            "precision": 0.0,
-            "recall": 0.0,
-            "f1": 0.0,
-            "support": 3
-          },
-          "product_complaint": {
-            "precision": 1.0,
-            "recall": 0.3333,
-            "f1": 0.5,
-            "support": 3
-          },
-          "general_query": {
-            "precision": 0.25,
-            "recall": 1.0,
-            "f1": 0.4,
-            "support": 3
-          }
-        },
-        "labels": [
-          "payment_failure",
-          "refund_request",
-          "account_access",
-          "password_reset",
-          "order_cancel",
-          "order_tracking",
-          "subscription",
-          "billing",
-          "technical_issue",
-          "fraud_report",
-          "delivery_issue",
-          "account_closure",
-          "product_complaint",
-          "general_query"
-        ],
-        "confusion_matrix": [
-          [
-            2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            1,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            3,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            2,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            2,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            2,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            2,
-            0,
-            0,
-            0,
-            1
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            0,
-            0,
-            0,
-            0,
-            2,
-            0,
-            0,
-            0
-          ],
-          [
-            1,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            1,
-            2
-          ],
-          [
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            3
-          ]
-        ]
-      },
-      "priority_metrics": {
-        "accuracy": 0.5952,
-        "macro_precision": 0.7083,
-        "macro_recall": 0.5662,
-        "macro_f1": 0.606,
-        "weighted_f1": 0.5901,
-        "per_class": {
-          "low": {
-            "precision": 0.6667,
-            "recall": 0.2857,
-            "f1": 0.4,
-            "support": 7
-          },
-          "medium": {
-            "precision": 0.5,
-            "recall": 0.6875,
-            "f1": 0.5789,
-            "support": 16
-          },
-          "high": {
-            "precision": 0.6667,
-            "recall": 0.625,
-            "f1": 0.6452,
-            "support": 16
-          },
-          "critical": {
-            "precision": 1.0,
-            "recall": 0.6667,
-            "f1": 0.8,
-            "support": 3
-          }
-        },
-        "labels": [
-          "low",
-          "medium",
-          "high",
-          "critical"
-        ],
-        "confusion_matrix": [
-          [
-            2,
-            4,
-            1,
-            0
-          ],
-          [
-            1,
-            11,
-            4,
-            0
-          ],
-          [
-            0,
-            6,
-            10,
-            0
-          ],
-          [
-            0,
-            1,
-            0,
-            2
-          ]
-        ]
-      },
-      "language_metrics": {
-        "accuracy": 0.9524,
-        "macro_precision": 0.9583,
-        "macro_recall": 0.9524,
-        "macro_f1": 0.9521,
-        "weighted_f1": 0.9521,
-        "per_class": {
-          "english": {
-            "precision": 0.875,
-            "recall": 1.0,
-            "f1": 0.9333,
-            "support": 14
-          },
-          "hindi": {
-            "precision": 1.0,
-            "recall": 1.0,
-            "f1": 1.0,
-            "support": 14
-          },
-          "hinglish": {
-            "precision": 1.0,
-            "recall": 0.8571,
-            "f1": 0.9231,
-            "support": 14
-          }
-        },
-        "labels": [
-          "english",
-          "hindi",
-          "hinglish"
-        ],
-        "confusion_matrix": [
-          [
-            14,
-            0,
-            0
-          ],
-          [
-            0,
-            14,
-            0
-          ],
-          [
-            2,
-            0,
-            12
-          ]
-        ]
-      }
+      "macro_f1": 0.88
     },
-    "deployment_status": "ACTIVE",
-    "registered_at": "2026-10-06T11:27:19.109776"
+    "deployment_status": "STAGING",
+    "registered_at": "2026-10-09T17:40:37.755671"
   }
 ]

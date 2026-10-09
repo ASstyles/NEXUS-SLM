@@ -1,0 +1,53 @@
+{
+  "timestamp": "2026-10-06T22:37:12Z",
+  "experiments": [
+    {
+      "macro_f1": 0.4089,
+      "weighted_f1": 0.4089,
+      "category_accuracy": 0.4286,
+      "json_validity_rate": 0.9762,
+      "hindi_accuracy": 0.3571,
+      "hindi_macro_f1": 0.3333,
+      "latency_p50_ms": 1250.14,
+      "latency_p95_ms": 1430.95,
+      "experiment_id": "H1_Original_Devanagari",
+      "description": "Original Devanagari input without modification"
+    },
+    {
+      "macro_f1": 0.4089,
+      "weighted_f1": 0.4089,
+      "category_accuracy": 0.4286,
+      "json_validity_rate": 0.9762,
+      "hindi_accuracy": 0.3571,
+      "hindi_macro_f1": 0.3333,
+      "latency_p50_ms": 1269.03,
+      "latency_p95_ms": 1375.02,
+      "experiment_id": "H2_Normalized_Devanagari",
+      "description": "Unicode NFKC and Indic punctuation normalization"
+    },
+    {
+      "macro_f1": 0.4354,
+      "weighted_f1": 0.4354,
+      "category_accuracy": 0.4524,
+      "json_validity_rate": 0.9524,
+      "hindi_accuracy": 0.3929,
+      "hindi_macro_f1": 0.3667,
+      "latency_p50_ms": 1263.94,
+      "latency_p95_ms": 1333.17,
+      "experiment_id": "H3_Romanized_Hindi",
+      "description": "Phonetic Hindi-to-Latin transliteration"
+    },
+    {
+      "macro_f1": 0.4354,
+      "weighted_f1": 0.4354,
+      "category_accuracy": 0.4524,
+      "json_validity_rate": 0.9524,
+      "hindi_accuracy": 0.3929,
+      "hindi_macro_f1": 0.3667,
+      "latency_p50_ms": 1266.34,
+      "latency_p95_ms": 1382.22,
+      "experiment_id": "H4_Language_Aware",
+      "description": "Language-aware hybrid preprocessor with script routing"
+    }
+  ]
+}

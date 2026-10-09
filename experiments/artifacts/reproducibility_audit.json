@@ -1,0 +1,81 @@
+{
+  "timestamp": "2026-10-09T16:22:28Z",
+  "overall_status": "PASS",
+  "dependencies": {
+    "torch": {
+      "status": "SUCCESS",
+      "version": "2.14.1+cpu"
+    },
+    "transformers": {
+      "status": "SUCCESS",
+      "version": "5.18.0"
+    },
+    "peft": {
+      "status": "SUCCESS",
+      "version": "0.21.2"
+    },
+    "fastapi": {
+      "status": "SUCCESS",
+      "version": "0.142.2"
+    },
+    "uvicorn": {
+      "status": "SUCCESS",
+      "version": "0.54.0"
+    },
+    "pydantic": {
+      "status": "SUCCESS",
+      "version": "2.13.5"
+    },
+    "sklearn": {
+      "status": "SUCCESS",
+      "version": "1.7.2"
+    },
+    "numpy": {
+      "status": "SUCCESS",
+      "version": "2.0.2"
+    },
+    "psutil": {
+      "status": "SUCCESS",
+      "version": "7.2.2"
+    },
+    "httpx": {
+      "status": "SUCCESS",
+      "version": "0.28.1"
+    }
+  },
+  "health_check": {
+    "status": "SUCCESS",
+    "data": {
+      "status": "healthy",
+      "model_loaded": true,
+      "model_version": "nexus-qlora-v1",
+      "inference_mode": "neural",
+      "hardware": {
+        "os": "Windows",
+        "os_release": "10",
+        "platform_machine": "AMD64",
+        "cpu_count": 12,
+        "ram_total_gb": 15.65,
+        "ram_available_gb": 1.95,
+        "cuda_available": false,
+        "cuda_version": null,
+        "gpu_count": 0,
+        "gpus": [],
+        "bitsandbytes_available": false,
+        "recommended_precision": "fp32"
+      }
+    }
+  },
+  "dataset_independent_inference": {
+    "status": "SUCCESS",
+    "status_code": 200,
+    "latency_ms": 1790.03,
+    "prediction": {
+      "category": "subscription",
+      "priority": "high",
+      "language": "english",
+      "requires_human": false,
+      "confidence": 0.7385
+    }
+  }
+}

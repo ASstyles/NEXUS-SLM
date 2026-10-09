@@ -1,0 +1,59 @@
+{
+  "candidate_name": "NEXUS-SLM-135M-LoRA",
+  "model_version": "nexus-qlora-v1",
+  "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
+  "dataset_version": "dataset_v1",
+  "dataset_size": {
+    "train_samples": 316,
+    "val_samples": 44,
+    "test_samples": 42
+  },
+  "test_set_hash": "sha256_edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4",
+  "peft_configuration": {
+    "type": "QLoRA",
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ],
+    "bias": "none",
+    "task_type": "CAUSAL_LM"
+  },
+  "training_hyperparameters": {
+    "learning_rate": 0.0005,
+    "epochs": 3,
+    "batch_size": 4,
+    "effective_batch_size": 8,
+    "warmup_ratio": 0.05,
+    "weight_decay": 0.01,
+    "max_sequence_length": 280,
+    "seed": 42,
+    "quantization_during_training": "none_fp32_lora"
+  },
+  "tokenizer": "HuggingFaceTB/SmolLM-135M-Instruct",
+  "hardware": {
+    "device": "cpu",
+    "cpu_count": 12,
+    "ram_total_gb": 15.65,
+    "gpu_detected": "NVIDIA GeForce RTX 2050 (4GB VRAM)",
+    "execution_runtime": "PyTorch 2.14 CPU-only build (torch.set_num_threads(12))"
+  },
+  "adapter_location": "models/nexus_qlora_v1",
+  "active_experiment_id": "exp_epoch_3",
+  "measured_benchmark_metrics": {
+    "macro_f1": 0.4089,
+    "weighted_f1": 0.4089,
+    "category_accuracy": 0.4286,
+    "priority_f1": 0.2739,
+    "language_f1": 0.9638,
+    "json_validity_rate": 0.9762,
+    "exact_match_accuracy": 0.0714,
+    "latency_p50_ms": 1658.57,
+    "latency_p95_ms": 1758.62,
+    "peak_ram_mb": 12273.7,
+    "train_duration_sec": 986.79
+  },
+  "timestamp_locked": "2026-10-06T16:25:00Z"
+}

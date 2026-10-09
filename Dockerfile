@@ -1,17 +1,17 @@
-# NEXUS-SLM Container Image
+# NEXUS-SLM Production Hardened Container Image
 FROM python:3.10-slim
 
 ENV PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     API_PORT=8000 \
-    API_HOST=0.0.0.0
+    API_HOST=0.0.0.0 \
+    ACTIVE_MODEL_VERSION=nexus-qlora-v1
 
 WORKDIR /app
 
-# Install system dependencies
+# Install minimal OS dependencies & curl for healthcheck
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
-    git \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
@@ -21,17 +21,27 @@ RUN pip install --no-cache-dir --upgrade pip && \
     pip install --no-cache-dir -r requirements.txt && \
     pip install --no-cache-dir -e .
 
-# Copy source code and configurations
+# Copy application source code, models, configs, and assets
 COPY src/ ./src/
 COPY api/ ./api/
 COPY configs/ ./configs/
 COPY scripts/ ./scripts/
 COPY monitoring/ ./monitoring/
 COPY data/ ./data/
+COPY models/ ./models/
+COPY experiments/ ./experiments/
+
+# Create non-root system user for security
+RUN useradd -m -u 10001 nexususer && \
+    chown -R nexususer:nexususer /app
+
+USER nexususer
 
 EXPOSE 8000
 
-HEALTHCHECK --interval=30s --timeout=5s --start-period=10s --retries=3 \
+STOPSIGNAL SIGTERM
+
+HEALTHCHECK --interval=30s --timeout=5s --start-period=15s --retries=3 \
     CMD curl -f http://localhost:8000/health || exit 1
 
 CMD ["python", "scripts/deployment/run_api.py"]

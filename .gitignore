@@ -70,3 +70,9 @@ htmlcov/
 # OS specific
 .DS_Store
 Thumbs.db
+
+# SQLite DBs and scratch directories
+mlflow.db
+*.db
+scratch/
+experiments/tmp_v2_training/

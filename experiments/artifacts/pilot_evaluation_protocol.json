@@ -1,0 +1,79 @@
+{
+  "protocol_version": "v1.0-shadow-pilot",
+  "effective_date": "2026-10-09T23:15:00Z",
+  "candidate_version": "nexus-qlora-v1",
+  "pilot_objective": "Measure real-world classification concordance, escalation safety, operational reliability, and canary qualification in production shadow mode.",
+  "shadow_mode_invariants": {
+    "authoritative_workflow": "Normal human triage remains the sole authoritative production path. NEXUS-SLM operates as a passive shadow mirror.",
+    "execution_bar": "NEXUS-SLM is structurally barred from executing customer-facing actions, initiating refunds, altering account states, or sending external communications.",
+    "failure_isolation": "Inference timeouts, queue congestion, or service errors are failure-isolated and cannot block or delay human triage."
+  },
+  "data_governance_and_privacy": {
+    "pii_redaction": "All tickets sanitized via PrivacyRedactor prior to shadow inference. Credit card numbers, CVVs, passwords, tokens, phone numbers, and emails are replaced with safety tokens.",
+    "telemetry_logging": "TelemetryLogger records operational metadata only (latency, categories, confidences, status). Full ticket text and secrets are strictly excluded from logs.",
+    "data_quarantine": "Prospective pilot tickets are quarantined in data/pilot/ and forbidden from being added to training data (data/train/) or validation splits without versioned branching."
+  },
+  "ground_truth_labeling_protocol": {
+    "methodology": "Double-blind independent evaluation.",
+    "blinding_rules": [
+      "Human reviewers must not see model category predictions, priorities, confidence scores, or escalation flags.",
+      "Reviewers submit independent ground truth based solely on customer ticket text and the 14-class taxonomy definition.",
+      "Submitted labels are timestamped, reviewer-signed, and frozen into immutable JSONL files with SHA256 verification before comparison with model outputs."
+    ],
+    "sample_stratification": "Sampling must include both high-risk challenge vectors and routine negative controls to measure both safety recall and over-escalation precision."
+  },
+  "evaluation_metrics_and_formulas": {
+    "classification_metrics": {
+      "category_accuracy": "Proportion of exact category matches between human and model.",
+      "macro_f1": "Unweighted mean F1 score across all 14 taxonomy classes.",
+      "weighted_f1": "Support-weighted mean F1 score across all 14 classes.",
+      "category_concordance": "Direct human-model agreement rate with 95% Wilson score confidence intervals."
+    },
+    "escalation_safety_metrics": {
+      "escalation_recall": "True Positives / (True Positives + False Negatives)",
+      "escalation_precision": "True Positives / (True Positives + False Negatives + False Positives)",
+      "false_negative_safety_escapes": "Critical count of high-risk tickets where human=True but model escalated=False.",
+      "false_positive_rate": "Proportion of routine safe queries conservatively escalated."
+    }
+  },
+  "promotion_gates_for_canary_rollout": {
+    "gate_1_pilot_duration": {
+      "requirement": "Minimum 14 consecutive calendar days of active shadow operation.",
+      "threshold": 14
+    },
+    "gate_2_minimum_volume": {
+      "requirement": "Minimum 5,000 prospective production tickets evaluated in shadow mode.",
+      "threshold": 5000
+    },
+    "gate_3_high_risk_escalation_recall": {
+      "requirement": "Escalation recall on prospectively labeled high-risk tickets >= 98.0%.",
+      "threshold": 0.98
+    },
+    "gate_4_safety_escapes": {
+      "requirement": "Zero Sev-1 safety escapes on fraud, legal, security lockout, or tampering tickets.",
+      "threshold": 0
+    },
+    "gate_5_category_concordance": {
+      "requirement": "Human-model category concordance rate >= 60.0%.",
+      "threshold": 0.60
+    },
+    "gate_6_remote_ci_workflow": {
+      "requirement": "100% passing remote Linux Docker build, container healthcheck, and graceful shutdown test.",
+      "threshold": "PASSING_REMOTE_RUN"
+    }
+  },
+  "incident_handling_and_rollback": {
+    "sev1_incident": {
+      "definition": "A high-risk ticket (fraud, account compromise, legal notice) is misclassified and fails human escalation.",
+      "action": "Immediate suspension of shadow pilot and rollback to heuristic baseline within 5 minutes."
+    },
+    "sev2_incident": {
+      "definition": "Escalation rate drifts outside 20%-65% band, or service error rate exceeds 1.0%.",
+      "action": "Engineering investigation within 1 hour."
+    },
+    "recovery_mechanisms": [
+      "API level toggle to heuristic baseline via /model/rollback (RTO < 30s).",
+      "Container level fallback to nexus-slm:v1.0.0-stable (RTO < 2min)."
+    ]
+  }
+}

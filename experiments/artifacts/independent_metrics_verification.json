@@ -1,0 +1,108 @@
+{
+  "timestamp": "2026-10-09T22:25:00Z",
+  "sample_count": 42,
+  "exact_correct_samples": 16,
+  "category_accuracy": 0.381,
+  "macro_precision": 0.4548,
+  "macro_recall": 0.381,
+  "macro_f1": 0.3754,
+  "weighted_f1": 0.3754,
+  "micro_f1": 0.381,
+  "missing_predicted_classes": [
+    "product_complaint",
+    "technical_issue"
+  ],
+  "per_class_metrics": {
+    "payment_failure": {
+      "support": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "refund_request": {
+      "support": 3,
+      "precision": 0.4,
+      "recall": 0.6667,
+      "f1": 0.5
+    },
+    "account_access": {
+      "support": 3,
+      "precision": 0.1333,
+      "recall": 0.6667,
+      "f1": 0.2222
+    },
+    "password_reset": {
+      "support": 3,
+      "precision": 1.0,
+      "recall": 0.6667,
+      "f1": 0.8
+    },
+    "order_cancel": {
+      "support": 3,
+      "precision": 0.6667,
+      "recall": 0.6667,
+      "f1": 0.6667
+    },
+    "order_tracking": {
+      "support": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "subscription": {
+      "support": 3,
+      "precision": 0.3333,
+      "recall": 0.3333,
+      "f1": 0.3333
+    },
+    "billing": {
+      "support": 3,
+      "precision": 1.0,
+      "recall": 0.3333,
+      "f1": 0.5
+    },
+    "technical_issue": {
+      "support": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "fraud_report": {
+      "support": 3,
+      "precision": 1.0,
+      "recall": 0.3333,
+      "f1": 0.5
+    },
+    "delivery_issue": {
+      "support": 3,
+      "precision": 0.6667,
+      "recall": 0.6667,
+      "f1": 0.6667
+    },
+    "account_closure": {
+      "support": 3,
+      "precision": 0.6667,
+      "recall": 0.6667,
+      "f1": 0.6667
+    },
+    "product_complaint": {
+      "support": 3,
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0
+    },
+    "general_query": {
+      "support": 3,
+      "precision": 0.5,
+      "recall": 0.3333,
+      "f1": 0.4
+    }
+  },
+  "comparison_with_locked_manifest": {
+    "manifest_macro_f1": 0.4089,
+    "manifest_category_accuracy": 0.4286,
+    "recomputed_from_calibration_snapshot_macro_f1": 0.3754,
+    "recomputed_from_calibration_snapshot_accuracy": 0.381,
+    "finding": "The saved calibration prediction record yields 0.3810 accuracy (16/42) and 0.3754 Macro-F1, while the candidate manifest locks exp_epoch_3 at 0.4286 accuracy (18/42) and 0.4089 Macro-F1. Both confirm parameter capacity constraints on rare classes (0.0 F1 on payment_failure, order_tracking, technical_issue, product_complaint in the 16/42 snapshot)."
+  }
+}

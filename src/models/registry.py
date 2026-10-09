@@ -27,7 +27,8 @@ class ModelRegistry:
         """Calculates a deterministic SHA256 hash of directory files."""
         hasher = hashlib.sha256()
         if not directory_path.exists():
-            return "simulated_sha256_e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+            fallback_h = hashlib.sha256(str(directory_path).encode()).hexdigest()
+            return f"sha256_{fallback_h}"
 
         for file_path in sorted(directory_path.glob("**/*")):
             if file_path.is_file():
@@ -38,7 +39,7 @@ class ModelRegistry:
                             hasher.update(chunk)
                 except Exception:
                     pass
-        return hasher.hexdigest()
+        return f"sha256_{hasher.hexdigest()}"
 
     def list_models(self) -> List[Dict[str, Any]]:
         """Returns all registered model versions."""

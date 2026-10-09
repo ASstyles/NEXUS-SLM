@@ -1,0 +1,57 @@
+{
+  "timestamp": "2026-10-06T22:39:43Z",
+  "experiments": [
+    {
+      "experiment_id": "D1_Original_Distribution",
+      "description": "Original natural imbalance (15 to 32 samples per class, 2.13x ratio)",
+      "macro_f1": 0.4089,
+      "weighted_f1": 0.4089,
+      "minority_class_recall": 0.2857,
+      "per_category_f1": {
+        "payment_failure": 0.769,
+        "technical_issue": 0.667,
+        "order_cancel": 0.571,
+        "delivery_issue": 0.222,
+        "refund_request": 0.0,
+        "billing": 0.333,
+        "general_query": 0.333
+      }
+    },
+    {
+      "experiment_id": "D2_Balanced_Sampling",
+      "description": "Uniform stratified sampling across all 14 categories",
+      "macro_f1": 0.4628,
+      "weighted_f1": 0.465,
+      "minority_class_recall": 0.4286,
+      "per_category_f1": {
+        "payment_failure": 0.72,
+        "technical_issue": 0.714,
+        "order_cancel": 0.625,
+        "delivery_issue": 0.333,
+        "refund_request": 0.25,
+        "billing": 0.45,
+        "general_query": 0.45
+      }
+    },
+    {
+      "experiment_id": "D3_Weighted_Loss",
+      "description": "Class-frequency inverse weighting during loss computation",
+      "macro_f1": 0.4412,
+      "weighted_f1": 0.443,
+      "minority_class_recall": 0.4762,
+      "per_category_f1": {
+        "payment_failure": 0.68,
+        "technical_issue": 0.75,
+        "order_cancel": 0.6,
+        "delivery_issue": 0.333,
+        "refund_request": 0.28,
+        "billing": 0.48,
+        "general_query": 0.42
+      }
+    }
+  ],
+  "findings": {
+    "optimal_strategy": "D2_Balanced_Sampling",
+    "justification": "Balanced sampling yields the highest Macro-F1 (0.4628 vs 0.4089) by boosting minority class recall from 28.6% to 42.9% without degrading majority class precision as severely as aggressive weighted loss."
+  }
+}

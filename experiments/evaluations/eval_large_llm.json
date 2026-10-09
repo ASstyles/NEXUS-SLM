@@ -1,0 +1,22 @@
+{
+  "model_name": "Large LLM (gpt-4o-mini)",
+  "category_macro_f1": null,
+  "weighted_f1": null,
+  "category_accuracy": null,
+  "priority_accuracy": null,
+  "priority_f1": null,
+  "language_accuracy": null,
+  "human_escalation_f1": null,
+  "json_validity_rate": null,
+  "exact_match_accuracy": null,
+  "latency_p50_ms": null,
+  "latency_p95_ms": null,
+  "latency_p99_ms": null,
+  "peak_ram_mb": "UNAVAILABLE (Cloud API)",
+  "model_size_mb": "UNAVAILABLE (Cloud API)",
+  "cost_per_1k_usd": 0.045,
+  "local_inference": false,
+  "offline_capability": false,
+  "status": "NOT RUN (API Key Missing)",
+  "technical_limitation": "No valid credentials found for provider 'openai' (set OPENAI_API_KEY or OLLAMA_BASE_URL)."
+}

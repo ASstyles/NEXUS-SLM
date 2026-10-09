@@ -1,0 +1,170 @@
+{
+  "timestamp": "2026-10-06T22:10:05Z",
+  "nexus_slm": {
+    "model_name": "NEXUS-SLM-135M-LoRA",
+    "category_macro_f1": 0.4089,
+    "weighted_f1": 0.4089,
+    "category_accuracy": 0.4286,
+    "priority_accuracy": 0.4762,
+    "priority_f1": 0.2739,
+    "language_accuracy": 0.9524,
+    "language_f1": 0.9638,
+    "human_escalation_f1": 0.5952,
+    "json_validity_rate": 0.9762,
+    "exact_match_accuracy": 0.0714,
+    "latency_p50_ms": 1206.05,
+    "latency_p95_ms": 1386.32,
+    "latency_p99_ms": 1465.89,
+    "peak_ram_mb": 12273.7,
+    "model_size_mb": 522.4,
+    "cost_per_1k_usd": 0.0058,
+    "local_inference": true,
+    "offline_capability": true
+  },
+  "large_llm": {
+    "model_name": "Large LLM (gpt-4o-mini)",
+    "category_macro_f1": null,
+    "weighted_f1": null,
+    "category_accuracy": null,
+    "priority_accuracy": null,
+    "priority_f1": null,
+    "language_accuracy": null,
+    "human_escalation_f1": null,
+    "json_validity_rate": null,
+    "exact_match_accuracy": null,
+    "latency_p50_ms": null,
+    "latency_p95_ms": null,
+    "latency_p99_ms": null,
+    "peak_ram_mb": "UNAVAILABLE (Cloud API)",
+    "model_size_mb": "UNAVAILABLE (Cloud API)",
+    "cost_per_1k_usd": 0.045,
+    "local_inference": false,
+    "offline_capability": false,
+    "status": "NOT RUN (API Key Missing)",
+    "technical_limitation": "No valid credentials found for provider 'openai' (set OPENAI_API_KEY or OLLAMA_BASE_URL)."
+  },
+  "language_comparison": [
+    {
+      "language": "English",
+      "nexus_accuracy": 0.5714,
+      "nexus_macro_f1": 0.5429,
+      "large_accuracy": null,
+      "difference": "N/A (Key Missing)"
+    },
+    {
+      "language": "Hinglish (Code-Switched)",
+      "nexus_accuracy": 0.5714,
+      "nexus_macro_f1": 0.5429,
+      "large_accuracy": null,
+      "difference": "N/A (Key Missing)"
+    },
+    {
+      "language": "Hindi (Devanagari)",
+      "nexus_accuracy": 0.1429,
+      "nexus_macro_f1": 0.1429,
+      "large_accuracy": null,
+      "difference": "N/A (Key Missing)"
+    },
+    {
+      "language": "Roman Hindi",
+      "nexus_accuracy": 0.3571,
+      "nexus_macro_f1": 0.339,
+      "large_accuracy": null,
+      "difference": "N/A (Key Missing)"
+    }
+  ],
+  "category_comparison": {
+    "categories_where_nexus_excels": [
+      "payment_issue (F1=0.769)",
+      "technical_support (F1=0.667)",
+      "cancellation (F1=0.571)"
+    ],
+    "categories_where_nexus_struggles": [
+      "refund_request (F1=0.000)",
+      "delivery_delay (F1=0.222)"
+    ],
+    "most_confused_pairs": [
+      "refund_request <-> cancellation",
+      "delivery_delay <-> tracking_query"
+    ],
+    "largest_performance_gap": "Devanagari script token fragmentation"
+  },
+  "robustness_comparison": [
+    {
+      "input_type": "Normal English",
+      "clean_acc": 0.5714,
+      "robust_acc": 0.5714,
+      "degradation": 0.0
+    },
+    {
+      "input_type": "Hinglish Colloquial",
+      "clean_acc": 0.5714,
+      "robust_acc": 0.5714,
+      "degradation": 0.0
+    },
+    {
+      "input_type": "Noisy Punctuation",
+      "clean_acc": 0.4286,
+      "robust_acc": 0.4286,
+      "degradation": 0.0
+    },
+    {
+      "input_type": "Typos & Misspellings",
+      "clean_acc": 0.4286,
+      "robust_acc": 0.381,
+      "degradation": -0.0476
+    },
+    {
+      "input_type": "Short Inputs (<5 words)",
+      "clean_acc": 0.4286,
+      "robust_acc": 0.2857,
+      "degradation": -0.1429
+    },
+    {
+      "input_type": "Devanagari Hindi",
+      "clean_acc": 0.4286,
+      "robust_acc": 0.1429,
+      "degradation": -0.2857
+    }
+  ],
+  "error_comparison": {
+    "total_audited_error_cases": 55,
+    "failure_modes": [
+      {
+        "type": "Semantic Category Overlap",
+        "percentage": "45.5%",
+        "pattern": "Tickets combining cancellation, refund, and payment terms (e.g. 'order cancel karo refund bhejo')",
+        "nexus_behavior": "Biases toward payment or cancellation when multiple intents exist",
+        "mitigation": "Multi-label classification head or explicit disambiguation rules"
+      },
+      {
+        "type": "Short Input / Context Sparsity",
+        "percentage": "23.6%",
+        "pattern": "Queries with <5 words (e.g. 'kya hua?', 'help karo')",
+        "nexus_behavior": "Low confidence escalation to general_query",
+        "mitigation": "Fallback to human agent escalation"
+      },
+      {
+        "type": "Devanagari Byte Fragmentation",
+        "percentage": "18.2%",
+        "pattern": "Native Hindi script tokens broken into byte fragments",
+        "nexus_behavior": "Degraded representation vs Romanized Hinglish",
+        "mitigation": "Indic-specific tokenizer vocabulary expansion"
+      },
+      {
+        "type": "Rare Class Underrepresentation",
+        "percentage": "9.1%",
+        "pattern": "Categories with <15 training samples in dataset_v1",
+        "nexus_behavior": "Under-predicts low-frequency classes",
+        "mitigation": "Targeted dataset curation and balanced re-sampling"
+      },
+      {
+        "type": "JSON Syntax Cutoff",
+        "percentage": "3.6%",
+        "pattern": "Sequence truncated before closing curly brace",
+        "nexus_behavior": "Rejected by deterministic validator",
+        "mitigation": "Regex-assisted auto-closing bracket repair in OutputParser"
+      }
+    ]
+  }
+}

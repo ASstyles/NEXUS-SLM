@@ -157,6 +157,9 @@ class NexusTrainer:
             eval_strategy="epoch",
             save_strategy="epoch",
             save_total_limit=2,
+            load_best_model_at_end=train_cfg.get("load_best_model_at_end", False),
+            metric_for_best_model=train_cfg.get("metric_for_best_model", "eval_loss"),
+            greater_is_better=train_cfg.get("greater_is_better", False),
             fp16=(hw_info["cuda_available"] and not torch.cuda.is_bf16_supported()),
             bf16=(hw_info["cuda_available"] and torch.cuda.is_bf16_supported()),
             gradient_checkpointing=train_cfg.get("gradient_checkpointing", True),
@@ -172,7 +175,8 @@ class NexusTrainer:
         )
 
         logger.info("Starting model training execution...")
-        train_result = trainer.train()
+        resume_ckpt = train_cfg.get("resume_from_checkpoint", None)
+        train_result = trainer.train(resume_from_checkpoint=resume_ckpt)
 
         duration = round(time.time() - start_time, 2)
         metrics = {

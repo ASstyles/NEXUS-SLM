@@ -1,0 +1,29 @@
+{
+  "dataset_version": "dataset_v2",
+  "status": "IMMUTABLE_LOCKED",
+  "random_seed": 42,
+  "total_examples": 5992,
+  "splits": {
+    "train": {
+      "count": 5000,
+      "file": "data/v2/train.jsonl",
+      "hash": "sha256_db392a62cfa41eb4115db1af674a64d0c5ba6dd6dc8d21baabd213245e1b388a"
+    },
+    "validation": {
+      "count": 500,
+      "file": "data/v2/val.jsonl",
+      "hash": "sha256_8c6e2fff62163c8c9ccad9b220488b4d87dd783c0f413ed4df4f5a3117a4891a"
+    },
+    "test_v2": {
+      "count": 492,
+      "file": "data/v2/test_v2.jsonl",
+      "hash": "sha256_bbb0c028c0954f6dcda809d0eacb6d8be286d2e2f8e0a1ae943bab40fea149a5"
+    }
+  },
+  "v1_compatibility": {
+    "historical_v1_test_file": "data/test/test.jsonl",
+    "historical_v1_count": 42,
+    "historical_v1_hash": "sha256_edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4",
+    "policy": "V1 test set preserved without modification. Model V2 evaluated on BOTH historical V1 test set and new 500-instance V2 test set."
+  }
+}

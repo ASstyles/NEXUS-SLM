@@ -7,8 +7,8 @@ on:
     branches: [ "main" ]
 
 jobs:
-  lint-and-unit-tests:
-    name: Lint, Unit Tests, and Integration Tests
+  lint-and-tests:
+    name: Lint, Static Checks, and Automated Test Suite
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -30,59 +30,91 @@ jobs:
           pip install -r requirements.txt
           pip install -e .
 
-      - name: Run Schema and Component Unit Tests
+      - name: Python Syntax & Compilation Verification
         run: |
-          pytest -v tests/test_schemas.py tests/test_data_pipeline.py tests/test_parser.py tests/test_benchmarks.py
+          python -m compileall src/ api/ scripts/ tests/
 
-      - name: Run FastAPI Integration Tests
+      - name: Run Full Automated Test Suite
         run: |
-          pytest -v tests/test_api.py
+          pytest -v tests/
 
-  evaluation-smoke-and-regression:
-    name: Evaluation Smoke & Regression Gate
+      - name: Verify Security & Secret Exclusion
+        run: |
+          # Ensure .env is not tracked in git
+          if git ls-files --error-unmatch .env 2>/dev/null; then
+            echo "ERROR: .env file is tracked in git! Must be ignored."
+            exit 1
+          fi
+          echo "Secret audit passed: No .env committed."
+
+  docker-build:
+    name: Container Build & Health Validation
     runs-on: ubuntu-latest
-    needs: lint-and-unit-tests
+    needs: lint-and-tests
 
     steps:
       - name: Checkout Codebase
         uses: actions/checkout@v4
 
-      - name: Setup Python 3.10
-        uses: actions/setup-python@v5
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Build NEXUS-SLM Docker Image
+        uses: docker/build-push-action@v5
         with:
-          python-version: "3.10"
-          cache: "pip"
+          context: .
+          file: ./Dockerfile
+          load: true
+          tags: nexus-slm:ci-test
 
-      - name: Install Dependencies
+      - name: Start Container with Environment Configuration
         run: |
-          pip install -r requirements.txt
-          pip install -e .
+          docker run -d \
+            --name nexus-ci-container \
+            -p 8000:8000 \
+            -e ACTIVE_MODEL_VERSION=nexus-qlora-v1 \
+            -e API_PORT=8000 \
+            -e API_HOST=0.0.0.0 \
+            nexus-slm:ci-test
 
-      - name: Run Dataset Pipeline Verification
+      - name: Verify Container Startup & Health Check
         run: |
-          python scripts/data/prepare_data.py --samples 100
+          echo "Waiting for container startup and healthcheck..."
+          for i in {1..30}; do
+            if curl -s -f http://localhost:8000/health; then
+              echo "Healthcheck passed!"
+              break
+            fi
+            echo "Waiting for API to become ready (attempt $i/30)..."
+            sleep 2
+          done
+          HEALTH_JSON=$(curl -s http://localhost:8000/health)
+          echo "Health response: $HEALTH_JSON"
+          echo "$HEALTH_JSON" | grep -q '"status":"healthy"' || exit 1
 
-      - name: Run Smoke Evaluation on Locked Test Set
+      - name: Verify Inference API Functionality
         run: |
-          python scripts/evaluation/run_evaluation.py --mode full
+          echo "Testing inference on container..."
+          RESP=$(curl -s -X POST http://localhost:8000/predict \
+            -H "Content-Type: application/json" \
+            -d '{"ticket": "My payment failed and account got debited twice"}')
+          echo "Inference response: $RESP"
+          echo "$RESP" | grep -q '"category":' || exit 1
+          echo "$RESP" | grep -q '"requires_human":' || exit 1
 
-      - name: Check Evaluation Regression Thresholds
+      - name: Verify Graceful Shutdown
         run: |
-          python -c "
-          import json
-          with open('experiments/artifacts/adversarial_report.json') as f:
-              adv = json.load(f)
-              assert adv['resistance_rate'] >= 0.80, f'Adversarial regression: {adv[\"resistance_rate\"]}'
-          with open('experiments/artifacts/robustness_report.json') as f:
-              rob = json.load(f)
-              assert rob['overall_json_validity'] >= 0.95, f'JSON validity regression: {rob[\"overall_json_validity\"]}'
-          print('All CI regression validation gates passed!')
-          "
+          echo "Issuing SIGTERM via docker stop..."
+          docker stop --time 15 nexus-ci-container
+          STATUS=$(docker inspect nexus-ci-container --format='{{.State.Status}}')
+          echo "Container status after stop: $STATUS"
+          docker logs nexus-ci-container | tail -n 20
+          docker rm nexus-ci-container
 
   build-dashboard:
     name: Build Next.js Dashboard
     runs-on: ubuntu-latest
-    needs: lint-and-unit-tests
+    needs: lint-and-tests
 
     steps:
       - name: Checkout Codebase

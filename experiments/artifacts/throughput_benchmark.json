@@ -1,0 +1,55 @@
+{
+  "timestamp": "2026-10-06T22:08:08Z",
+  "hardware": "Intel 8-Core CPU (12 logical threads), 16GB RAM",
+  "concurrency_benchmarks": [
+    {
+      "concurrency": 1,
+      "requests_processed": 16,
+      "throughput_req_per_sec": 0.81,
+      "latency_mean_ms": 1238.5,
+      "latency_p50_ms": 1256.2,
+      "latency_p95_ms": 1350.6,
+      "peak_ram_mb": 1004.5,
+      "error_rate_pct": 0.0,
+      "json_validity_rate": 0.938
+    },
+    {
+      "concurrency": 4,
+      "requests_processed": 16,
+      "throughput_req_per_sec": 0.81,
+      "latency_mean_ms": 4900.1,
+      "latency_p50_ms": 4915.6,
+      "latency_p95_ms": 5267.5,
+      "peak_ram_mb": 1078.6,
+      "error_rate_pct": 0.0,
+      "json_validity_rate": 0.938
+    },
+    {
+      "concurrency": 8,
+      "requests_processed": 16,
+      "throughput_req_per_sec": 0.71,
+      "latency_mean_ms": 10925.2,
+      "latency_p50_ms": 10786.3,
+      "latency_p95_ms": 12086.1,
+      "peak_ram_mb": 1167.4,
+      "error_rate_pct": 0.0,
+      "json_validity_rate": 0.938
+    },
+    {
+      "concurrency": 16,
+      "requests_processed": 16,
+      "throughput_req_per_sec": 0.63,
+      "latency_mean_ms": 25065.7,
+      "latency_p50_ms": 25260.1,
+      "latency_p95_ms": 25546.3,
+      "peak_ram_mb": 1304.4,
+      "error_rate_pct": 0.0,
+      "json_validity_rate": 0.938
+    }
+  ],
+  "sustainable_ceiling": {
+    "optimal_concurrency": 1,
+    "max_sustainable_throughput_rps": 0.81,
+    "saturation_notes": "Peak CPU saturation achieved at concurrency=1. Beyond 8 workers, CPU thread context-switching overhead increases latency with diminishing throughput return."
+  }
+}

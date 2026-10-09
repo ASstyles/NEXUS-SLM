@@ -1,0 +1,139 @@
+{
+  "timestamp": "2026-10-09T17:28:06.006629Z",
+  "evaluation_name": "Deployment Capacity & Infrastructure Evaluation",
+  "candidate_model": "nexus-qlora-v1",
+  "runtime_environment": {
+    "hardware": "Intel 8-Core / 12-thread CPU, 16 GB RAM",
+    "runtime": "PyTorch 2.14 CPU-only build (Torch threadpool)",
+    "os": "Windows (Local host)"
+  },
+  "memory_clarification": {
+    "historical_misreporting_finding": "Historical benchmarks reported 12,273 MB to 14,400 MB RAM because psutil.virtual_memory().used was called, measuring the host-wide Windows operating system memory across all background tasks. Process-specific RSS (psutil.Process().memory_info().rss) was measured and confirms the application consumes under 1.05 GB total.",
+    "initial_process_rss_mb": 205.86,
+    "post_warmup_process_rss_mb": 1001.69,
+    "peak_process_rss_under_load_mb": 1210.66
+  },
+  "concurrency_benchmarks": [
+    {
+      "concurrency": 1,
+      "total_requests": 16,
+      "duration_sec": 25.91,
+      "throughput_req_per_sec": 0.62,
+      "latency_p50_ms": 1564.04,
+      "latency_p90_ms": 1713.45,
+      "latency_p95_ms": 1886.14,
+      "latency_p99_ms": 2292.45,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "status": "STABLE"
+    },
+    {
+      "concurrency": 2,
+      "total_requests": 16,
+      "duration_sec": 24.95,
+      "throughput_req_per_sec": 0.64,
+      "latency_p50_ms": 2998.26,
+      "latency_p90_ms": 3505.94,
+      "latency_p95_ms": 3595.15,
+      "latency_p99_ms": 3618.78,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "status": "STABLE"
+    },
+    {
+      "concurrency": 4,
+      "total_requests": 16,
+      "duration_sec": 30.72,
+      "throughput_req_per_sec": 0.52,
+      "latency_p50_ms": 7350.3,
+      "latency_p90_ms": 8529.89,
+      "latency_p95_ms": 8914.06,
+      "latency_p99_ms": 9390.27,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "status": "STABLE"
+    }
+  ],
+  "container_sizing_verification": {
+    "recommended_vcpu": 2,
+    "recommended_memory_limit_mb": 4096,
+    "recommended_memory_reservation_mb": 2048,
+    "measured_peak_process_rss_mb": 1210.66,
+    "safety_headroom_mb": 2885.34,
+    "safety_factor": 3.38,
+    "oom_risk": "NEGLIGIBLE",
+    "cpu_headroom_status": "2 vCPUs provides sufficient compute for steady-state 0.67 req/s inference with PyTorch threadpool capped at 2 threads (torch.set_num_threads(2)).",
+    "verdict": "VERIFIED_SAFE_FOR_DEPLOYMENT"
+  },
+  "economic_cost_analysis": {
+    "hardware_baselines": {
+      "c6i_large_on_demand_hourly_usd": 0.085,
+      "c6i_large_spot_hourly_usd": 0.025,
+      "c6i_xlarge_on_demand_hourly_usd": 0.17,
+      "c6i_xlarge_spot_hourly_usd": 0.038,
+      "data_transfer_per_gb_usd": 0.09,
+      "alb_hourly_usd": 0.0225,
+      "monitoring_cloudwatch_monthly_usd": 15.0
+    },
+    "scenario_a_empirical_measured_throughput": {
+      "throughput_req_per_sec": 0.67,
+      "max_requests_per_hour_per_instance": 2412,
+      "max_requests_per_day_per_instance": 57888,
+      "cost_per_1k_requests": {
+        "c6i_large_spot_100pct_utilization_usd": 0.0104,
+        "c6i_large_spot_50pct_utilization_usd": 0.0207,
+        "c6i_large_on_demand_100pct_utilization_usd": 0.0352,
+        "c6i_large_on_demand_50pct_utilization_usd": 0.0705,
+        "c6i_xlarge_spot_100pct_utilization_usd": 0.0158
+      },
+      "monthly_operating_cost_at_50k_tickets": {
+        "instance_cost_c6i_large_on_demand_usd": 62.05,
+        "alb_cost_usd": 16.2,
+        "monitoring_and_logs_usd": 15.0,
+        "data_transfer_usd": 0.45,
+        "total_monthly_infrastructure_usd": 93.7,
+        "effective_cost_per_1k_requests_usd": 1.874
+      }
+    },
+    "scenario_b_projected_assumed_throughput": {
+      "throughput_req_per_sec": 1.8,
+      "max_requests_per_hour_per_instance": 6480,
+      "max_requests_per_day_per_instance": 155520,
+      "cost_per_1k_requests": {
+        "c6i_xlarge_spot_100pct_utilization_usd": 0.0059,
+        "c6i_large_spot_100pct_utilization_usd": 0.0039,
+        "c6i_large_on_demand_100pct_utilization_usd": 0.0131
+      },
+      "note": "Historical figure ($0.0058 / 1k) assumed continuous 100% saturation on spot pricing at 1.8 req/s."
+    },
+    "commercial_api_cost_comparison_per_1k_requests": {
+      "gpt_4o_mini_usd": 0.0457,
+      "claude_3_haiku_usd": 0.085,
+      "gemini_1_5_flash_usd": 0.0229,
+      "gpt_4o_premium_usd": 0.7625
+    }
+  },
+  "github_actions_workflow_audit": {
+    "workflow_file": ".github/workflows/ci.yml",
+    "target_runner": "ubuntu-latest",
+    "jobs": [
+      "lint-and-tests",
+      "docker-build",
+      "build-dashboard"
+    ],
+    "docker_test_defined": true,
+    "container_health_check_defined": true,
+    "graceful_shutdown_test_defined": true,
+    "local_docker_status": "DAEMON_NOT_AVAILABLE_ON_WINDOWS_HOST",
+    "remote_git_origin": "NONE_CONFIGURED",
+    "actual_run_id": null,
+    "commit_hash": "b438442b2d3cf0e1801c3396c45ebf63d7f24fe2",
+    "ci_gate_verdict": "PENDING_REMOTE_EXECUTION",
+    "requirement_note": "CI gate remains pending until code is pushed to a remote GitHub repository and a real GitHub Actions run succeeds on an Ubuntu runner."
+  },
+  "scalability_and_multi_replica_limits": {
+    "single_instance_capacity": "0.67 requests/sec (~2,412 requests/hour; ~57,800 requests/day)",
+    "multi_replica_claim_status": "UNVERIFIED_PROJECTION",
+    "policy": "Multi-replica capacity behind an application load balancer (ALB) or NGINX reverse proxy is not claimed until end-to-end load tests behind the actual load balancer are performed. For pilot phase, single-replica deployment is sized to handle up to 20,000 requests/day."
+  }
+}

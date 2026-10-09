@@ -1,0 +1,77 @@
+{
+  "hardware_profile": {
+    "logical_cpus": 12,
+    "physical_cpus": 8,
+    "total_ram_gb": 15.65
+  },
+  "concurrency_tiers": [
+    {
+      "concurrency": 1,
+      "total_requests": 16,
+      "duration_sec": 30.02,
+      "throughput_req_per_sec": 0.53,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "latency_p50_ms": 1739.16,
+      "latency_p95_ms": 2606.32,
+      "mean_latency_ms": 1876.26,
+      "cpu_utilization_pct": 96.0,
+      "ram_used_mb": 13274.84,
+      "ram_delta_mb": -1078.48,
+      "process_stability": "STABLE"
+    },
+    {
+      "concurrency": 2,
+      "total_requests": 16,
+      "duration_sec": 23.87,
+      "throughput_req_per_sec": 0.67,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "latency_p50_ms": 2836.07,
+      "latency_p95_ms": 4862.22,
+      "mean_latency_ms": 2880.36,
+      "cpu_utilization_pct": 91.7,
+      "ram_used_mb": 13343.94,
+      "ram_delta_mb": 84.22,
+      "process_stability": "STABLE"
+    },
+    {
+      "concurrency": 4,
+      "total_requests": 16,
+      "duration_sec": 24.1,
+      "throughput_req_per_sec": 0.66,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "latency_p50_ms": 5888.54,
+      "latency_p95_ms": 6229.47,
+      "mean_latency_ms": 5402.21,
+      "cpu_utilization_pct": 90.7,
+      "ram_used_mb": 13435.67,
+      "ram_delta_mb": 97.46,
+      "process_stability": "STABLE"
+    },
+    {
+      "concurrency": 8,
+      "total_requests": 16,
+      "duration_sec": 23.76,
+      "throughput_req_per_sec": 0.67,
+      "error_count": 0,
+      "error_rate": 0.0,
+      "latency_p50_ms": 10385.33,
+      "latency_p95_ms": 14074.8,
+      "mean_latency_ms": 9352.43,
+      "cpu_utilization_pct": 89.4,
+      "ram_used_mb": 13442.42,
+      "ram_delta_mb": -4.0,
+      "process_stability": "STABLE"
+    }
+  ],
+  "sustainable_operating_point": {
+    "recommended_concurrency": 2,
+    "max_throughput_req_sec": 0.67,
+    "p50_latency_ms": 2836.07,
+    "p95_latency_ms": 4862.22,
+    "ram_used_mb": 13343.94,
+    "recommendation": "Sustainable operating point identified at concurrency 2 workers. Delivers 0.67 req/sec with P95 latency 4862.22ms on CPU host without memory leaks or request timeouts."
+  }
+}

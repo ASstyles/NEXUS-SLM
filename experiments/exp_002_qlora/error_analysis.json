@@ -1,0 +1,823 @@
+{
+  "total_evaluated": 42,
+  "total_failures": 42,
+  "overall_accuracy": 0.0,
+  "categories": [
+    "payment_failure",
+    "refund_request",
+    "account_access",
+    "password_reset",
+    "order_cancel",
+    "order_tracking",
+    "subscription",
+    "billing",
+    "technical_issue",
+    "fraud_report",
+    "delivery_issue",
+    "account_closure",
+    "product_complaint",
+    "general_query"
+  ],
+  "confusion_matrix": [
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ],
+    [
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0,
+      0
+    ]
+  ],
+  "worst_performing_categories": [
+    {
+      "category": "account_access",
+      "accuracy": 0.0,
+      "total_samples": 3
+    },
+    {
+      "category": "account_closure",
+      "accuracy": 0.0,
+      "total_samples": 3
+    },
+    {
+      "category": "billing",
+      "accuracy": 0.0,
+      "total_samples": 3
+    },
+    {
+      "category": "delivery_issue",
+      "accuracy": 0.0,
+      "total_samples": 3
+    },
+    {
+      "category": "fraud_report",
+      "accuracy": 0.0,
+      "total_samples": 3
+    }
+  ],
+  "best_performing_categories": [
+    {
+      "category": "payment_failure",
+      "accuracy": 0.0,
+      "total_samples": 3
+    },
+    {
+      "category": "product_complaint",
+      "accuracy": 0.0,
+      "total_samples": 3
+    },
+    {
+      "category": "refund_request",
+      "accuracy": 0.0,
+      "total_samples": 3
+    },
+    {
+      "category": "subscription",
+      "accuracy": 0.0,
+      "total_samples": 3
+    },
+    {
+      "category": "technical_issue",
+      "accuracy": 0.0,
+      "total_samples": 3
+    }
+  ],
+  "language_performance": {
+    "english": {
+      "total": 14,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "hindi": {
+      "total": 14,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "hinglish": {
+      "total": 14,
+      "correct": 0,
+      "accuracy": 0.0
+    }
+  },
+  "priority_performance": {
+    "critical": {
+      "total": 3,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "high": {
+      "total": 16,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "low": {
+      "total": 7,
+      "correct": 0,
+      "accuracy": 0.0
+    },
+    "medium": {
+      "total": 16,
+      "correct": 0,
+      "accuracy": 0.0
+    }
+  },
+  "invalid_json_count": 42,
+  "invalid_json_rate": 1.0,
+  "error_taxonomy_distribution": {
+    "invalid_json": 42
+  },
+  "representative_errors_count": 25,
+  "representative_errors": [
+    {
+      "sample_index": 1,
+      "input": "Transaction ID TXN-9981 failed at bank gateway but money got debited.",
+      "expected": {
+        "category": "payment_failure",
+        "priority": "high",
+        "language": "english",
+        "requires_human": true
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Transaction ID TXN-9981 failed at bank gateway but money got debited.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_tracki",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 2,
+      "input": "Mera SBI account se 1200 kat gaye par order screen pe error aa gaya.",
+      "expected": {
+        "category": "payment_failure",
+        "priority": "high",
+        "language": "hinglish",
+        "requires_human": true
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Mera SBI account se 1200 kat gaye par order screen pe error aa gaya.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_trackin",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 3,
+      "input": "\u092a\u0947\u092e\u0947\u0902\u091f \u0915\u0930\u0924\u0947 \u0938\u092e\u092f \u0917\u0947\u091f\u0935\u0947 \u091f\u093e\u0907\u092e\u0906\u0909\u091f \u0939\u094b \u0917\u092f\u093e \u0914\u0930 \u092c\u0948\u0902\u0915 \u0938\u0947 \u092a\u0948\u0938\u0947 \u0915\u091f\u0928\u0947 \u0915\u093e \u090f\u0938\u090f\u092e\u090f\u0938 \u0906 \u0917\u092f\u093e\u0964",
+      "expected": {
+        "category": "payment_failure",
+        "priority": "high",
+        "language": "hindi",
+        "requires_human": true
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"\u092a\u0947\u092e\u0947\u0902\u091f \u0915\u0930\u0924\u0947 \u0938\u092e\u092f \u0917\u0947\u091f\u0935\u0947 \u091f\u093e\u0907\u092e\u0906\u0909\u091f \u0939\u094b \u0917\u092f\u093e \u0914\u0930 \u092c\u0948\u0902\u0915 \u0938\u0947 \u092a\u0948\u0938\u0947 \u0915\u091f\u0928\u0947 \u0915\u093e \u090f\u0938\u090f\u092e\u090f\u0938 \u0906\u0917\u0947 \u0939\u094b\u0928\u0947 \u0915\u093e \u090f\u0938\u090f\u092e\u090f",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 4,
+      "input": "Courier picked up returned shoes 4 days ago. Please initiate refund to bank.",
+      "expected": {
+        "category": "refund_request",
+        "priority": "medium",
+        "language": "english",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Courier picked up returned shoes 4 days ago. Please initiate refund to bank.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 5,
+      "input": "Bhai return pickup to ho gaya tha par abhi tak refund account me credit nahi hua.",
+      "expected": {
+        "category": "refund_request",
+        "priority": "medium",
+        "language": "hinglish",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Bhai return pickup to ho gaya tha par abhi tak refund account me credit nahi hua.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, ",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 6,
+      "input": "\u0935\u093e\u092a\u0938 \u0915\u093f\u090f \u0917\u090f \u0938\u093e\u092e\u093e\u0928 \u0915\u093e \u092a\u0948\u0938\u093e \u0905\u092d\u0940 \u0924\u0915 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u092e\u0947\u0902 \u0915\u094d\u092f\u094b\u0902 \u0928\u0939\u0940\u0902 \u0906\u092f\u093e?",
+      "expected": {
+        "category": "refund_request",
+        "priority": "medium",
+        "language": "hindi",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"\u0935\u093e\u092a\u0938 \u0915\u093f\u090f \u0917\u090f \u0938\u093e\u092e\u093e\u0928 \u0915\u093e \u092a\u0948\u0938\u093e \u0905\u092d\u0940 \u0924\u0915 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u092e\u0947\u0902 k\u0932 \u0930\u0939\u0947 \u0939\u0948\u0902 \u0917\u092f\u093e \u0939\u0948, \u091c\u093f\u0932 \u0939\u094b\u0928\u0947 \u0935\u093e\u0932\u093e \u0939\u0948 \u091c\u093f\ufffd",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 7,
+      "input": "Unable to log in due to 'account locked for security reasons' warning.",
+      "expected": {
+        "category": "account_access",
+        "priority": "high",
+        "language": "english",
+        "requires_human": true
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Unable to log in due to 'account locked for security reasons' warning.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_track",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 8,
+      "input": "OTP SMS receive nahi ho raha mere Jio number par login karte time.",
+      "expected": {
+        "category": "account_access",
+        "priority": "high",
+        "language": "hinglish",
+        "requires_human": true
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"OTP SMS receive nahi ho raha mere Jio number par login karte time.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_tracking,",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 9,
+      "input": "\u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0938\u0939\u0940 \u0921\u093e\u0932\u0928\u0947 \u092a\u0930 \u092d\u0940 '\u0905\u0915\u093e\u0909\u0902\u091f \u0938\u0938\u094d\u092a\u0947\u0902\u0921\u0947\u0921' \u0926\u093f\u0916\u093e \u0930\u0939\u093e \u0939\u0948\u0964",
+      "expected": {
+        "category": "account_access",
+        "priority": "high",
+        "language": "hindi",
+        "requires_human": true
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"\u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0938\u0939\u0940 \u0921\u093e\u0932\u0928\u0947 \u092a\u0930 \u092d\u0940 '\u0905\u0915\u093e\u0909\u0902\u091f \u0938\u0938\u094d\u092a\u0947\u0902\u0921\u0947\u0921' \u0926\u093f\u0916\u093e \u0930\u0939\u093e \u0939\u0948\u0964\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 10,
+      "input": "Password reset email verification link brings up a 404 expired page.",
+      "expected": {
+        "category": "password_reset",
+        "priority": "medium",
+        "language": "english",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Password reset email verification link brings up a 404 expired page.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_trackin",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 11,
+      "input": "Forgot password link click karne pe email nahi aa raha inbox ya spam me.",
+      "expected": {
+        "category": "password_reset",
+        "priority": "medium",
+        "language": "hinglish",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Forgot password link click karne pe email nahi aa raha inbox ya spam me.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_tra",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 12,
+      "input": "\u0915\u0943\u092a\u092f\u093e \u092e\u0947\u0930\u0947 \u092a\u0902\u091c\u0940\u0915\u0943\u0924 \u092e\u0947\u0932 \u092a\u0930 \u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0930\u0940\u0938\u0947\u091f \u0915\u0930\u0928\u0947 \u0915\u093e \u0932\u093f\u0902\u0915 \u092a\u0941\u0928\u0903 \u092d\u0947\u091c\u0947\u0902\u0964",
+      "expected": {
+        "category": "password_reset",
+        "priority": "medium",
+        "language": "hindi",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"\u0915\u0943\u092a\u092f\u093e \u092e\u0947\u0930\u0947 \u092a\u0902\u091c\u0940\u0915\u0943\u0924 \u092e\u0947\u0932 \u092a\u0930 \u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0930\u0940\u0938\u0947\u091f \u0915\u0930\u0928\u0947 \u0915\u093e \u0932\u093f\u0902\u0915 \u092a\u0941\u0928\u0903 \u092d\u0947\ufffd\ufffd\u0947\u0902\u0964\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 13,
+      "input": "Please abort and cancel order #771239 immediately as I ordered duplicate.",
+      "expected": {
+        "category": "order_cancel",
+        "priority": "high",
+        "language": "english",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Please abort and cancel order #771239 immediately as I ordered duplicate.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_tr",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 14,
+      "input": "Yeh order galti se place ho gaya hai, dispatch hone se pehle rok dijiye.",
+      "expected": {
+        "category": "order_cancel",
+        "priority": "high",
+        "language": "hinglish",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Yeh order galti se place ho gaya hai, dispatch hone se pehle rok dijiye.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_tra",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 15,
+      "input": "\u092e\u0948\u0902\u0928\u0947 \u0917\u0932\u0924 \u0930\u0902\u0917 \u0915\u093e \u0909\u0924\u094d\u092a\u093e\u0926 \u091a\u0941\u0928 \u0932\u093f\u092f\u093e \u0939\u0948, \u0915\u094d\u092f\u093e \u092f\u0939 \u0906\u0930\u094d\u0921\u0930 \u0928\u093f\u0930\u0938\u094d\u0924 \u0939\u094b \u0938\u0915\u0924\u093e \u0939\u0948?",
+      "expected": {
+        "category": "order_cancel",
+        "priority": "medium",
+        "language": "hindi",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"\u092e\u0948\u0902\u0928\u0947 \u0917\u0932\u0924 \u0930\u0902\u0917 \u0915\u093e \u0909\u0924\u094d\u092a\u093e\u0926 \u091a\u0941\u0928 \u0932\u093f\u092f\u093e \u0939\u0948, \u0915\u094d\u092f\u093e \u092f\u0939 \u0906\u0930\u094d\u0921\u0930 \u0928\u093f\u0930\u0938\u094d\u0924 \u0939\u094b \u0938\u0915\u0924\u093e \u0939\u0948?\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 16,
+      "input": "The tracking AWB 88129033 shows package stuck in transit hub for a week.",
+      "expected": {
+        "category": "order_tracking",
+        "priority": "medium",
+        "language": "english",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"The tracking AWB 88129033 shows package stuck in transit hub for a week.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_tra",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 17,
+      "input": "Shipment ka live status check karna hai, courier boy ka contact number dijiye.",
+      "expected": {
+        "category": "order_tracking",
+        "priority": "medium",
+        "language": "hinglish",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Shipment ka live status check karna hai, courier boy ka contact number dijiye.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, ord",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 18,
+      "input": "\u092e\u0947\u0930\u093e \u092a\u093e\u0930\u094d\u0938\u0932 \u0907\u0938 \u0938\u092e\u092f \u0915\u093f\u0938 \u0936\u0939\u0930 \u092e\u0947\u0902 \u0939\u0948 \u0914\u0930 \u0915\u092c \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e?",
+      "expected": {
+        "category": "order_tracking",
+        "priority": "medium",
+        "language": "hindi",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"\u092e\u0947\u0930\u093e \u092a\u093e\u0930\u094d\u0938\u0932 \u0907\u0938 \u0938\u092e\u092f \u0915\u093f\u0938 \u0936\u0939\u0930 \u092e\u0947\u0902 \u0939\u0948 \u0914\u0930 \u0915\u092c \u0924\u0915 \u092a\u0939\u0941\u0902\ufffd\u0947\u0917\u093e?\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_tracking, subscription,",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 19,
+      "input": "I disabled auto-renewal yet my credit card was billed $29 for annual plan.",
+      "expected": {
+        "category": "subscription",
+        "priority": "high",
+        "language": "english",
+        "requires_human": true
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"I disabled auto-renewal yet my credit card was billed $29 for annual plan.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_t",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 20,
+      "input": "Next month ka subscription plan cancel karke basic plan pe downgrade karna hai.",
+      "expected": {
+        "category": "subscription",
+        "priority": "medium",
+        "language": "hinglish",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Next month ka subscription plan cancel karke basic plan pe downgrade karna hai.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, or",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 21,
+      "input": "\u092e\u0947\u0930\u0940 \u092a\u094d\u0930\u0940\u092e\u093f\u092f\u092e \u0938\u0926\u0938\u094d\u092f\u0924\u093e \u0938\u094d\u0935\u0924\u0903 \u0928\u0935\u0940\u0928\u0940\u0915\u0943\u0924 \u0939\u094b \u0917\u0908, \u092e\u0941\u091d\u0947 \u0907\u0938\u0947 \u0930\u0926\u094d\u0926 \u0915\u0930\u0928\u093e \u0939\u0948\u0964",
+      "expected": {
+        "category": "subscription",
+        "priority": "medium",
+        "language": "hindi",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"\u092e\u0947\u0930\u0940 \u092a\u094d\u0930\u0940\u092e\u093f\u092f\u092e \u0938\u0926\u0938\u094d\u092f\u0924\u093e \u0938\u094d\u0935\u0924\u0903 \u0928\u0935\u0940\u0928\u0940\u0915\u0943\u0924 \u0939\u094b \u0917\u0908, \u092e\u0941\u091d\u0947 \u0907\u0938\u0947 \u0930\u0926\u094d\u0926 \u0915\u0930\u0928\u093e \u0939\u0948\u0964\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 22,
+      "input": "Discrepancy in billing: invoice reflects 18% tax on tax-exempt merchandise.",
+      "expected": {
+        "category": "billing",
+        "priority": "medium",
+        "language": "english",
+        "requires_human": true
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Discrepancy in billing: invoice reflects 18% tax on tax-exempt merchandise.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 23,
+      "input": "Bill me \u20b9250 convenience charge kis cheez ka laga hai details chahiye.",
+      "expected": {
+        "category": "billing",
+        "priority": "low",
+        "language": "hinglish",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"Bill me \u20b9250 convenience charge kis cheez ka laga hai details chahiye.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_track",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 24,
+      "input": "\u0915\u0943\u092a\u092f\u093e \u092e\u0947\u0930\u0940 \u0905\u0902\u0924\u093f\u092e \u0916\u0930\u0940\u0926\u093e\u0930\u0940 \u0915\u093e \u0906\u0927\u093f\u0915\u093e\u0930\u093f\u0915 \u091f\u0948\u0915\u094d\u0938 \u0907\u0928\u0935\u0949\u0907\u0938 \u092a\u0940\u0921\u0940\u090f\u092b \u092d\u0947\u091c\u0947\u0902\u0964",
+      "expected": {
+        "category": "billing",
+        "priority": "low",
+        "language": "hindi",
+        "requires_human": false
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"\u0915\u0943\u092a\u092f\u093e \u092e\u0947\u0930\u0940 \u0905\u0902\u0924\u093f\u092e \u0916\u0930\u0940\u0926\u093e\u0930\u0940 \u0915\u093e \u0906\u0927\u093f\u0915\u093e\u0930\u093f\u0915 \u091f\u0948\u0915\u094d\u0938 \u0907\u0928\u0935\u0949\u0907\u0938 \u092a\u0940\u0921\u0940\u090f\u092b \u092d\u0947\ufffd\u094d\u092f\u0915 \u092e\u093f\u0932\u0928\u093e \u0939\u0948\u0964\"\n\nAllowed categories: payment_failure",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    },
+    {
+      "sample_index": 25,
+      "input": "The payment submission endpoint throws a JSON serialization 500 error.",
+      "expected": {
+        "category": "technical_issue",
+        "priority": "high",
+        "language": "english",
+        "requires_human": true
+      },
+      "predicted": {
+        "category": "unknown",
+        "priority": "unknown",
+        "language": "unknown",
+        "requires_human": false
+      },
+      "raw_output": "Support Ticket:\n\"The payment submission endpoint throws a JSON serialization 500 error.\"\n\nAllowed categories: payment_failure, refund_request, account_access, password_reset, order_cancel, order_track",
+      "json_valid": false,
+      "why_it_failed": "Model failed to emit JSON braces entirely; output was conversational preamble or echoed prompt text."
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "timestamp": "2026-10-09T23:15:00Z",
+  "candidate_name": "NEXUS-SLM-135M-LoRA",
+  "candidate_version": "nexus-qlora-v1",
+  "git_commit": "b438442b2d3cf0e1801c3396c45ebf63d7f24fe2",
+  "git_branch": "main",
+  "pilot_freeze_status": "FROZEN_FOR_SHADOW_PILOT",
+  "architecture": {
+    "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
+    "parameters_total": 135436608,
+    "trainable_parameters": 921600,
+    "adapter_type": "QLoRA",
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ]
+  },
+  "artifact_hashes_sha256": {
+    "test_dataset_test_jsonl": "edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4",
+    "challenge_dataset_jsonl": "70b43711fd2f515bdd27d6daa8e604698a109f6093cdaea7f85bd584339dbc5b",
+    "adapter_model_safetensors": "643971155ba3fe3a91379005fbe85d5ca95e73af90ec7cd65f871379a838983f",
+    "adapter_config_json": "0b8ba73d7f06e7492e09e33c3c62b3e5452a1ca9dfb0f0f0ed3cfaeedc09ab36",
+    "tokenizer_json": "bf346d64f6f0fbcefb4c1b6928a98241467dff36c6fbae5fe1785c4ff90667f4",
+    "tokenizer_config_json": "0b42a9ea2767e426a9f8eb5ee93e3dfe1fccc58b75949dcb15c0cdcaa58166b0",
+    "safety_policy_py": "f3528ff55672246a1e9439d37fafed840287819ba4e76a6bda28b5510f9c4e7d",
+    "canonical_evaluation_script_py": "75dd0f1fa2de8ef22ee5e9e0b023c00e8cb5ebc27b28b443fbcae12b966546aa"
+  },
+  "inference_configuration": {
+    "decoding_strategy": "deterministic_greedy",
+    "temperature": 0.0,
+    "do_sample": false,
+    "max_new_tokens": 50,
+    "top_p": null,
+    "pad_token_id": 0,
+    "eos_token_id": 0,
+    "prompt_formatter": "ChatML (src/models/prompt_formatter.py)",
+    "output_parser": "OutputParser (src/inference/parser.py)"
+  },
+  "safety_policy_configuration": {
+    "policy_version": "v1.2-remediated-frozen",
+    "heuristic_confidence_threshold": 0.85,
+    "confidence_status": "uncalibrated_heuristic",
+    "deterministic_routing_safeguards": [
+      "adversarial_prompt_injection",
+      "safety_critical_fraud_detection",
+      "native_hindi_devanagari_unreliable_tokenization",
+      "legal_or_account_closure_action",
+      "parse_or_schema_validation_failure",
+      "critical_urgency_escalation",
+      "short_input_context_sparsity",
+      "ambiguous_ticket_requires_human_clarification",
+      "high_impact_financial_dispute",
+      "account_security_lockout",
+      "delivery_theft_or_tampering"
+    ]
+  },
+  "metric_reconciliation_and_authoritative_baseline": {
+    "investigation_finding": "The 0.0072 difference between Macro-F1 0.4089 (manifest exp_epoch_3) and 0.4017 (canonical greedy run) was verified: both runs share the exact same 18/42 correct predictions (Accuracy 0.4286). The 0.0072 delta arises from a single off-target false positive shift among incorrect predictions. For all prospective pilot evaluations, 0.4017 Macro-F1 and 0.4286 Accuracy is locked as the authoritative canonical baseline.",
+    "authoritative_canonical_baseline": {
+      "category_accuracy": 0.4286,
+      "exact_correct_samples": 18,
+      "total_samples": 42,
+      "macro_f1": 0.4017,
+      "weighted_f1": 0.4017,
+      "macro_precision": 0.4724,
+      "macro_recall": 0.4286,
+      "evaluation_command": ".venv\\Scripts\\python.exe scripts/evaluation/run_canonical_evaluation.py"
+    },
+    "preserved_historical_runs": {
+      "exp_epoch_3_log": {
+        "category_accuracy": 0.4286,
+        "macro_f1": 0.4089,
+        "source": "experiments/runs.json"
+      },
+      "stochastic_sampling_snapshot": {
+        "category_accuracy": 0.3810,
+        "macro_f1": 0.3754,
+        "source": "experiments/artifacts/confidence_calibration.json"
+      }
+    }
+  },
+  "historical_and_challenge_evidence_summary": {
+    "development_train_set": {
+      "sample_count": 316,
+      "train_loss": 0.2077,
+      "status": "CONVERGED_HISTORICAL"
+    },
+    "development_validation_set": {
+      "sample_count": 44,
+      "eval_loss": 0.1439,
+      "status": "CONVERGED_HISTORICAL"
+    },
+    "locked_test_set": {
+      "sample_count": 42,
+      "category_accuracy": 0.4286,
+      "macro_f1": 0.4017,
+      "escalation_recall": 1.0,
+      "false_negatives": 0,
+      "status": "VERIFIED_LOCKED"
+    },
+    "high_risk_challenge_set": {
+      "sample_count": 70,
+      "challenge_vectors_count": 60,
+      "safe_controls_count": 10,
+      "escalation_recall": 1.0,
+      "escalation_precision": 1.0,
+      "false_negatives": 0,
+      "false_positives": 0,
+      "status": "VERIFIED_ISOLATED"
+    }
+  }
+}

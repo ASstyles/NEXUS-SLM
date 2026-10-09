@@ -1,0 +1,109 @@
+{
+  "schema_version": "1.0.0",
+  "candidate_name": "NEXUS-SLM-135M-LoRA-v1",
+  "model_version": "nexus-qlora-v1",
+  "status": "LOCKED_PRODUCTION_CANDIDATE",
+  "timestamp_locked": "2026-10-09T21:30:00Z",
+  "base_model": {
+    "name": "HuggingFaceTB/SmolLM-135M-Instruct",
+    "parameters": 135436608,
+    "architecture": "LlamaForCausalLM",
+    "hidden_size": 576,
+    "intermediate_size": 1536,
+    "num_hidden_layers": 30,
+    "num_attention_heads": 9,
+    "num_key_value_heads": 3
+  },
+  "adapter": {
+    "version": "v1.0.0",
+    "path": "models/nexus_qlora_v1",
+    "trainable_parameters": 921600,
+    "peft_type": "LORA",
+    "lora_r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "v_proj"
+    ],
+    "bias": "none",
+    "task_type": "CAUSAL_LM"
+  },
+  "tokenizer": {
+    "name": "HuggingFaceTB/SmolLM-135M-Instruct",
+    "vocab_size": 49152,
+    "chat_template": "chatml",
+    "pad_token": "<|im_end|>",
+    "eos_token": "<|im_end|>"
+  },
+  "precision": {
+    "training_precision": "fp32",
+    "inference_precision": "fp32",
+    "quantization": "none_fp32"
+  },
+  "dataset": {
+    "dataset_version": "dataset_v1",
+    "random_seed": 42,
+    "total_samples": 402,
+    "splits": {
+      "train": 316,
+      "validation": 44,
+      "test": 42
+    }
+  },
+  "training_configuration": {
+    "experiment_id": "exp_epoch_3",
+    "random_seed": 42,
+    "learning_rate": 0.0005,
+    "epochs": 3,
+    "batch_size": 4,
+    "effective_batch_size": 8,
+    "warmup_ratio": 0.05,
+    "weight_decay": 0.01,
+    "max_sequence_length": 280,
+    "train_loss": 0.2077,
+    "eval_loss": 0.1439,
+    "train_duration_sec": 986.79
+  },
+  "benchmark_ids": [
+    "exp_001_baseline",
+    "exp_epoch_3",
+    "v2_comprehensive_evaluation"
+  ],
+  "measured_benchmark_metrics": {
+    "macro_f1": 0.4089,
+    "weighted_f1": 0.4089,
+    "category_accuracy": 0.4286,
+    "priority_accuracy": 0.4762,
+    "priority_f1": 0.2739,
+    "language_accuracy": 0.9524,
+    "language_f1": 0.9638,
+    "human_escalation_f1": 0.5952,
+    "json_validity_rate": 0.9762,
+    "exact_match_accuracy": 0.0714,
+    "latency_p50_ms": 1204.46,
+    "latency_p95_ms": 1306.49,
+    "latency_p99_ms": 1313.64,
+    "throughput_req_per_sec": 0.83,
+    "model_memory_footprint_mb": 516.65,
+    "peak_inference_ram_mb": 982.24
+  },
+  "artifact_hashes": {
+    "models/nexus_qlora_v1/adapter_model.safetensors": "sha256_643971155ba3fe3a91379005fbe85d5ca95e73af90ec7cd65f871379a838983f",
+    "models/nexus_qlora_v1/adapter_config.json": "sha256_0b8ba73d7f06e7492e09e33c3c62b3e5452a1ca9dfb0f0f0ed3cfaeedc09ab36",
+    "models/nexus_qlora_v1/tokenizer.json": "sha256_bf346d64f6f0fbcefb4c1b6928a98241467dff36c6fbae5fe1785c4ff90667f4",
+    "models/nexus_qlora_v1/tokenizer_config.json": "sha256_0b42a9ea2767e426a9f8eb5ee93e3dfe1fccc58b75949dcb15c0cdcaa58166b0",
+    "data/test/test.jsonl": "sha256_edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4",
+    "data/train/train.jsonl": "sha256_11df262072d7243f623bfd829b407a8dbd2c5a3087ed697a836a7152c7688967",
+    "data/validation/validation.jsonl": "sha256_2e349ad3b1330aec224c266460d2e4189b94138a1d63146a10bd8f45ea65508e"
+  },
+  "selection_rationale": "Empirical comparison against V2 confirms V1 significantly outperforms V2 across all core dimensions on the locked evaluation benchmark. V1 achieves Macro-F1 0.4089 (vs V2 0.2224, a 45.6% relative advantage), Category Accuracy 0.4286 (vs V2 0.2381), Language Accuracy 0.9524 (vs V2 0.6190), and JSON Validity 97.6% (vs V2 83.3%). V2 suffered empirical parameter saturation on the 135M parameter architecture when exposed to 1,000 diverse samples across 14 categories. Latency for V1 (P95 1306ms) is also nearly 2x faster than V2 (P95 2551ms). Consequently, V1 is locked as the production candidate.",
+  "known_limitations": [
+    "Sample Size: The primary evaluation benchmark consists of 42 locked test samples, which limits statistical power across rare classes.",
+    "Native Devanagari Hindi: Incomplete subword tokenization in SmolLM-135M yields high byte-fallback token count and degraded accuracy (14.3%) on pure Devanagari script.",
+    "Short Tickets: Extremely short inputs (<= 5 words) lack syntactic context, reducing category classification accuracy.",
+    "Rare Class Confusion: Rare categories with subtle boundaries (e.g., account_closure vs account_access) show low recall without deterministic human-escalation rules.",
+    "Parameter Ceiling: 135M parameters cannot support complex multi-intent reasoning without architectural scaling (e.g., Qwen2.5-0.5B).",
+    "CPU Hardware Latency: CPU execution requires ~1.2-1.6s per inference, requiring batching or GPU acceleration for high concurrency."
+  ]
+}

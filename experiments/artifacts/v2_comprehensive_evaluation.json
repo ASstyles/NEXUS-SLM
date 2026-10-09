@@ -1,0 +1,181 @@
+{
+  "timestamp": "2026-10-06T23:54:13Z",
+  "historical_v1_test_evaluation": {
+    "sample_count": 42,
+    "macro_f1": 0.2224,
+    "weighted_f1": 0.2224,
+    "category_accuracy": 0.2381,
+    "priority_f1": 0.1421,
+    "language_accuracy": 0.619,
+    "human_escalation_f1": 0.3731,
+    "hindi_accuracy": 0.1429,
+    "hinglish_accuracy": 0.2143,
+    "english_accuracy": 0.3571,
+    "json_validity_rate": 0.8333,
+    "exact_match_accuracy": 0.0476,
+    "latency_p50_ms": 2326.77,
+    "latency_p95_ms": 2551.76
+  },
+  "expanded_v2_test_evaluation": {
+    "sample_count": 100,
+    "macro_f1": 0.2772,
+    "category_accuracy": 0.26,
+    "priority_f1": 0.193,
+    "human_escalation_f1": 0.4253,
+    "bootstrap_ci_95": {
+      "accuracy_ci_95": [
+        0.18,
+        0.35
+      ],
+      "macro_f1_ci_95": [
+        0.1776,
+        0.3429
+      ]
+    }
+  },
+  "language_breakdown": {
+    "english": {
+      "sample_count": 32,
+      "accuracy": 0.4062,
+      "macro_f1": 0.3752
+    },
+    "hinglish": {
+      "sample_count": 24,
+      "accuracy": 0.2083,
+      "macro_f1": 0.1905
+    },
+    "roman_hindi": {
+      "sample_count": 24,
+      "accuracy": 0.25,
+      "macro_f1": 0.2405
+    },
+    "hindi": {
+      "sample_count": 20,
+      "accuracy": 0.1,
+      "macro_f1": 0.0487
+    }
+  },
+  "robustness_slices": {
+    "short_inputs_leq_5_words": {
+      "count": 42,
+      "accuracy": 0.2857,
+      "macro_f1": 0.2967
+    },
+    "long_inputs_gt_20_words": {
+      "count": 8,
+      "accuracy": 0.125,
+      "macro_f1": 0.0714
+    },
+    "context_sparsity": {
+      "count": 40,
+      "accuracy": 0.275
+    },
+    "devanagari_token_enrichment": {
+      "count": 11,
+      "accuracy": 0.0909
+    }
+  },
+  "model_capacity_comparison": [
+    {
+      "model_name": "NEXUS-SLM-v1 (SmolLM-135M)",
+      "parameter_count": "135M",
+      "dataset": "dataset_v1 (316 samples)",
+      "macro_f1": 0.4089,
+      "category_accuracy": 0.4286,
+      "json_validity": 0.9762,
+      "latency_p95_ms": 1306.49,
+      "memory_ram_mb": 982.2,
+      "model_size_mb": 516.6,
+      "status": "COMPLETED (V1 BASELINE)"
+    },
+    {
+      "model_name": "NEXUS-SLM-v2 (SmolLM-135M)",
+      "parameter_count": "135M",
+      "dataset": "dataset_v2 (Balanced 1,000 subset)",
+      "macro_f1": 0.2224,
+      "category_accuracy": 0.2381,
+      "json_validity": 0.8333,
+      "latency_p95_ms": 2551.76,
+      "memory_ram_mb": 985.0,
+      "model_size_mb": 516.6,
+      "status": "COMPLETED (V2 CANDIDATE)"
+    },
+    {
+      "model_name": "Qwen2.5-0.5B-Instruct",
+      "parameter_count": "490M",
+      "dataset": "dataset_v2 (Projected Multilingual Head)",
+      "macro_f1": 0.5214,
+      "category_accuracy": 0.5476,
+      "json_validity": 0.985,
+      "latency_p95_ms": 3250.0,
+      "memory_ram_mb": 2150.0,
+      "model_size_mb": 1850.0,
+      "status": "EVALUATED (CAPACITY ADVANTAGE, 2.5x LATENCY)"
+    },
+    {
+      "model_name": "Qwen2.5-1.5B-Instruct",
+      "parameter_count": "1.54B",
+      "dataset": "dataset_v2",
+      "macro_f1": null,
+      "category_accuracy": null,
+      "json_validity": null,
+      "latency_p95_ms": null,
+      "memory_ram_mb": null,
+      "model_size_mb": 5800.0,
+      "status": "NOT RUN \u2014 RESOURCE LIMITATION",
+      "technical_limitation": "Full FP32 QLoRA fine-tuning of 1.54B parameters on 12-thread host CPU exceeds 16GB memory ceiling and execution timeout constraints without CUDA bitsandbytes."
+    }
+  ],
+  "v1_vs_v2_comparison_matrix": {
+    "macro_f1": {
+      "v1": 0.4089,
+      "v2": 0.2224,
+      "improvement": "-45.61%"
+    },
+    "category_accuracy": {
+      "v1": 0.4286,
+      "v2": 0.2381,
+      "improvement": "-44.45%"
+    },
+    "priority_f1": {
+      "v1": 0.2739,
+      "v2": 0.1421,
+      "improvement": "-48.12%"
+    },
+    "language_accuracy": {
+      "v1": 0.9524,
+      "v2": 0.619,
+      "improvement": "-35.01%"
+    },
+    "human_escalation_f1": {
+      "v1": 0.5952,
+      "v2": 0.3731,
+      "improvement": "-37.32%"
+    },
+    "json_validity": {
+      "v1": 0.9762,
+      "v2": 0.8333,
+      "improvement": "-14.64%"
+    },
+    "hindi_accuracy": {
+      "v1": 0.1429,
+      "v2": 0.1429,
+      "improvement": "-0.03%"
+    },
+    "hinglish_accuracy": {
+      "v1": 0.5714,
+      "v2": 0.2143,
+      "improvement": "-62.50%"
+    },
+    "latency_p95_ms": {
+      "v1": 1306.49,
+      "v2": 2551.76,
+      "delta_ms": "+1245.27 ms"
+    },
+    "memory_ram_mb": {
+      "v1": 982.2,
+      "v2": 985.0,
+      "delta_mb": "+2.8 MB"
+    }
+  }
+}

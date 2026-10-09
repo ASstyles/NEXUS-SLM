@@ -1,0 +1,35 @@
+experiment_name: exp_002_qlora
+export:
+  export_dir: ./models/nexus_qlora_v1
+  save_adapter_only: true
+lora:
+  bias: none
+  lora_alpha: 32
+  lora_dropout: 0.05
+  r: 16
+  target_modules:
+  - q_proj
+  - k_proj
+  - v_proj
+  - o_proj
+  task_type: CAUSAL_LM
+model:
+  device_map: cpu
+  pretrained_model_name_or_path: HuggingFaceTB/SmolLM-135M-Instruct
+  torch_dtype: float32
+quantization:
+  load_in_4bit: false
+seed: 42
+training:
+  eval_strategy: epoch
+  gradient_accumulation_steps: 2
+  learning_rate: 0.0005
+  logging_steps: 5
+  max_seq_length: 128
+  num_train_epochs: 1
+  output_dir: ./models/checkpoints/exp_002_qlora
+  per_device_eval_batch_size: 4
+  per_device_train_batch_size: 4
+  save_strategy: epoch
+  save_total_limit: 1
+  weight_decay: 0.01

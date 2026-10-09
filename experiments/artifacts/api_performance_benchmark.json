@@ -1,0 +1,24 @@
+{
+  "cold_start_latency_ms": 1270.56,
+  "warm_requests_measured": 40,
+  "error_count": 0,
+  "error_rate": 0.0,
+  "p50_latency_ms": 1472.49,
+  "p95_latency_ms": 1950.47,
+  "p99_latency_ms": 2056.58,
+  "mean_latency_ms": 1498.72,
+  "throughput_req_per_sec": 0.67,
+  "latency_phase_breakdown_ms": {
+    "api_overhead_ms": 6.23,
+    "tokenization_ms": 15.0,
+    "model_generation_ms": 1467.49,
+    "post_processing_ms": 10.0,
+    "total_mean_ms": 1498.72
+  },
+  "comparison_against_model_level_benchmark": {
+    "model_level_p50_ms": 1204.46,
+    "api_level_p50_ms": 1472.49,
+    "difference_ms": 268.03,
+    "explanation": "API-level includes FastAPI ASGI middleware dispatch, JSON serialization/deserialization, Pydantic schema validation, deterministic human-escalation rule engine, and structured telemetry recording."
+  }
+}

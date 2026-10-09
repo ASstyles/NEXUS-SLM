@@ -1,0 +1,76 @@
+{
+  "timestamp": "2026-10-06T22:08:27Z",
+  "empirical_token_measurements": {
+    "avg_input_tokens": 165,
+    "avg_output_tokens": 35,
+    "total_tokens_per_request": 200,
+    "measurement_basis": "Empirical ticket tokenization from locked dataset_v1 test set"
+  },
+  "cost_comparison_table": [
+    {
+      "model_key": "nexus_slm_self_hosted",
+      "model_name": "NEXUS-SLM-135M (Self-Hosted CPU / Micro-Instance)",
+      "tier_type": "Self-Hosted Dedicated / Edge",
+      "pricing_nature": "Estimated Hardware Amortization",
+      "cost_per_single_request_usd": 5.8e-06,
+      "cost_per_1k_requests_usd": 0.0058,
+      "cost_per_10k_requests_usd": 0.06,
+      "cost_per_100k_requests_usd": 0.58
+    },
+    {
+      "model_key": "gemini_1_5_flash",
+      "model_name": "Google Gemini 1.5 Flash",
+      "tier_type": "Commercial Cloud API (Tier 1)",
+      "pricing_nature": "Provider-Reported Official Pricing",
+      "cost_per_single_request_usd": 2.29e-05,
+      "cost_per_1k_requests_usd": 0.0229,
+      "cost_per_10k_requests_usd": 0.23,
+      "cost_per_100k_requests_usd": 2.29
+    },
+    {
+      "model_key": "gpt_4o_mini",
+      "model_name": "OpenAI GPT-4o-mini",
+      "tier_type": "Commercial Cloud API (Tier 1)",
+      "pricing_nature": "Provider-Reported Official Pricing",
+      "cost_per_single_request_usd": 4.58e-05,
+      "cost_per_1k_requests_usd": 0.0457,
+      "cost_per_10k_requests_usd": 0.46,
+      "cost_per_100k_requests_usd": 4.58
+    },
+    {
+      "model_key": "claude_3_haiku",
+      "model_name": "Anthropic Claude 3 Haiku",
+      "tier_type": "Commercial Cloud API (Tier 1)",
+      "pricing_nature": "Provider-Reported Official Pricing",
+      "cost_per_single_request_usd": 8.5e-05,
+      "cost_per_1k_requests_usd": 0.085,
+      "cost_per_10k_requests_usd": 0.85,
+      "cost_per_100k_requests_usd": 8.5
+    },
+    {
+      "model_key": "gpt_4o",
+      "model_name": "OpenAI GPT-4o",
+      "tier_type": "Commercial Cloud API (Premium)",
+      "pricing_nature": "Provider-Reported Official Pricing",
+      "cost_per_single_request_usd": 0.0007625,
+      "cost_per_1k_requests_usd": 0.7625,
+      "cost_per_10k_requests_usd": 7.62,
+      "cost_per_100k_requests_usd": 76.25
+    },
+    {
+      "model_key": "claude_3_5_sonnet",
+      "model_name": "Anthropic Claude 3.5 Sonnet",
+      "tier_type": "Commercial Cloud API (Premium)",
+      "pricing_nature": "Provider-Reported Official Pricing",
+      "cost_per_single_request_usd": 0.00102,
+      "cost_per_1k_requests_usd": 1.02,
+      "cost_per_10k_requests_usd": 10.2,
+      "cost_per_100k_requests_usd": 102.0
+    }
+  ],
+  "savings_analysis": {
+    "nexus_vs_gpt4o_mini_savings_pct": 87.3,
+    "nexus_vs_gpt4o_savings_pct": 99.2,
+    "break_even_point_requests": 3400
+  }
+}

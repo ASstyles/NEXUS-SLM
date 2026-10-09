@@ -1,0 +1,6 @@
+dataset: data/test/test.jsonl
+dataset_version: dataset_v1
+experiment_id: exp_001_baseline
+model_name_or_path: HuggingFaceTB/SmolLM-135M-Instruct
+prompt_style: chat_template_instructions
+quantization: fp32_cpu

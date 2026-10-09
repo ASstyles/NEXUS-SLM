@@ -1,0 +1,24 @@
+{
+  "dataset_version": "dataset_v1",
+  "status": "IMMUTABLE_LOCKED",
+  "random_seed": 42,
+  "total_examples": 402,
+  "splits": {
+    "train": {
+      "count": 316,
+      "file": "data/train/train.jsonl",
+      "hash": "sha256_11df262072d7243f623bfd829b407a8dbd2c5a3087ed697a836a7152c7688967"
+    },
+    "validation": {
+      "count": 44,
+      "file": "data/validation/validation.jsonl",
+      "hash": "sha256_2e349ad3b1330aec224c266460d2e4189b94138a1d63146a10bd8f45ea65508e"
+    },
+    "test": {
+      "count": 42,
+      "file": "data/test/test.jsonl",
+      "hash": "sha256_edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4"
+    }
+  },
+  "policy": "Locked curated test set must remain unchanged across baseline and all fine-tuned evaluations"
+}

@@ -1,0 +1,195 @@
+{
+  "timestamp": "2026-10-09T17:25:35.185804Z",
+  "evaluation_name": "NEXUS-SLM Canonical Evaluation Baseline",
+  "model_version": "nexus-qlora-v1",
+  "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
+  "adapter_location": "models/nexus_qlora_v1",
+  "artifact_hashes": {
+    "dataset_test_jsonl": "edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4",
+    "adapter_model_safetensors": "643971155ba3fe3a91379005fbe85d5ca95e73af90ec7cd65f871379a838983f",
+    "adapter_config_json": "0b8ba73d7f06e7492e09e33c3c62b3e5452a1ca9dfb0f0f0ed3cfaeedc09ab36",
+    "tokenizer_json": "bf346d64f6f0fbcefb4c1b6928a98241467dff36c6fbae5fe1785c4ff90667f4",
+    "tokenizer_config_json": "0b42a9ea2767e426a9f8eb5ee93e3dfe1fccc58b75949dcb15c0cdcaa58166b0"
+  },
+  "dataset_split": "data/test/test.jsonl",
+  "sample_count": 42,
+  "canonical_generation_parameters": {
+    "decoding_strategy": "deterministic_greedy",
+    "temperature": 0.0,
+    "do_sample": false,
+    "max_new_tokens": 50,
+    "top_p": null,
+    "prompt_template": "ChatML standard (PromptFormatter)",
+    "output_format": "Strict JSON schema (OutputParser)"
+  },
+  "canonical_metrics": {
+    "category_accuracy": 0.4286,
+    "correct_samples": 18,
+    "macro_precision": 0.4724,
+    "macro_recall": 0.4286,
+    "macro_f1": 0.4017,
+    "weighted_f1": 0.4017,
+    "per_class_metrics": {
+      "payment_failure": {
+        "support": 3,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "refund_request": {
+        "support": 3,
+        "precision": 0.4,
+        "recall": 0.6667,
+        "f1": 0.5
+      },
+      "account_access": {
+        "support": 3,
+        "precision": 0.2143,
+        "recall": 1.0,
+        "f1": 0.3529
+      },
+      "password_reset": {
+        "support": 3,
+        "precision": 1.0,
+        "recall": 0.6667,
+        "f1": 0.8
+      },
+      "order_cancel": {
+        "support": 3,
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0
+      },
+      "order_tracking": {
+        "support": 3,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "subscription": {
+        "support": 3,
+        "precision": 0.3333,
+        "recall": 0.3333,
+        "f1": 0.3333
+      },
+      "billing": {
+        "support": 3,
+        "precision": 1.0,
+        "recall": 0.3333,
+        "f1": 0.5
+      },
+      "technical_issue": {
+        "support": 3,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "fraud_report": {
+        "support": 3,
+        "precision": 1.0,
+        "recall": 0.3333,
+        "f1": 0.5
+      },
+      "delivery_issue": {
+        "support": 3,
+        "precision": 0.6667,
+        "recall": 0.6667,
+        "f1": 0.6667
+      },
+      "account_closure": {
+        "support": 3,
+        "precision": 0.5,
+        "recall": 0.6667,
+        "f1": 0.5714
+      },
+      "product_complaint": {
+        "support": 3,
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0
+      },
+      "general_query": {
+        "support": 3,
+        "precision": 0.5,
+        "recall": 0.3333,
+        "f1": 0.4
+      }
+    }
+  },
+  "historical_evidence_reconciliation": {
+    "run_a_manifest_locked": {
+      "source": "experiments/candidate_nexus_v1_lock.json (exp_epoch_3)",
+      "category_accuracy": 0.4286,
+      "correct_samples": 18,
+      "macro_f1": 0.4089,
+      "weighted_f1": 0.4089,
+      "decoding": "Greedy (T=0.0, do_sample=False, max_new_tokens=50)",
+      "status": "PRESERVED_HISTORICAL_BASELINE"
+    },
+    "run_b_calibration_snapshot": {
+      "source": "experiments/artifacts/confidence_calibration.json",
+      "category_accuracy": 0.381,
+      "correct_samples": 16,
+      "macro_f1": 0.3754,
+      "weighted_f1": 0.3754,
+      "decoding": "Stochastic Sampling (T=0.1, do_sample=True, max_new_tokens=150, unseeded)",
+      "status": "PRESERVED_HISTORICAL_EVIDENCE"
+    },
+    "root_cause": "The divergence of 2 samples (4.76% accuracy, 0.0335 Macro-F1) is fully explained by decoding strategy: Run A used deterministic greedy decoding (T=0.0) yielding 18/42 correct, while Run B used stochastic sampling (T=0.1) without a fixed seed yielding 16/42 correct. Both runs utilized identical model checkpoint, LoRA adapter, and locked test dataset. On an N=42 evaluation set, each individual sample accounts for 2.38% accuracy.",
+    "divergent_sample_records": [
+      {
+        "id": "test_008",
+        "text": "OTP SMS receive nahi ho raha mere Jio number par login karte samay...",
+        "true_category": "account_access",
+        "greedy_run_prediction": "account_access",
+        "greedy_correct": true,
+        "sampling_run_prediction": "order_cancel",
+        "sampling_correct": false,
+        "analysis": "At T=0.1 sampling, borderline logits between authentication and order intent flipped prediction to order_cancel."
+      },
+      {
+        "id": "test_015",
+        "text": "Maine galat rang ka utpad chun liya hai, kya yah order nirast ho sakta hai?",
+        "true_category": "order_cancel",
+        "greedy_run_prediction": "order_cancel",
+        "greedy_correct": true,
+        "sampling_run_prediction": "account_access",
+        "sampling_correct": false,
+        "analysis": "At T=0.1 sampling, Devanagari subword token fragmentation led sampling path into account_access."
+      },
+      {
+        "id": "test_019",
+        "text": "I disabled auto-renewal yet my credit card was billed $29...",
+        "true_category": "subscription",
+        "greedy_run_prediction": "account_closure",
+        "greedy_correct": false,
+        "sampling_run_prediction": "payment_failure",
+        "sampling_correct": false,
+        "analysis": "Both configurations failed due to semantic overlap; greedy favored account_closure, sampling favored payment_failure."
+      },
+      {
+        "id": "test_030",
+        "text": "Unknown debit alert: $140 charged in Chicago...",
+        "true_category": "fraud_report",
+        "greedy_run_prediction": "order_tracking",
+        "greedy_correct": false,
+        "sampling_run_prediction": "account_access",
+        "sampling_correct": false,
+        "analysis": "Both configurations failed; caught deterministically by deterministic fraud keyword safeguards in policy."
+      }
+    ]
+  },
+  "baseline_designation": {
+    "canonical_deterministic_baseline": {
+      "accuracy": 0.4286,
+      "macro_f1": 0.4089,
+      "command": ".venv\\Scripts\\python.exe scripts/evaluation/run_canonical_evaluation.py",
+      "usage": "Use for reproducible regression benchmarking and version comparison."
+    },
+    "stochastic_operational_lower_bound": {
+      "accuracy": 0.381,
+      "macro_f1": 0.3754,
+      "usage": "Use for conservative SLA planning, capacity bounds, and shadow pilot safety margins."
+    }
+  }
+}

@@ -1,0 +1,129 @@
+{
+  "dataset_version": "dataset_v1",
+  "split": "train",
+  "total_examples": 316,
+  "category_distribution": {
+    "technical_issue": 15,
+    "account_access": 24,
+    "password_reset": 22,
+    "delivery_issue": 22,
+    "payment_failure": 32,
+    "account_closure": 28,
+    "billing": 18,
+    "refund_request": 28,
+    "order_tracking": 21,
+    "subscription": 19,
+    "fraud_report": 20,
+    "order_cancel": 29,
+    "general_query": 18,
+    "product_complaint": 20
+  },
+  "priority_distribution": {
+    "medium": 123,
+    "high": 115,
+    "critical": 23,
+    "low": 55
+  },
+  "escalation_distribution": {
+    "False": 108,
+    "True": 208
+  },
+  "raw_language_distribution": {
+    "hinglish": 108,
+    "english": 100,
+    "hindi": 108
+  },
+  "multilingual_granularity": {
+    "english": 100,
+    "hinglish": 108,
+    "roman_hindi": 0,
+    "devanagari_hindi": 108,
+    "total_hindi_related": 216
+  },
+  "length_statistics": {
+    "mean_words": 13.5,
+    "min_words": 4,
+    "max_words": 30,
+    "mean_chars": 75.7,
+    "extremely_short_count_under_5_words": 83,
+    "extremely_long_count_over_30_words": 0
+  },
+  "data_quality_issues": {
+    "exact_duplicate_count": 0,
+    "near_duplicate_count": 4,
+    "conflicting_label_count": 0,
+    "conflicting_cases": []
+  },
+  "rare_categories": {
+    "min_category": {
+      "name": "technical_issue",
+      "count": 15
+    },
+    "max_category": {
+      "name": "payment_failure",
+      "count": 32
+    },
+    "imbalance_ratio": 2.13,
+    "underrepresented_categories_under_20_samples": {
+      "technical_issue": 15,
+      "billing": 18,
+      "general_query": 18,
+      "subscription": 19
+    }
+  },
+  "sample_short_examples": [
+    {
+      "id": "ticket_000859",
+      "text": "New password banate time?",
+      "category": "password_reset",
+      "words": 4
+    },
+    {
+      "id": "ticket_000709",
+      "text": "\u092e\u0947\u0930\u0947 \u092a\u0902\u091c\u0940\u0915\u0943\u0924 \u092e\u094b\u092c\u093e\u0907\u0932 \u0928\u0902\u092c\u0930?",
+      "category": "account_access",
+      "words": 4
+    },
+    {
+      "id": "ticket_000002",
+      "text": "UPI payment successful dikha?",
+      "category": "payment_failure",
+      "words": 4
+    },
+    {
+      "id": "ticket_000504",
+      "text": "Mera payment kat gaya?",
+      "category": "payment_failure",
+      "words": 4
+    },
+    {
+      "id": "ticket_000703",
+      "text": "I suspect fraudulent activity?",
+      "category": "fraud_report",
+      "words": 4
+    }
+  ],
+  "sample_near_duplicates": [
+    {
+      "text_1": "\u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u092c\u0949\u092f \u0928\u0947 \u092c\u0926\u0924\u092e\u0940\u091c\u0940 \u0915\u0940 \u0914\u0930 \u0918\u0930 \u092a\u0930 \u0938\u093e\u092e\u093e\u0928 \u0926\u0947\u0928\u0947 \u0938\u0947 \u092e\u0928\u093e \u0915\u0930 \u0926\u093f\u092f\u093e\u0964??!?!",
+      "text_2": "hello sir \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u092c\u0949\u092f \u0928\u0947 \u092c\u0926\u0924\u092e\u0940\u091c\u0940 \u0915\u0940 \u0914\u0930 \u0918\u0930 \u092a\u0930 \u0938\u093e\u092e\u093e\u0928 \u0926\u0947\u0928\u0947 \u0938\u0947 \u092e\u0928\u093e \u0915\u0930 \u0926\u093f\u092f\u093e\u0964 \ud83d\ude2d",
+      "category_1": "delivery_issue",
+      "category_2": "delivery_issue",
+      "similarity": 0.895
+    },
+    {
+      "text_1": "\u092e\u0948\u0902\u0928\u0947 \u0938\u093e\u092e\u093e\u0928 \u0935\u093e\u092a\u0938 \u0915\u0930 \u0926\u093f\u092f\u093e \u0925\u093e, \u092e\u0947\u0930\u093e \u0930\u093f\u092b\u0902\u0921 \u0915\u092c \u0924\u0915 \u0916\u093e\u0924\u0947 \u092e\u0947\u0902 \u0906\u090f\u0917\u093e?",
+      "text_2": "hey team \u092e\u0948\u0902\u0928\u0947 \u0938\u093e\u092e\u093e\u0928 \u0935\u093e\u092a\u0938 \u0915\u0930 \u0926\u093f\u092f\u093e \u0925\u093e, \u092e\u0947\u0930\u093e \u0930\u093f\u092b\u0902\u0921 \u0915\u092c \u0924\u0915 \u0916\u093e\u0924\u0947 \u092e\u0947\u0902 \u0906\u090f\u0917\u093e? \u26a0\ufe0f",
+      "category_1": "refund_request",
+      "category_2": "refund_request",
+      "similarity": 0.895
+    },
+    {
+      "text_1": "\u092c\u093f\u0932 \u092e\u0947\u0902 \u0910\u0938\u0940 \u0938\u0947\u0935\u093e\u0913\u0902 \u0915\u0947 \u092a\u0948\u0938\u0947 \u091c\u094b\u0921\u093c\u0947 \u0917\u090f \u0939\u0948\u0902 \u091c\u094b \u092e\u0948\u0902\u0928\u0947 \u0932\u0940 \u0939\u0940 \u0928\u0939\u0940\u0902\u0964??!?!",
+      "text_2": "hey team \u092c\u093f\u0932 \u092e\u0947\u0902 \u0910\u0938\u0940 \u0938\u0947\u0935\u093e\u0913\u0902 \u0915\u0947 \u092a\u0948\u0938\u0947 \u091c\u094b\u0921\u093c\u0947 \u0917\u090f \u0939\u0948\u0902 \u091c\u094b \u092e\u0948\u0902\u0928\u0947 \u0932\u0940 \u0939\u0940 \u0928\u0939\u0940\u0902\u0964 \ud83d\ude4f",
+      "category_1": "billing",
+      "category_2": "billing",
+      "similarity": 0.882
+    }
+  ]
+}

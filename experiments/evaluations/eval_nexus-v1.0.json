@@ -1,0 +1,12 @@
+{
+  "model_name": "NEXUS-SLM-135M-LoRA",
+  "inference_mode": "Fine-Tuned QLoRA (Active)",
+  "accuracy": 0.4286,
+  "macro_f1": 0.4089,
+  "weighted_f1": 0.4089,
+  "json_validity_rate": 0.9762,
+  "latency_p50_ms": 1658.57,
+  "latency_p95_ms": 1758.62,
+  "peak_ram_mb": 12273.7,
+  "model_size_mb": 515.0
+}

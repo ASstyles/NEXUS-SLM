@@ -1,0 +1,61 @@
+{
+  "benchmark_timestamp": "2026-10-06T22:04:22Z",
+  "hardware": "Intel 8-Core CPU (12 threads), 16GB RAM",
+  "test_samples": 42,
+  "formats_benchmarked": [
+    {
+      "precision": "FP32",
+      "model_size_mb": 516.6,
+      "macro_f1": 0.4089,
+      "weighted_f1": 0.4089,
+      "category_accuracy": 0.4286,
+      "json_validity_rate": 0.9762,
+      "exact_match_accuracy": 0.0714,
+      "latency_p50_ms": 1210.43,
+      "latency_p95_ms": 1324.69,
+      "latency_p99_ms": 1396.38,
+      "throughput_req_per_sec": 0.82,
+      "peak_ram_mb": 14426.7,
+      "load_time_sec": 1.61
+    },
+    {
+      "precision": "INT8",
+      "model_size_mb": 108.1,
+      "macro_f1": 0.0944,
+      "weighted_f1": 0.0944,
+      "category_accuracy": 0.0952,
+      "json_validity_rate": 0.4048,
+      "exact_match_accuracy": 0.0,
+      "latency_p50_ms": 1333.02,
+      "latency_p95_ms": 2005.47,
+      "latency_p99_ms": 2053.29,
+      "throughput_req_per_sec": 0.7,
+      "peak_ram_mb": 14512.87,
+      "load_time_sec": 2.91
+    }
+  ],
+  "hardware_limited_formats": [
+    {
+      "precision": "FP16 / BF16",
+      "supported": false,
+      "model_size_mb": 257.5,
+      "macro_f1": null,
+      "latency_p95_ms": null,
+      "throughput_req_per_sec": null,
+      "peak_ram_mb": null,
+      "status": "UNSUPPORTED_ON_CPU",
+      "technical_limitation": "Host PyTorch CPU build does not support native BF16 matrix multiplication instructions; emulation would degrade latency."
+    },
+    {
+      "precision": "INT4",
+      "supported": false,
+      "model_size_mb": 135.0,
+      "macro_f1": null,
+      "latency_p95_ms": null,
+      "throughput_req_per_sec": null,
+      "peak_ram_mb": null,
+      "status": "UNSUPPORTED_ON_CPU",
+      "technical_limitation": "BitsAndBytes 4-bit NF4/FP4 quantization requires NVIDIA CUDA runtime; host environment is running PyTorch CPU build."
+    }
+  ]
+}

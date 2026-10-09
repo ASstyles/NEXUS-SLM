@@ -1,0 +1,17 @@
+{
+  "model_version": "nexus-qlora-v2",
+  "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
+  "dataset_version": "dataset_v2",
+  "training_samples": 1000,
+  "validation_samples": 100,
+  "epochs": 2,
+  "batch_size": 8,
+  "gradient_accumulation_steps": 2,
+  "effective_batch_size": 16,
+  "learning_rate": 0.0005,
+  "lora_r": 16,
+  "lora_alpha": 32,
+  "train_loss": 0.8883,
+  "train_duration_sec": 2161.8,
+  "completed_at": "2026-10-06T18:13:53.975604Z"
+}

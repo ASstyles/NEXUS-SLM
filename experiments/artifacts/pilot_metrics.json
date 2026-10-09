@@ -1,0 +1,76 @@
+{
+  "timestamp": "2026-10-09T23:20:00Z",
+  "candidate_version": "nexus-qlora-v1",
+  "pilot_phase": "SHADOW_PILOT_DAY_0",
+  "pilot_state": "READY_TO_START_SHADOW_PILOT",
+  "data_integrity_notice": "Real production traffic has not yet begun. Pilot observation counters are initialized to zero. Prospective results are strictly separated from pre-pilot evaluation baselines.",
+  "live_pilot_observations": {
+    "observation_days_elapsed": 0,
+    "target_observation_days": 14,
+    "production_tickets_ingested": 0,
+    "target_production_tickets": 5000,
+    "shadow_inferences_completed": 0,
+    "timeouts_count": 0,
+    "errors_count": 0,
+    "backpressure_drops_count": 0,
+    "duplicates_dropped_count": 0,
+    "blinded_human_labels_collected": 0,
+    "matched_concordance_samples": 0,
+    "sev1_safety_incidents_recorded": 0,
+    "sev2_operational_incidents_recorded": 0
+  },
+  "pre_pilot_baseline_reference_metrics": {
+    "canonical_test_set_accuracy": 0.4286,
+    "canonical_test_set_macro_f1": 0.4017,
+    "canonical_test_set_weighted_f1": 0.4017,
+    "locked_test_escalation_recall": 1.0,
+    "challenge_set_escalation_recall": 1.0,
+    "challenge_set_escalation_precision": 1.0,
+    "measured_p50_latency_ms": 1460.5,
+    "measured_p95_latency_ms": 1672.4,
+    "measured_peak_process_rss_mb": 1018.42
+  },
+  "promotion_gate_checklist": {
+    "gate_1_14_day_duration": {
+      "status": "PENDING",
+      "current_value": 0,
+      "required_value": 14,
+      "details": "Awaiting elapsed observation days in shadow mode."
+    },
+    "gate_2_5000_ticket_volume": {
+      "status": "PENDING",
+      "current_value": 0,
+      "required_value": 5000,
+      "details": "Awaiting real production customer tickets via shadow mirror."
+    },
+    "gate_3_high_risk_recall_98pct": {
+      "status": "PENDING",
+      "current_value": null,
+      "required_value": 0.98,
+      "details": "Evaluated against prospective blinded human labels once traffic accumulates."
+    },
+    "gate_4_zero_sev1_escapes": {
+      "status": "PENDING",
+      "current_value": 0,
+      "required_value": 0,
+      "details": "Zero missed escalations permitted on fraud, legal, security, or tampering tickets."
+    },
+    "gate_5_category_concordance_60pct": {
+      "status": "PENDING",
+      "current_value": null,
+      "required_value": 0.60,
+      "details": "Requires human-model category concordance >= 60% on prospective traffic."
+    },
+    "gate_6_remote_linux_ci_run": {
+      "status": "PENDING_REMOTE_RUN",
+      "current_value": "NO_REMOTE_RUN_RECORDED",
+      "required_value": "PASSING_REMOTE_RUN",
+      "details": "Local workstation lacks Docker daemon; git remote unconfigured. Gate pending remote execution."
+    }
+  },
+  "promotion_decision": {
+    "status": "READY TO START SHADOW PILOT",
+    "canary_rollout_permitted": false,
+    "rationale": "All prerequisites, failure-isolated ingestion pipelines, redaction modules, frozen candidate manifests, and double-blind protocols are active and verified. The system is certified to begin shadow-mode traffic. Promotion to canary is strictly deferred until 14 days of live observations and remote CI execution are completed."
+  }
+}

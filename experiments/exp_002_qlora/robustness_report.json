@@ -1,0 +1,118 @@
+{
+  "timestamp": "2026-10-06T12:27:19.017178",
+  "overall_accuracy": 0.0,
+  "overall_json_validity": 0.0,
+  "canonical_accuracy": 0.0,
+  "subsets": {
+    "complex_multisentence_long": {
+      "test_count": 2,
+      "category_accuracy": 0.0,
+      "json_validity_rate": 0.0
+    },
+    "english_canonical": {
+      "test_count": 3,
+      "category_accuracy": 0.0,
+      "json_validity_rate": 0.0
+    },
+    "hindi_devanagari": {
+      "test_count": 3,
+      "category_accuracy": 0.0,
+      "json_validity_rate": 0.0
+    },
+    "hinglish_roman": {
+      "test_count": 3,
+      "category_accuracy": 0.0,
+      "json_validity_rate": 0.0
+    },
+    "informal_slang_emojis": {
+      "test_count": 3,
+      "category_accuracy": 0.0,
+      "json_validity_rate": 0.0
+    },
+    "mixed_script_code_switched": {
+      "test_count": 2,
+      "category_accuracy": 0.0,
+      "json_validity_rate": 0.0
+    },
+    "noisy_punctuation_caps": {
+      "test_count": 3,
+      "category_accuracy": 0.0,
+      "json_validity_rate": 0.0
+    },
+    "typos_and_misspellings": {
+      "test_count": 3,
+      "category_accuracy": 0.0,
+      "json_validity_rate": 0.0
+    },
+    "ultra_short_queries": {
+      "test_count": 3,
+      "category_accuracy": 0.0,
+      "json_validity_rate": 0.0
+    }
+  },
+  "robustness_breakdown_table": [
+    {
+      "input_type": "Complex Multisentence Long",
+      "subset_key": "complex_multisentence_long",
+      "samples": 2,
+      "accuracy": 0.0,
+      "macro_f1": 0.0
+    },
+    {
+      "input_type": "English Canonical",
+      "subset_key": "english_canonical",
+      "samples": 3,
+      "accuracy": 0.0,
+      "macro_f1": 0.0
+    },
+    {
+      "input_type": "Hindi Devanagari",
+      "subset_key": "hindi_devanagari",
+      "samples": 3,
+      "accuracy": 0.0,
+      "macro_f1": 0.0
+    },
+    {
+      "input_type": "Hinglish Roman",
+      "subset_key": "hinglish_roman",
+      "samples": 3,
+      "accuracy": 0.0,
+      "macro_f1": 0.0
+    },
+    {
+      "input_type": "Informal Slang Emojis",
+      "subset_key": "informal_slang_emojis",
+      "samples": 3,
+      "accuracy": 0.0,
+      "macro_f1": 0.0
+    },
+    {
+      "input_type": "Mixed Script Code Switched",
+      "subset_key": "mixed_script_code_switched",
+      "samples": 2,
+      "accuracy": 0.0,
+      "macro_f1": 0.0
+    },
+    {
+      "input_type": "Noisy Punctuation Caps",
+      "subset_key": "noisy_punctuation_caps",
+      "samples": 3,
+      "accuracy": 0.0,
+      "macro_f1": 0.0
+    },
+    {
+      "input_type": "Typos And Misspellings",
+      "subset_key": "typos_and_misspellings",
+      "samples": 3,
+      "accuracy": 0.0,
+      "macro_f1": 0.0
+    },
+    {
+      "input_type": "Ultra Short Queries",
+      "subset_key": "ultra_short_queries",
+      "samples": 3,
+      "accuracy": 0.0,
+      "macro_f1": 0.0
+    }
+  ]
+}

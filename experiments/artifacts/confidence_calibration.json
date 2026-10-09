@@ -1,0 +1,495 @@
+{
+  "candidate_model": "nexus-qlora-v1",
+  "dataset": "data/test/test.jsonl",
+  "calibration_metrics": {
+    "sample_count": 42,
+    "mean_confidence": 0.9689,
+    "mean_accuracy": 0.381,
+    "overconfidence_gap": 0.5879,
+    "expected_calibration_error": 0.5879,
+    "max_calibration_error": 0.6023,
+    "brier_score": 0.5841,
+    "correlation_pearson": 0.138,
+    "recommendation": "raw_model_confidence_is_overconfident: Expose calibrated confidence or apply conservative human-escalation gating when confidence < 0.70. Do not treat raw confidence as true Bayesian posterior.",
+    "buckets": [
+      {
+        "bucket_index": 0,
+        "range": [
+          0.0,
+          0.2
+        ],
+        "count": 1,
+        "mean_confidence": 0.0,
+        "accuracy": 0.0,
+        "calibration_gap": 0.0
+      },
+      {
+        "bucket_index": 1,
+        "range": [
+          0.2,
+          0.4
+        ],
+        "count": 0,
+        "mean_confidence": 0.3,
+        "accuracy": 0.0,
+        "calibration_gap": 0.0
+      },
+      {
+        "bucket_index": 2,
+        "range": [
+          0.4,
+          0.6
+        ],
+        "count": 0,
+        "mean_confidence": 0.5,
+        "accuracy": 0.0,
+        "calibration_gap": 0.0
+      },
+      {
+        "bucket_index": 3,
+        "range": [
+          0.6,
+          0.8
+        ],
+        "count": 0,
+        "mean_confidence": 0.7,
+        "accuracy": 0.0,
+        "calibration_gap": 0.0
+      },
+      {
+        "bucket_index": 4,
+        "range": [
+          0.8,
+          1.0
+        ],
+        "count": 41,
+        "mean_confidence": 0.9925,
+        "accuracy": 0.3902,
+        "calibration_gap": 0.6023
+      }
+    ]
+  },
+  "exact_match_accuracy": 0.1429,
+  "detailed_sample_records": [
+    {
+      "id": "test_001",
+      "text": "Transaction ID TXN-9981 failed at bank gateway but money got...",
+      "true_category": "payment_failure",
+      "pred_category": "account_closure",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9955,
+      "requires_human": true
+    },
+    {
+      "id": "test_002",
+      "text": "Mera SBI account se 1200 kat gaye par order screen pe error ...",
+      "true_category": "payment_failure",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9944,
+      "requires_human": true
+    },
+    {
+      "id": "test_003",
+      "text": "\u092a\u0947\u092e\u0947\u0902\u091f \u0915\u0930\u0924\u0947 \u0938\u092e\u092f \u0917\u0947\u091f\u0935\u0947 \u091f\u093e\u0907\u092e\u0906\u0909\u091f \u0939\u094b \u0917\u092f\u093e \u0914\u0930 \u092c\u0948\u0902\u0915 \u0938\u0947 \u092a\u0948\u0938\u0947 \u0915\u091f\u0928\u0947 \u0915\u093e...",
+      "true_category": "payment_failure",
+      "pred_category": "order_tracking",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9934,
+      "requires_human": true
+    },
+    {
+      "id": "test_004",
+      "text": "Courier picked up returned shoes 4 days ago. Please initiate...",
+      "true_category": "refund_request",
+      "pred_category": "refund_request",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.9985,
+      "requires_human": true
+    },
+    {
+      "id": "test_005",
+      "text": "Bhai return pickup to ho gaya tha par abhi tak refund accoun...",
+      "true_category": "refund_request",
+      "pred_category": "refund_request",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.9991,
+      "requires_human": true
+    },
+    {
+      "id": "test_006",
+      "text": "\u0935\u093e\u092a\u0938 \u0915\u093f\u090f \u0917\u090f \u0938\u093e\u092e\u093e\u0928 \u0915\u093e \u092a\u0948\u0938\u093e \u0905\u092d\u0940 \u0924\u0915 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u092e\u0947\u0902 \u0915\u094d\u092f\u094b\u0902 \u0928\u0939\u0940\u0902 \u0906\u092f...",
+      "true_category": "refund_request",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9854,
+      "requires_human": true
+    },
+    {
+      "id": "test_007",
+      "text": "Unable to log in due to 'account locked for security reasons...",
+      "true_category": "account_access",
+      "pred_category": "account_access",
+      "category_correct": true,
+      "exact_match_correct": true,
+      "confidence": 0.9894,
+      "requires_human": true
+    },
+    {
+      "id": "test_008",
+      "text": "OTP SMS receive nahi ho raha mere Jio number par login karte...",
+      "true_category": "account_access",
+      "pred_category": "order_cancel",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.982,
+      "requires_human": true
+    },
+    {
+      "id": "test_009",
+      "text": "\u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0938\u0939\u0940 \u0921\u093e\u0932\u0928\u0947 \u092a\u0930 \u092d\u0940 '\u0905\u0915\u093e\u0909\u0902\u091f \u0938\u0938\u094d\u092a\u0947\u0902\u0921\u0947\u0921' \u0926\u093f\u0916\u093e \u0930\u0939\u093e \u0939\u0948\u0964...",
+      "true_category": "account_access",
+      "pred_category": "account_access",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.9999,
+      "requires_human": true
+    },
+    {
+      "id": "test_010",
+      "text": "Password reset email verification link brings up a 404 expir...",
+      "true_category": "password_reset",
+      "pred_category": "password_reset",
+      "category_correct": true,
+      "exact_match_correct": true,
+      "confidence": 0.9998,
+      "requires_human": true
+    },
+    {
+      "id": "test_011",
+      "text": "Forgot password link click karne pe email nahi aa raha inbox...",
+      "true_category": "password_reset",
+      "pred_category": "password_reset",
+      "category_correct": true,
+      "exact_match_correct": true,
+      "confidence": 1.0,
+      "requires_human": true
+    },
+    {
+      "id": "test_012",
+      "text": "\u0915\u0943\u092a\u092f\u093e \u092e\u0947\u0930\u0947 \u092a\u0902\u091c\u0940\u0915\u0943\u0924 \u092e\u0947\u0932 \u092a\u0930 \u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0930\u0940\u0938\u0947\u091f \u0915\u0930\u0928\u0947 \u0915\u093e \u0932\u093f\u0902\u0915 \u092a\u0941\u0928\u0903 \u092d\u0947...",
+      "true_category": "password_reset",
+      "pred_category": "order_tracking",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9911,
+      "requires_human": true
+    },
+    {
+      "id": "test_013",
+      "text": "Please abort and cancel order #771239 immediately as I order...",
+      "true_category": "order_cancel",
+      "pred_category": "order_cancel",
+      "category_correct": true,
+      "exact_match_correct": true,
+      "confidence": 0.9982,
+      "requires_human": true
+    },
+    {
+      "id": "test_014",
+      "text": "Yeh order galti se place ho gaya hai, dispatch hone se pehle...",
+      "true_category": "order_cancel",
+      "pred_category": "order_cancel",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.9844,
+      "requires_human": true
+    },
+    {
+      "id": "test_015",
+      "text": "\u092e\u0948\u0902\u0928\u0947 \u0917\u0932\u0924 \u0930\u0902\u0917 \u0915\u093e \u0909\u0924\u094d\u092a\u093e\u0926 \u091a\u0941\u0928 \u0932\u093f\u092f\u093e \u0939\u0948, \u0915\u094d\u092f\u093e \u092f\u0939 \u0906\u0930\u094d\u0921\u0930 \u0928\u093f\u0930\u0938\u094d\u0924 \u0939\u094b...",
+      "true_category": "order_cancel",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9803,
+      "requires_human": true
+    },
+    {
+      "id": "test_016",
+      "text": "The tracking AWB 88129033 shows package stuck in transit hub...",
+      "true_category": "order_tracking",
+      "pred_category": "general_query",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.0,
+      "requires_human": true
+    },
+    {
+      "id": "test_017",
+      "text": "Shipment ka live status check karna hai, courier boy ka cont...",
+      "true_category": "order_tracking",
+      "pred_category": "delivery_issue",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9995,
+      "requires_human": true
+    },
+    {
+      "id": "test_018",
+      "text": "\u092e\u0947\u0930\u093e \u092a\u093e\u0930\u094d\u0938\u0932 \u0907\u0938 \u0938\u092e\u092f \u0915\u093f\u0938 \u0936\u0939\u0930 \u092e\u0947\u0902 \u0939\u0948 \u0914\u0930 \u0915\u092c \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e?...",
+      "true_category": "order_tracking",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9761,
+      "requires_human": true
+    },
+    {
+      "id": "test_019",
+      "text": "I disabled auto-renewal yet my credit card was billed $29 fo...",
+      "true_category": "subscription",
+      "pred_category": "payment_failure",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9921,
+      "requires_human": true
+    },
+    {
+      "id": "test_020",
+      "text": "Next month ka subscription plan cancel karke basic plan pe d...",
+      "true_category": "subscription",
+      "pred_category": "subscription",
+      "category_correct": true,
+      "exact_match_correct": true,
+      "confidence": 0.9984,
+      "requires_human": true
+    },
+    {
+      "id": "test_021",
+      "text": "\u092e\u0947\u0930\u0940 \u092a\u094d\u0930\u0940\u092e\u093f\u092f\u092e \u0938\u0926\u0938\u094d\u092f\u0924\u093e \u0938\u094d\u0935\u0924\u0903 \u0928\u0935\u0940\u0928\u0940\u0915\u0943\u0924 \u0939\u094b \u0917\u0908, \u092e\u0941\u091d\u0947 \u0907\u0938\u0947 \u0930\u0926\u094d\u0926 \u0915\u0930...",
+      "true_category": "subscription",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9973,
+      "requires_human": true
+    },
+    {
+      "id": "test_022",
+      "text": "Discrepancy in billing: invoice reflects 18% tax on tax-exem...",
+      "true_category": "billing",
+      "pred_category": "billing",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.993,
+      "requires_human": false
+    },
+    {
+      "id": "test_023",
+      "text": "Bill me \u20b9250 convenience charge kis cheez ka laga hai detail...",
+      "true_category": "billing",
+      "pred_category": "refund_request",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9968,
+      "requires_human": true
+    },
+    {
+      "id": "test_024",
+      "text": "\u0915\u0943\u092a\u092f\u093e \u092e\u0947\u0930\u0940 \u0905\u0902\u0924\u093f\u092e \u0916\u0930\u0940\u0926\u093e\u0930\u0940 \u0915\u093e \u0906\u0927\u093f\u0915\u093e\u0930\u093f\u0915 \u091f\u0948\u0915\u094d\u0938 \u0907\u0928\u0935\u0949\u0907\u0938 \u092a\u0940\u0921\u0940\u090f\u092b \u092d\u0947\u091c...",
+      "true_category": "billing",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.993,
+      "requires_human": true
+    },
+    {
+      "id": "test_025",
+      "text": "The payment submission endpoint throws a JSON serialization ...",
+      "true_category": "technical_issue",
+      "pred_category": "payment_failure",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.998,
+      "requires_human": true
+    },
+    {
+      "id": "test_026",
+      "text": "Android app update ke baad cart page pe white screen aa kar ...",
+      "true_category": "technical_issue",
+      "pred_category": "refund_request",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9662,
+      "requires_human": true
+    },
+    {
+      "id": "test_027",
+      "text": "\u0935\u0947\u092c\u0938\u093e\u0907\u091f \u092a\u0930 '\u0938\u092c\u092e\u093f\u091f' \u092c\u091f\u0928 \u0926\u092c\u093e\u0928\u0947 \u092a\u0930 \u0915\u094b\u0908 \u092a\u094d\u0930\u0924\u093f\u0915\u094d\u0930\u093f\u092f\u093e \u0928\u0939\u0940\u0902 \u0939\u094b \u0930\u0939\u0940 ...",
+      "true_category": "technical_issue",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.996,
+      "requires_human": true
+    },
+    {
+      "id": "test_028",
+      "text": "CRITICAL: Multiple unauthorized charges detected from IP out...",
+      "true_category": "fraud_report",
+      "pred_category": "fraud_report",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.9922,
+      "requires_human": true
+    },
+    {
+      "id": "test_029",
+      "text": "Bhai kisi ne mera account hack karke unknown address pe orde...",
+      "true_category": "fraud_report",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9932,
+      "requires_human": true
+    },
+    {
+      "id": "test_030",
+      "text": "\u0905\u0924\u093f \u0917\u0902\u092d\u0940\u0930: \u092e\u0947\u0930\u0947 \u0915\u094d\u0930\u0947\u0921\u093f\u091f \u0915\u093e\u0930\u094d\u0921 \u0938\u0947 \u0906\u092a\u0915\u0947 \u092a\u094b\u0930\u094d\u091f\u0932 \u092a\u0930 \u0927\u094b\u0916\u093e\u0927\u0921\u093c\u0940\u092a\u0942\u0930\u094d...",
+      "true_category": "fraud_report",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9838,
+      "requires_human": true
+    },
+    {
+      "id": "test_031",
+      "text": "Delivery courier marked packet delivered at 11 PM but no doo...",
+      "true_category": "delivery_issue",
+      "pred_category": "delivery_issue",
+      "category_correct": true,
+      "exact_match_correct": true,
+      "confidence": 0.9852,
+      "requires_human": true
+    },
+    {
+      "id": "test_032",
+      "text": "Delivery boy ne packet seal tooti hui di aur andar headphone...",
+      "true_category": "delivery_issue",
+      "pred_category": "delivery_issue",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.9947,
+      "requires_human": true
+    },
+    {
+      "id": "test_033",
+      "text": "\u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u0935\u093e\u0932\u0947 \u0928\u0947 \u092a\u093e\u0930\u094d\u0938\u0932 \u092c\u093e\u0939\u0930 \u092c\u093e\u0930\u093f\u0936 \u092e\u0947\u0902 \u092b\u0947\u0902\u0915 \u0926\u093f\u092f\u093e, \u0909\u0924\u094d\u092a\u093e\u0926 \u092a\u0942\u0930\u0940...",
+      "true_category": "delivery_issue",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9854,
+      "requires_human": true
+    },
+    {
+      "id": "test_034",
+      "text": "Under GDPR rights, I request permanent erasure of my profile...",
+      "true_category": "account_closure",
+      "pred_category": "account_closure",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.9975,
+      "requires_human": true
+    },
+    {
+      "id": "test_035",
+      "text": "Mujhe apna account delete karna hai aur saare saved payment ...",
+      "true_category": "account_closure",
+      "pred_category": "account_closure",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.9992,
+      "requires_human": true
+    },
+    {
+      "id": "test_036",
+      "text": "\u092e\u0948\u0902 \u0905\u092a\u0928\u0940 \u092a\u094d\u0930\u094b\u092b\u093e\u0907\u0932 \u0914\u0930 \u0938\u0902\u092c\u0902\u0927\u093f\u0924 \u0938\u092d\u0940 \u0921\u0947\u091f\u093e \u0915\u094b \u0938\u094d\u0925\u093e\u092f\u0940 \u0930\u0942\u092a \u0938\u0947 \u0939\u091f\u093e\u0928\u093e...",
+      "true_category": "account_closure",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9969,
+      "requires_human": true
+    },
+    {
+      "id": "test_037",
+      "text": "Received open box with severe scratches, clearly refurbished...",
+      "true_category": "product_complaint",
+      "pred_category": "refund_request",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9996,
+      "requires_human": true
+    },
+    {
+      "id": "test_038",
+      "text": "Saree ka fabric bilkul transparent aur torn nikla, website p...",
+      "true_category": "product_complaint",
+      "pred_category": "subscription",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9989,
+      "requires_human": true
+    },
+    {
+      "id": "test_039",
+      "text": "\u092d\u0947\u091c\u093e \u0917\u092f\u093e \u0938\u093e\u092e\u093e\u0928 \u090f\u0915\u0926\u092e \u0918\u091f\u093f\u092f\u093e \u0914\u0930 \u091f\u0942\u091f\u093e \u0939\u0941\u0906 \u0939\u0948, \u0924\u0941\u0930\u0902\u0924 \u092c\u0926\u0932\u0947\u0902\u0964...",
+      "true_category": "product_complaint",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9914,
+      "requires_human": true
+    },
+    {
+      "id": "test_040",
+      "text": "Do you offer enterprise B2B volume procurement discounts for...",
+      "true_category": "general_query",
+      "pred_category": "subscription",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.9938,
+      "requires_human": true
+    },
+    {
+      "id": "test_041",
+      "text": "Support center holiday pe open rehta hai kya calling ke liye...",
+      "true_category": "general_query",
+      "pred_category": "general_query",
+      "category_correct": true,
+      "exact_match_correct": false,
+      "confidence": 0.9988,
+      "requires_human": true
+    },
+    {
+      "id": "test_042",
+      "text": "\u0915\u094d\u092f\u093e \u0906\u092a\u0915\u0940 \u0938\u0947\u0935\u093e \u0930\u0935\u093f\u0935\u093e\u0930 \u0915\u094b \u092d\u0940 \u0909\u092a\u0932\u092c\u094d\u0927 \u0930\u0939\u0924\u0940 \u0939\u0948?...",
+      "true_category": "general_query",
+      "pred_category": "account_access",
+      "category_correct": false,
+      "exact_match_correct": false,
+      "confidence": 0.984,
+      "requires_human": true
+    }
+  ]
+}

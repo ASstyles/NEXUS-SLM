@@ -26,15 +26,20 @@ class OutputParser:
             return None
 
         # 1. Check for markdown json block
-        code_fence_match = re.search(r"```(?:json)?\s*(\{.*?\})\s*```", raw_text, re.DOTALL)
+        code_fence_match = re.search(r"```(?:json)?\s*([\{\[].*?[\}\]])\s*```", raw_text, re.DOTALL)
         if code_fence_match:
             return code_fence_match.group(1).strip()
 
-        # 2. Find outermost curly braces
-        start_idx = raw_text.find("{")
-        end_idx = raw_text.rfind("}")
-        if start_idx != -1 and end_idx != -1 and end_idx > start_idx:
-            return raw_text[start_idx : end_idx + 1].strip()
+        # 2. Find outermost curly braces or array brackets
+        start_brace = raw_text.find("{")
+        end_brace = raw_text.rfind("}")
+        start_bracket = raw_text.find("[")
+        end_bracket = raw_text.rfind("]")
+
+        if start_brace != -1 and end_brace > start_brace:
+            return raw_text[start_brace : end_brace + 1].strip()
+        elif start_bracket != -1 and end_bracket > start_bracket:
+            return raw_text[start_bracket : end_bracket + 1].strip()
 
         return None
 

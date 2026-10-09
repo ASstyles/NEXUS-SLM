@@ -1,267 +1,468 @@
 [
   {
-    "run_id": "run_20261006_112314_step_1_base_model",
-    "run_name": "step_1_base_model",
+    "run_id": "exp_001_baseline",
+    "run_name": "exp_001_baseline",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:23:14.352230",
+    "timestamp": "2026-10-06T12:12:52.418203",
     "params": {
-      "label": "Base Model (Zero-Shot)",
+      "label": "Base SLM (SmolLM-135M-Instruct)",
+      "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
       "lora": false,
-      "dataset_size": 0,
-      "quantization": "FP16/INT4",
-      "description": "Original pretrained base SLM prompted with schema instructions"
+      "parameters": 134515008,
+      "dataset": "dataset_v1",
+      "test_samples": 42,
+      "quantization": "none_fp32",
+      "device": "cpu",
+      "description": "Zero-shot base model evaluated on locked dataset_v1 test set"
     },
     "metrics": {
-      "macro_f1": 0.52,
-      "json_validity_rate": 0.64,
-      "latency_p50_ms": 190.0
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "weighted_f1": 0.0,
+      "json_validity_rate": 0.0,
+      "category_accuracy": 0.0,
+      "priority_accuracy": 0.0,
+      "language_accuracy": 0.0,
+      "latency_p50_ms": 4888.22,
+      "latency_p95_ms": 5396.91,
+      "peak_ram_mb": 13196.75
     }
   },
   {
-    "run_id": "run_20261006_112314_step_2_base_lora_small",
-    "run_name": "step_2_base_lora_small",
+    "run_id": "exp_002_qlora",
+    "run_name": "exp_002_qlora",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:23:14.361534",
+    "timestamp": "2026-10-06T12:22:47.068949",
     "params": {
-      "label": "Base + LoRA (1K Examples)",
-      "lora": true,
-      "lora_r": 8,
-      "dataset_size": 1000,
-      "quantization": "INT4",
-      "description": "QLoRA on minimal 1K ticket sample"
-    },
-    "metrics": {
-      "macro_f1": 0.78,
-      "json_validity_rate": 0.95,
-      "latency_p50_ms": 145.0
-    }
-  },
-  {
-    "run_id": "run_20261006_112314_step_3_base_lora_larger_data",
-    "run_name": "step_3_base_lora_larger_data",
-    "status": "FINISHED",
-    "timestamp": "2026-10-06T11:23:14.393232",
-    "params": {
-      "label": "Base + LoRA (5K Examples)",
+      "label": "NEXUS-SLM-135M-LoRA (Epoch 1)",
+      "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
       "lora": true,
       "lora_r": 16,
-      "dataset_size": 5000,
-      "quantization": "INT4",
-      "description": "Expanded multilingual training corpus with synthetic augmentation"
+      "lora_alpha": 32,
+      "lora_dropout": 0.05,
+      "target_modules": [
+        "q_proj",
+        "k_proj",
+        "v_proj",
+        "o_proj"
+      ],
+      "trainable_parameters": 1843200,
+      "frozen_parameters": 134515008,
+      "epochs": 1,
+      "batch_size": 4,
+      "effective_batch_size": 8,
+      "learning_rate": 0.0005,
+      "dataset": "dataset_v1",
+      "train_samples": 316,
+      "val_samples": 44,
+      "test_samples": 42,
+      "device": "cpu",
+      "description": "PEFT LoRA instruction-tuned on dataset_v1 for 1 epoch on CPU"
     },
     "metrics": {
-      "macro_f1": 0.88,
-      "json_validity_rate": 0.99,
-      "latency_p50_ms": 142.0
+      "train_loss": 2.8518,
+      "eval_loss": 1.7351,
+      "accuracy": 0.0,
+      "macro_f1": 0.0,
+      "weighted_f1": 0.0,
+      "json_validity_rate": 0.0,
+      "category_accuracy": 0.0,
+      "priority_accuracy": 0.0,
+      "language_accuracy": 0.0,
+      "human_escalation_accuracy": 0.5952,
+      "latency_p50_ms": 4237.41,
+      "latency_p95_ms": 4675.85,
+      "peak_ram_mb": 11899.4
     }
   },
   {
-    "run_id": "run_20261006_112314_step_4_base_lora_optimized",
-    "run_name": "step_4_base_lora_optimized",
+    "run_id": "exp_data_50",
+    "run_name": "exp_data_50",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:23:14.432721",
+    "timestamp": "2026-10-06T14:57:58.665142",
     "params": {
-      "label": "Base + LoRA (Full 10K + Tuned HPs)",
-      "lora": true,
+      "experiment_id": "exp_data_50",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 50,
       "lora_r": 16,
-      "dataset_size": 10000,
-      "quantization": "INT4",
-      "description": "Full dataset with optimal cosine LR schedule and Hinglish balancing"
+      "lora_alpha": 32,
+      "learning_rate": 0.0005,
+      "epochs": 1,
+      "batch_size": 4,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.9813,
+      "eval_loss": 0.7385,
+      "train_duration_sec": 74.08,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
     },
     "metrics": {
-      "macro_f1": 0.93,
-      "json_validity_rate": 1.0,
-      "latency_p50_ms": 138.0
+      "macro_f1": 0.0,
+      "weighted_f1": 0.0,
+      "category_f1": 0.0,
+      "priority_f1": 0.0,
+      "language_f1": 0.0,
+      "accuracy": 0.0,
+      "json_validity_rate": 0.0,
+      "category_accuracy": 0.0,
+      "exact_match_accuracy": 0.0,
+      "latency_p50_ms": 3334.43,
+      "latency_p95_ms": 3640.35,
+      "peak_ram_mb": 11633.09,
+      "train_duration_sec": 74.08,
+      "train_loss": 0.9813,
+      "eval_loss": 0.7385
     }
   },
   {
-    "run_id": "run_20261006_112314_step_5_optimized_quantized",
-    "run_name": "step_5_optimized_quantized",
+    "run_id": "exp_data_100",
+    "run_name": "exp_data_100",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:23:14.486665",
+    "timestamp": "2026-10-06T15:02:01.972422",
     "params": {
-      "label": "NEXUS-SLM Quantized Production (INT4)",
-      "lora": true,
+      "experiment_id": "exp_data_100",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 100,
       "lora_r": 16,
-      "dataset_size": 10000,
-      "quantization": "INT4",
-      "description": "Final 4-bit NF4 quantized artifact for minimal memory and fast inference"
+      "lora_alpha": 32,
+      "learning_rate": 0.0005,
+      "epochs": 1,
+      "batch_size": 4,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.7,
+      "eval_loss": 0.4157,
+      "train_duration_sec": 144.91,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
     },
     "metrics": {
-      "macro_f1": 0.925,
-      "json_validity_rate": 1.0,
-      "latency_p50_ms": 84.0
+      "macro_f1": 0.0253,
+      "weighted_f1": 0.0253,
+      "category_f1": 0.0253,
+      "priority_f1": 0.2095,
+      "language_f1": 0.7264,
+      "accuracy": 0.0476,
+      "json_validity_rate": 0.7381,
+      "category_accuracy": 0.0476,
+      "exact_match_accuracy": 0.0,
+      "latency_p50_ms": 1865.39,
+      "latency_p95_ms": 2540.15,
+      "peak_ram_mb": 12556.14,
+      "train_duration_sec": 144.91,
+      "train_loss": 0.7,
+      "eval_loss": 0.4157
     }
   },
   {
-    "run_id": "b65fcf5469d34792992af2be8d2ae158",
+    "run_id": "exp_data_200",
+    "run_name": "exp_data_200",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T15:07:18.601883",
+    "params": {
+      "experiment_id": "exp_data_200",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 200,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "learning_rate": 0.0005,
+      "epochs": 1,
+      "batch_size": 4,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.4573,
+      "eval_loss": 0.2657,
+      "train_duration_sec": 218.9,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
+    },
+    "metrics": {
+      "macro_f1": 0.1465,
+      "weighted_f1": 0.1465,
+      "category_f1": 0.1465,
+      "priority_f1": 0.1478,
+      "language_f1": 0.7863,
+      "accuracy": 0.1905,
+      "json_validity_rate": 0.8571,
+      "category_accuracy": 0.1905,
+      "exact_match_accuracy": 0.0238,
+      "latency_p50_ms": 1867.19,
+      "latency_p95_ms": 2246.57,
+      "peak_ram_mb": 12444.11,
+      "train_duration_sec": 218.9,
+      "train_loss": 0.4573,
+      "eval_loss": 0.2657
+    }
+  },
+  {
+    "run_id": "exp_data_full",
+    "run_name": "exp_data_full",
+    "status": "FINISHED",
+    "timestamp": "2026-10-06T15:14:26.256985",
+    "params": {
+      "experiment_id": "exp_data_full",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 316,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "learning_rate": 0.0005,
+      "epochs": 1,
+      "batch_size": 4,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.3532,
+      "eval_loss": 0.2074,
+      "train_duration_sec": 336.74,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
+    },
+    "metrics": {
+      "macro_f1": 0.2179,
+      "weighted_f1": 0.2179,
+      "category_f1": 0.2179,
+      "priority_f1": 0.2283,
+      "language_f1": 0.869,
+      "accuracy": 0.2381,
+      "json_validity_rate": 0.9048,
+      "category_accuracy": 0.2381,
+      "exact_match_accuracy": 0.0714,
+      "latency_p50_ms": 1757.12,
+      "latency_p95_ms": 2010.61,
+      "peak_ram_mb": 12304.57,
+      "train_duration_sec": 336.74,
+      "train_loss": 0.3532,
+      "eval_loss": 0.2074
+    }
+  },
+  {
+    "run_id": "exp_lora_r8",
     "run_name": "exp_lora_r8",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:23:57.557061",
+    "timestamp": "2026-10-06T15:21:34.637458",
     "params": {
-      "name": "exp_lora_r8",
-      "description": "Low-rank LoRA adapter (r=8, alpha=16)",
-      "lora": {
-        "r": 8,
-        "lora_alpha": 16,
-        "lora_dropout": 0.05
-      },
-      "training": {
-        "learning_rate": 0.0002,
-        "num_train_epochs": 3
-      }
+      "experiment_id": "exp_lora_r8",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 316,
+      "lora_r": 8,
+      "lora_alpha": 16,
+      "learning_rate": 0.0005,
+      "epochs": 1,
+      "batch_size": 4,
+      "total_parameters": 134975808,
+      "trainable_parameters": 460800,
+      "train_loss": 0.4317,
+      "eval_loss": 0.2497,
+      "train_duration_sec": 330.0,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
     },
     "metrics": {
-      "eval_loss": 0.45,
-      "macro_f1": 0.87,
-      "json_validity": 1.0
+      "macro_f1": 0.1186,
+      "weighted_f1": 0.1186,
+      "category_f1": 0.1186,
+      "priority_f1": 0.2219,
+      "language_f1": 0.8133,
+      "accuracy": 0.1667,
+      "json_validity_rate": 0.8571,
+      "category_accuracy": 0.1667,
+      "exact_match_accuracy": 0.0238,
+      "latency_p50_ms": 1807.99,
+      "latency_p95_ms": 2518.17,
+      "peak_ram_mb": 11791.7,
+      "train_duration_sec": 330.0,
+      "train_loss": 0.4317,
+      "eval_loss": 0.2497
     }
   },
   {
-    "run_id": "d8b64e0b34a94bad83d2f3ebee673c0a",
-    "run_name": "exp_lora_r16",
-    "status": "FINISHED",
-    "timestamp": "2026-10-06T11:23:58.430794",
-    "params": {
-      "name": "exp_lora_r16",
-      "description": "Standard QLoRA adapter (r=16, alpha=32)",
-      "lora": {
-        "r": 16,
-        "lora_alpha": 32,
-        "lora_dropout": 0.05
-      },
-      "training": {
-        "learning_rate": 0.0002,
-        "num_train_epochs": 3
-      }
-    },
-    "metrics": {
-      "eval_loss": 0.45,
-      "macro_f1": 0.91,
-      "json_validity": 1.0
-    }
-  },
-  {
-    "run_id": "aadcf24ee0be44ca98e34973af567861",
+    "run_id": "exp_lora_r32",
     "run_name": "exp_lora_r32",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:23:59.312081",
+    "timestamp": "2026-10-06T15:29:33.508361",
     "params": {
-      "name": "exp_lora_r32",
-      "description": "High-capacity LoRA adapter (r=32, alpha=64)",
-      "lora": {
-        "r": 32,
-        "lora_alpha": 64,
-        "lora_dropout": 0.05
-      },
-      "training": {
-        "learning_rate": 0.00015,
-        "num_train_epochs": 3
-      }
+      "experiment_id": "exp_lora_r32",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 316,
+      "lora_r": 32,
+      "lora_alpha": 64,
+      "learning_rate": 0.0005,
+      "epochs": 1,
+      "batch_size": 4,
+      "total_parameters": 136358208,
+      "trainable_parameters": 1843200,
+      "train_loss": 0.2905,
+      "eval_loss": 0.1785,
+      "train_duration_sec": 378.08,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
     },
     "metrics": {
-      "eval_loss": 0.45,
-      "macro_f1": 0.92,
-      "json_validity": 1.0
+      "macro_f1": 0.2141,
+      "weighted_f1": 0.2141,
+      "category_f1": 0.2141,
+      "priority_f1": 0.1874,
+      "language_f1": 0.8818,
+      "accuracy": 0.2381,
+      "json_validity_rate": 0.881,
+      "category_accuracy": 0.2381,
+      "exact_match_accuracy": 0.0,
+      "latency_p50_ms": 1875.91,
+      "latency_p95_ms": 2379.48,
+      "peak_ram_mb": 12576.89,
+      "train_duration_sec": 378.08,
+      "train_loss": 0.2905,
+      "eval_loss": 0.1785
     }
   },
   {
-    "run_id": "9922991aac5a40cab5789310909285e9",
-    "run_name": "exp_data_1k",
+    "run_id": "exp_lr_0_0001",
+    "run_name": "exp_lr_0_0001",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:24:25.279705",
+    "timestamp": "2026-10-06T15:36:39.903297",
     "params": {
-      "name": "exp_data_1k",
-      "sample_size": 1000,
-      "description": "Few-sample regime: 1,000 training examples"
+      "experiment_id": "exp_lr_0_0001",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 316,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "learning_rate": 0.0001,
+      "epochs": 1,
+      "batch_size": 4,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.8118,
+      "eval_loss": 0.5916,
+      "train_duration_sec": 318.95,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
     },
     "metrics": {
-      "eval_loss": 0.45,
-      "macro_f1": 0.92,
-      "json_validity": 1.0
+      "macro_f1": 0.0,
+      "weighted_f1": 0.0,
+      "category_f1": 0.0,
+      "priority_f1": 0.0,
+      "language_f1": 0.0784,
+      "accuracy": 0.0,
+      "json_validity_rate": 0.0952,
+      "category_accuracy": 0.0,
+      "exact_match_accuracy": 0.0,
+      "latency_p50_ms": 2775.53,
+      "latency_p95_ms": 2972.69,
+      "peak_ram_mb": 10983.06,
+      "train_duration_sec": 318.95,
+      "train_loss": 0.8118,
+      "eval_loss": 0.5916
     }
   },
   {
-    "run_id": "35b128607a724ad58258e83dff0e7c74",
-    "run_name": "exp_data_5k",
+    "run_id": "exp_lr_0_0002",
+    "run_name": "exp_lr_0_0002",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:24:26.113435",
+    "timestamp": "2026-10-06T15:43:30.573445",
     "params": {
-      "name": "exp_data_5k",
-      "sample_size": 5000,
-      "description": "Moderate-sample regime: 5,000 training examples"
+      "experiment_id": "exp_lr_0_0002",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 316,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "learning_rate": 0.0002,
+      "epochs": 1,
+      "batch_size": 4,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.5451,
+      "eval_loss": 0.3081,
+      "train_duration_sec": 318.92,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
     },
     "metrics": {
-      "eval_loss": 0.45,
-      "macro_f1": 0.92,
-      "json_validity": 1.0
+      "macro_f1": 0.0706,
+      "weighted_f1": 0.0706,
+      "category_f1": 0.0706,
+      "priority_f1": 0.1777,
+      "language_f1": 0.5556,
+      "accuracy": 0.119,
+      "json_validity_rate": 0.8333,
+      "category_accuracy": 0.119,
+      "exact_match_accuracy": 0.0,
+      "latency_p50_ms": 1761.09,
+      "latency_p95_ms": 1950.45,
+      "peak_ram_mb": 10919.93,
+      "train_duration_sec": 318.92,
+      "train_loss": 0.5451,
+      "eval_loss": 0.3081
     }
   },
   {
-    "run_id": "cc330b42dec545c78702caa973ac77eb",
-    "run_name": "exp_data_10k",
+    "run_id": "exp_epoch_2",
+    "run_name": "exp_epoch_2",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:24:26.836950",
+    "timestamp": "2026-10-06T15:55:37.332372",
     "params": {
-      "name": "exp_data_10k",
-      "sample_size": 10000,
-      "description": "Full-scale regime: 10,000 training examples"
+      "experiment_id": "exp_epoch_2",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 316,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "learning_rate": 0.0005,
+      "epochs": 2,
+      "batch_size": 4,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.2471,
+      "eval_loss": 0.1586,
+      "train_duration_sec": 636.43,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
     },
     "metrics": {
-      "eval_loss": 0.45,
-      "macro_f1": 0.92,
-      "json_validity": 1.0
+      "macro_f1": 0.3235,
+      "weighted_f1": 0.3235,
+      "category_f1": 0.3235,
+      "priority_f1": 0.2284,
+      "language_f1": 0.9877,
+      "accuracy": 0.3571,
+      "json_validity_rate": 0.9762,
+      "category_accuracy": 0.3571,
+      "exact_match_accuracy": 0.0238,
+      "latency_p50_ms": 1756.4,
+      "latency_p95_ms": 1902.46,
+      "peak_ram_mb": 10812.25,
+      "train_duration_sec": 636.43,
+      "train_loss": 0.2471,
+      "eval_loss": 0.1586
     }
   },
   {
-    "run_id": "0d49bd81c4ad44b291ea7b4177f2413d",
-    "run_name": "exp_quant_fp16",
+    "run_id": "exp_epoch_3",
+    "run_name": "exp_epoch_3",
     "status": "FINISHED",
-    "timestamp": "2026-10-06T11:24:41.290336",
+    "timestamp": "2026-10-06T16:13:28.467981",
     "params": {
-      "name": "exp_quant_fp16",
-      "precision": "FP16",
-      "load_in_4bit": false,
-      "load_in_8bit": false
+      "experiment_id": "exp_epoch_3",
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "dataset_size": 316,
+      "lora_r": 16,
+      "lora_alpha": 32,
+      "learning_rate": 0.0005,
+      "epochs": 3,
+      "batch_size": 4,
+      "total_parameters": 135436608,
+      "trainable_parameters": 921600,
+      "train_loss": 0.2077,
+      "eval_loss": 0.1439,
+      "train_duration_sec": 986.79,
+      "hardware": "Intel 8-Core CPU (RTX 2050 available; Torch CPU runtime)"
     },
     "metrics": {
-      "eval_loss": 0.45,
-      "macro_f1": 0.92,
-      "json_validity": 1.0
-    }
-  },
-  {
-    "run_id": "a55a4672e9aa4b30baf90aa740cf2123",
-    "run_name": "exp_quant_int8",
-    "status": "FINISHED",
-    "timestamp": "2026-10-06T11:24:42.202315",
-    "params": {
-      "name": "exp_quant_int8",
-      "precision": "INT8",
-      "load_in_4bit": false,
-      "load_in_8bit": true
-    },
-    "metrics": {
-      "eval_loss": 0.45,
-      "macro_f1": 0.92,
-      "json_validity": 1.0
-    }
-  },
-  {
-    "run_id": "e90146072d81426bac2577ebe3adff9b",
-    "run_name": "exp_quant_int4",
-    "status": "FINISHED",
-    "timestamp": "2026-10-06T11:24:43.099030",
-    "params": {
-      "name": "exp_quant_int4",
-      "precision": "INT4",
-      "load_in_4bit": true,
-      "load_in_8bit": false
-    },
-    "metrics": {
-      "eval_loss": 0.45,
-      "macro_f1": 0.92,
-      "json_validity": 1.0
+      "macro_f1": 0.4089,
+      "weighted_f1": 0.4089,
+      "category_f1": 0.4089,
+      "priority_f1": 0.2739,
+      "language_f1": 0.9638,
+      "accuracy": 0.4286,
+      "json_validity_rate": 0.9762,
+      "category_accuracy": 0.4286,
+      "exact_match_accuracy": 0.0714,
+      "latency_p50_ms": 1658.57,
+      "latency_p95_ms": 1758.62,
+      "peak_ram_mb": 12273.7,
+      "train_duration_sec": 986.79,
+      "train_loss": 0.2077,
+      "eval_loss": 0.1439
     }
   }
 ]

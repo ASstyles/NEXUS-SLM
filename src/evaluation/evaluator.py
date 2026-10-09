@@ -8,6 +8,7 @@ from typing import Any, Callable, Dict, List, Optional
 import psutil
 import torch
 from src.evaluation.metrics import EvaluationMetrics
+from src.inference.parser import OutputParser
 from src.utils.constants import CATEGORIES, PRIORITIES, LANGUAGES
 from src.utils.logger import get_logger
 
@@ -25,6 +26,7 @@ class NexusEvaluator:
         self.test_dataset_path = Path(test_dataset_path)
         self.output_dir = Path(output_dir)
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        self.parser = OutputParser()
 
     def load_test_data(self) -> List[Dict[str, Any]]:
         """Loads locked test dataset records."""
@@ -73,10 +75,14 @@ class NexusEvaluator:
             lat = getattr(pred, "latency_ms", None) or dt
             latencies_ms.append(lat)
 
-            # Check JSON validity from raw generation or parse status
-            confidence = getattr(pred, "confidence", 0.0)
-            json_valid = (confidence > 0.0)
-            json_valid_flags.append(json_valid)
+            # Check JSON validity from raw generation using strict parser
+            raw_gen = getattr(pred, "raw_output", None)
+            if raw_gen:
+                is_v, _, _ = self.parser.parse_and_validate(raw_gen)
+                json_valid_flags.append(is_v)
+            else:
+                confidence = getattr(pred, "confidence", 0.0)
+                json_valid_flags.append(confidence > 0.0)
 
             p_dict = {
                 "category": getattr(pred, "category", "unknown"),
