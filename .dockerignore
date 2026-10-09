@@ -1,0 +1,31 @@
+# Exclude virtual environments and local artifacts from Docker image build
+.venv/
+venv/
+ENV/
+env/
+
+# Git metadata
+.git/
+.github/
+
+# Frontend (dashboard runs in separate container/service)
+dashboard/
+node_modules/
+
+# Test caches and Python bytecode
+.pytest_cache/
+__pycache__/
+*.py[cod]
+*$py.class
+.coverage
+htmlcov/
+
+# Local databases and temporary scratch
+*.db
+mlflow.db
+mlruns/
+scratch/
+experiments/tmp_v2_training/
+
+# Large documentation files
+docs/
