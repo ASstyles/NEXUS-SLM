@@ -200,25 +200,80 @@ The full automated test suite was executed against the active candidate environm
 
 ---
 
-## 8. Final Release Recommendation
+## 8. Technical Release Qualification
 
-### Formal Status: `READY TO START SHADOW PILOT`
+### Technical Qualification: `READY TO START SHADOW PILOT`
 
-**Formal Recommendation Statement**:  
-NEXUS-SLM candidate `nexus-qlora-v1` has satisfied every pre-flight condition required to initiate the 14-day shadow-mode pilot:
-1. Model weights, configuration, tokenizers, and evaluation scripts are cryptographically locked in the candidate manifest.
-2. The asynchronous shadow ingestion pipeline is fully failure-isolated, ensuring zero risk to live human agent triage.
-3. Automated customer-facing actions are physically blocked by permission barriers.
+**Technical Verification Summary**:  
+NEXUS-SLM candidate `nexus-qlora-v1` has satisfied every software engineering, safety policy, and evaluation prerequisite required for shadow-mode operation:
+1. Candidate weights, configuration, tokenizers, and evaluation scripts are cryptographically locked in [experiments/artifacts/pilot_candidate_manifest.json](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/experiments/artifacts/pilot_candidate_manifest.json).
+2. The asynchronous shadow ingestion pipeline is fully failure-isolated, ensuring zero interference with live human agent triage.
+3. Automated customer-facing actions are physically blocked by permission barriers (`PermissionError`).
 4. Privacy redaction ensures that credit cards, CVVs, passwords, tokens, emails, and phone numbers are scrubbed prior to inference or logging.
 5. Double-blind human ground-truth labeling protocols are operational and sealed against confirmation bias.
 6. Telemetry, PSI drift tracking, and sub-30s rollback paths are validated.
 
-**Canary Rollout Decision**:  
-Immediate deployment of a customer-facing canary is **STRICTLY PROHIBITED**. Promotion to canary review requires:
-- Successful completion of the full 14-day shadow observation period.
-- Evaluation of at least 5,000 live production tickets.
-- Verification of $\ge 98.0\%$ prospective escalation recall with zero Sev-1 safety escapes.
-- Verification of $\ge 60.0\%$ human-model category concordance.
-- A passing remote Linux Docker CI workflow run on GitHub Actions.
+---
 
-Shadow traffic ingestion is certified to begin immediately upon operational activation.
+## 9. Live Operational Activation Gate Audit
+
+To determine whether NEXUS-SLM can actually initiate its 14-day shadow pilot on live production customer traffic, all 7 operational activation requirements were empirically evaluated:
+
+### 9.1 Evaluation of the 7 Mandatory Activation Gates
+
+| # | Activation Gate Requirement | Evaluation Evidence & Empirical Verification | Gate Status |
+|:---:|:---|:---|:---:|
+| **1** | **Manifest & Report Consistency** | Verified perfect agreement between [docs/shadow_pilot_readiness_report.md](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/docs/shadow_pilot_readiness_report.md) and [experiments/artifacts/pilot_candidate_manifest.json](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/experiments/artifacts/pilot_candidate_manifest.json). Identical base model (`SmolLM-135M-Instruct`), adapter hash (`643971155ba3fe3a...`), tokenizer hash (`bf346d64f6f0fbce...`), safety policy hash (`f3528ff55672246a...`), greedy decoding parameters (`T=0.0, max_new_tokens=50`), and canonical baseline (`Macro-F1 = 0.4017`, `Accuracy = 0.4286`). | **PASS** |
+| **2** | **Remote Linux Docker CI Workflow** | Remote GitHub Actions CI runs monitored on upstream repository `ASstyles/NEXUS-SLM`: Commit `6e7d528` passed 94/94 Python tests and Next.js build, but Docker buildx layer export ran out of disk space (`4 MB left`). Commit `8d6687b` added `.dockerignore` and runner disk cleanup (`Free Disk Space on Runner`), actively executing on `ubuntu-latest`. | **PENDING** |
+| **3** | **Inference Service Health & Smoke Test** | Verified via [scripts/deployment/run_final_e2e_validation.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/scripts/deployment/run_final_e2e_validation.py) (6 modalities passed with `Status: PASS`) and [scripts/deployment/smoke_test_shadow_path.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/scripts/deployment/smoke_test_shadow_path.py) (`Status: COMPLETED`). Local service returns healthy. Live production cloud cluster hosting (e.g. AWS ECS/K8s) is not yet provisioned. | **PASS (Engine)**<br>**PENDING (Prod Cluster)** |
+| **4** | **Asynchronous & Failure-Isolated Path** | Verified in [src/pilot/shadow_pipeline.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/pilot/shadow_pipeline.py) and [tests/test_shadow_pilot.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/tests/test_shadow_pilot.py). Asynchronous non-blocking queue (max 500 items), strict `asyncio.wait_for` timeout isolation (3.0s), deduplication filter, and graceful backpressure drops. Live production CRM mirror webhook feed is pending connection. | **PASS (Pipeline)**<br>**PENDING (CRM Mirror)** |
+| **5** | **Zero Customer-Facing Actions** | Verified in `ShadowPipeline.execute_customer_action()`, which unconditionally raises `PermissionError`. No customer messaging, refund APIs, or account mutation endpoints exist in the shadow path. Authoritative human triage remains the sole production workflow. | **PASS** |
+| **6** | **Authorised Ticket Access & Privacy Controls** | Privacy scrubbing ([PrivacyRedactor](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/pilot/privacy_redactor.py)) and privacy-safe telemetry (no plaintext ticket bodies in logs) are operational and passing. However, **access to real live production customer tickets is UNAUTHORIZED**: no production CRM credentials (API keys / webhooks) are provisioned, and no Data Protection Agreement (DPA) for ticket shadow-mirroring is signed. | **BLOCKED** |
+| **7** | **Operational Human Review & Governance** | Double-blind protocol software ([src/pilot/evaluation_protocol.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/pilot/evaluation_protocol.py)), rollback endpoint (`/model/rollback`), and drift monitoring (`/monitoring/drift`, PSI > 0.25) are operational. However, a live panel of human reviewers has not yet been rostered for prospective blind labeling of live tickets. | **PASS (Software)**<br>**PENDING (Ops Roster)** |
+
+---
+
+### 9.2 Activation Blockers & Resolution Requirements
+
+Because mandatory activation gates 2, 3, 6, and 7 are pending or blocked by external operational prerequisites, live pilot activation on real customer data cannot proceed immediately. The exact blockers, required actions, owner roles, and verification commands are detailed below:
+
+```
+========================================================================================================================
+                                      NEXUS-SLM ACTIVATION BLOCKER MATRIX
+========================================================================================================================
+ Blocker #  Description                Required Remediation Action                  Owner Role      Verification Command
+------------------------------------------------------------------------------------------------------------------------
+ BLK-01     Unauthorised Live Ticket   Sign Data Protection Agreement (DPA) and      Data Protection  .venv\Scripts\python.exe -c "
+            Access & Missing Mirror    provision read-only CRM webhook listener      Officer (DPO) &  import os; assert os.getenv('CRM_WEBHOOK_SECRET')"
+            Credentials                (Zendesk / Salesforce mirror).               CRM Lead
+ 
+ BLK-02     Production Infrastructure  Deploy containerized service to designated    Site Reliability curl -f https://nexus-slm-shadow.internal/health
+            Cluster Provisioning       internal K8s/ECS cluster with 2-vCPU / 4-GB   Engineer (SRE)
+                                       limits and Prometheus scraping.
+ 
+ BLK-03     Human Review Workforce     Roster 5+ support specialists for double-     Support Ops     .venv\Scripts\python.exe scripts/pilot/
+            Rostering                  blind evaluation; seal initial ground truth   Lead            verify_reviewer_roster.py
+                                       before model predictions are unblinded.
+ 
+ BLK-04     Remote Linux Docker CI     Await final passing run of GitHub Actions     CI/CD Release   .venv\Scripts\python.exe scripts/deployment/
+            Workflow Completion        workflow on commit 8d6687b (container         Engineer        check_github_ci.py
+                                       healthcheck & graceful shutdown).
+========================================================================================================================
+```
+
+---
+
+## 10. Final Activation Gate Status
+
+### Formal Status: `BLOCKED — ACTIVATION REQUIREMENTS UNMET`
+
+**Authoritative Gate Determination**:  
+NEXUS-SLM candidate `nexus-qlora-v1` is structurally, algorithmically, and architecturally verified for shadow operation, with all software safeguards, redaction modules, and evaluation protocols validated locally and passing 94/94 automated tests.
+
+However, in accordance with strict release governance:
+1. **Live customer tickets must never be ingested without formal data access approval and CRM mirror provisioning (BLK-01).**
+2. **The production cluster infrastructure must be formally provisioned and health-checked before routing live mirrors (BLK-02).**
+3. **The human reviewer workforce must be rostered for prospective double-blind ground-truth labeling (BLK-03).**
+4. **Remote Linux Docker CI must complete its passing run on GitHub Actions (BLK-04).**
+
+Until these operational blockers are formally resolved by their respective owners, live shadow ingestion remains paused. Immediate canary rollout or autonomous customer-facing execution remains **STRICTLY PROHIBITED**.

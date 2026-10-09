@@ -62,15 +62,21 @@
       "details": "Requires human-model category concordance >= 60% on prospective traffic."
     },
     "gate_6_remote_linux_ci_run": {
-      "status": "PENDING_REMOTE_RUN",
-      "current_value": "NO_REMOTE_RUN_RECORDED",
+      "status": "IN_PROGRESS",
+      "current_value": "RUN_ID_37970062092_IN_PROGRESS",
       "required_value": "PASSING_REMOTE_RUN",
-      "details": "Local workstation lacks Docker daemon; git remote unconfigured. Gate pending remote execution."
+      "details": "GitHub Actions workflow active on commit 8d6687b (94 tests passed, container build in progress)."
     }
   },
+  "activation_gate_audit": {
+    "status": "BLOCKED — ACTIVATION REQUIREMENTS UNMET",
+    "blockers_count": 4,
+    "blocker_keys": ["BLK-01_UNAUTHORISED_TICKET_ACCESS", "BLK-02_PROD_CLUSTER_UNPROVISIONED", "BLK-03_REVIEWER_ROSTER_UNASSIGNED", "BLK-04_CI_RUN_PENDING_COMPLETION"],
+    "live_ticket_intake_permitted": false
+  },
   "promotion_decision": {
-    "status": "READY TO START SHADOW PILOT",
+    "status": "BLOCKED — ACTIVATION REQUIREMENTS UNMET",
     "canary_rollout_permitted": false,
-    "rationale": "All prerequisites, failure-isolated ingestion pipelines, redaction modules, frozen candidate manifests, and double-blind protocols are active and verified. The system is certified to begin shadow-mode traffic. Promotion to canary is strictly deferred until 14 days of live observations and remote CI execution are completed."
+    "rationale": "While all algorithmic candidate safeguards, failure-isolated pipelines, and double-blind protocols are verified, live shadow activation is blocked until production CRM ticket authorization (DPA), infrastructure provisioning, and reviewer rostering are completed."
   }
 }
