@@ -38,18 +38,22 @@ class MockLlamaModel:
         self._logits_all = False
 
     def create_completion(self, prompt, **kwargs):
-        p_lower = str(prompt).lower()
-        if "cancel" in p_lower or "refund" in p_lower:
-            text = '{"category": "refund_request", "priority": "high", "language": "english", "requires_human": false}'
+        p_str = str(prompt)
+        p_lower = p_str.lower()
+
+        # 1. Detect Native Devanagari Hindi script
+        if any("\u0900" <= c <= "\u097f" for c in p_str):
+            text = '{"category": "account_closure", "priority": "high", "language": "hindi", "requires_human": false}'
+        # 2. Detect Hinglish Romanized Hindi keywords in ticket
+        elif any(w in p_lower for w in ["mera", "nahi", "kya", "abhi tak", "deliver nahi"]):
+            text = '{"category": "order_tracking", "priority": "medium", "language": "hinglish", "requires_human": false}'
+        # 3. Detect account access queries
         elif "password" in p_lower or "login" in p_lower or "log into" in p_lower:
             text = '{"category": "account_access", "priority": "medium", "language": "english", "requires_human": false}'
-        elif "deliver" in p_lower or "order" in p_lower:
-            lang = "hinglish" if ("mera" in p_lower or "nahi" in p_lower) else "english"
-            text = f'{{"category": "order_tracking", "priority": "medium", "language": "{lang}", "requires_human": false}}'
-        elif "खाता" in p_lower or "कृपया" in p_lower:
-            text = '{"category": "account_closure", "priority": "high", "language": "hindi", "requires_human": false}'
+        # 4. Standard English query
         else:
-            text = '{"category": "general_query", "priority": "medium", "language": "english", "requires_human": false}'
+            text = '{"category": "refund_request", "priority": "high", "language": "english", "requires_human": false}'
+
         return {
             "choices": [{"text": text}],
             "usage": {"total_tokens": 25},
