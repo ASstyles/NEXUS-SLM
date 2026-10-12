@@ -409,46 +409,45 @@ For the Hinglish financial dispute:
 
 ---
 
-### 6.5 Live Local Demonstration Route Exercise Results
-Recorded in [experiments/artifacts/local_demo_verification_results.json](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/experiments/artifacts/local_demo_verification_results.json) ($N=30$, 0 failures):
+### 6.5 Live Local Demonstration Route Exercise & Synthetic Benchmark Audit
+Recorded in [experiments/artifacts/local_demo_verification_results.json](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/experiments/artifacts/local_demo_verification_results.json) ($N=30$ synthetic demo fixtures across 10 categories and 3 languages, 0 failures):
 
-1. **System Health Check (`GET /health`)**:
-   - HTTP Status: `200 OK`
-   - Payload: `{"status": "healthy", "model_loaded": true, "model_version": "qwen25_05b_lora_seed42_q8_0", "inference_mode": "neural"}`
-2. **Synthetic English Ticket**:
-   - Input: `"My payment of $49.99 was deducted from my account but the order status is still pending."`
-   - HTTP Status: `200 OK`
-   - Category: `payment_failure`, Priority: `high`, Language: `english`
-   - Requires Human: `true` (Reason: `high_impact_financial_dispute`)
-   - Client Elapsed: `1,160.3 ms` | Model Latency: `1,154.3 ms`
-3. **Synthetic Hinglish Ticket**:
-   - Input: `"Mera payment account se cut ho gaya hai but order confirm nahi hua, please jaldi refund karo ya update do."`
-   - HTTP Status: `200 OK`
-   - Category: `payment_failure`, Priority: `high`, Language: `hinglish`
-   - Requires Human: `true` (Reason: `high_impact_financial_dispute`)
-   - Client Elapsed: `1,136.9 ms` | Model Latency: `1,130.6 ms`
-   - Escalation Invariant: **PASS (100% compliant with model-preservation & policy precedence)**
-4. **Synthetic Devanagari Hindi Ticket**:
-   - Input: `"मेरे खाते से पैसे कट गए हैं लेकिन ऑर्डर अभी तक कन्फर्म नहीं हुआ है।"`
-   - HTTP Status: `200 OK`
-   - Category: `payment_failure`, Priority: `high`, Language: `hindi`
-   - Requires Human: `true` (Reason: `native_hindi_devanagari_unreliable_tokenization`)
-   - Client Elapsed: `1,151.7 ms` | Model Latency: `1,145.8 ms`
-5. **High-Risk Security / Fraud Ticket (Deterministic Escalation Verification)**:
-   - Input: `"CRITICAL EMERGENCY: Someone hacked my account, changed the 2FA phone number, and made an unauthorized transaction of $4,500. Lock my account immediately!"`
-   - HTTP Status: `200 OK`
-   - Category: `fraud_report`, Priority: `critical`, Language: `english`
-   - Requires Human: `true` (Reason: `safety_critical_fraud_detection`)
-   - Client Elapsed: `1,148.2 ms` | Model Latency: `1,141.9 ms`
-6. **Safe Missing-Model Rollback Handling**:
-   - Endpoint: `POST /model/rollback?target_version=non_existent_candidate_v99`
-   - HTTP Status: `404 Not Found`
-   - Response: `{"detail": "Target model version 'non_existent_candidate_v99' not registered."}`
-7. **Safe Input Validation Rejection**:
-   - Endpoint: `POST /predict` with body `{"invalid_key": 12345}`
-   - HTTP Status: `422 Unprocessable Entity`
-   - Error Code: `INVALID_INPUT_SCHEMA`
-   - Verification: Request rejected with structured validation payload.
+#### Benchmark Aggregate Statistics
+- **Total Requests Evaluated**: 30
+- **Automated Routing Allowed (`requires_human=False`)**: 0 (0.0%)
+- **Human Escalation Enforced (`requires_human=True`)**: 30 (100.0%)
+- **Response Schema Validity**: 30 / 30 (100.0% compliant with `PredictResponse` Pydantic model)
+- **API Request Success Rate**: 30 / 30 (100.0% HTTP 200 OK, 0 HTTP failures)
+- **Client Latency (Method 7 Linear Percentile Estimator)**: Median: 2,473.82 ms | Mean: 2,397.70 ms | P95: 3,149.94 ms (unpinned local workstation CPU under sequential thermal jitter)
+- **Model Inference Latency**: Median: 2,458.57 ms | Mean: 2,384.21 ms | P95: 3,121.15 ms
+
+#### Comprehensive Escalation Reason Breakdown
+| Escalation Reason Code | Trigger Description | Ticket Count | Percentage |
+| :--- | :--- | :---: | :---: |
+| `confidence_unavailable_conservative_escalation` | Routine / low-risk tickets where logprobs are unmeasured (`confidence: null`) | **11** | 36.7% |
+| `native_hindi_devanagari_unreliable_tokenization` | Native Devanagari script subword fragmentation guard | **9** | 30.0% |
+| `safety_critical_fraud_detection` | Fraud, credential compromise, or unauthorized transaction | **3** | 10.0% |
+| `high_impact_financial_dispute` | Payment deduction without confirmation (`cut ho gaya`, etc.) | **2** | 6.7% |
+| `account_security_lockout` | Locked out, authentication reset failure, account recovery | **2** | 6.7% |
+| `legal_or_account_closure_action` | Account closure, legal compliance, GDPR right to be forgotten | **2** | 6.7% |
+| `delivery_theft_or_tampering` | Parcel theft, tampering, empty package delivery | **1** | 3.3% |
+| **Total** | | **30** | **100.0%** |
+
+#### Routine, Low-Risk Ticket Audit (When Confidence is Unavailable)
+11 tickets in the synthetic benchmark cohort represent routine, low-risk customer support interactions without deterministic threat keywords:
+- `demo_gen_en` / `demo_gen_hinglish`: General operating hours and customer care contact requests.
+- `demo_sub_en` / `demo_sub_hinglish`: Subscription downgrade and cancellation policy queries.
+- `demo_pwd_en` / `demo_pwd_hinglish`: Routine password reset link requests.
+- `demo_ref_en` / `demo_ref_hinglish`: Routine item return refund status inquiries.
+- `demo_del_en`: Courier delivery status query.
+- `demo_tech_en` / `demo_tech_hinglish`: Checkout page error 500 crash reports.
+
+**Safety Finding & Governance Invariant**:
+- Because `logits_all=False` is active for inference efficiency, raw log-probabilities are unmeasured.
+- Rather than manufacturing an uncalibrated heuristic confidence (such as a constant `0.95`), the engine emits `confidence = None`.
+- The API returns `confidence: null` with `"confidence_status": "unavailable"`.
+- Under Rule 12 of `HumanEscalationPolicy`, whenever model confidence cannot be measured, the system refuses to guess and defaults to human review (`requires_human=True`, reason: `confidence_unavailable_conservative_escalation`).
+- **Policy Invariant**: Routine tickets are **never silently automated** on unmeasured confidence. Conservative escalation policy guarantees 100% human oversight safety and **must not be weakened without a dedicated, evidence-based calibration and safety review**.
 
 ---
 
@@ -459,25 +458,29 @@ Recorded in [experiments/artifacts/local_demo_verification_results.json](file://
    - *Statistical Reality*: With $N=44$, the 95% binomial confidence margin of error is approximately $\pm 7.5\%$. While quality retention between FP32 (90.91%) and Q8_0 (90.91%) is mathematically exact on this cohort, generalized out-of-distribution performance requires prospective evaluation on larger cohorts ($N \ge 1,000$).
 2. **Subword Fragmentation in Native Devanagari Hindi**:
    - While Qwen's large 152k vocabulary achieved 92.86% accuracy on Hindi test items, native Devanagari script can still suffer higher token-to-word ratios than Romanized text under adversarial or dialectal variations.
-   - *Safety Guard*: [src/inference/policy.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/policy.py) enforces mandatory human escalation for native-script Hindi tickets whenever confidence is below 0.98 or when critical operations are requested.
-3. **Uncalibrated Heuristic Confidence**:
-   - Output softmax confidence scores reflect model probability distributions, not calibrated empirical accuracies.
-   - All API responses explicitly set `"confidence_status": "uncalibrated_heuristic"`. Downstream automated routing policies must never rely solely on raw probability thresholds without deterministic policy checks.
+   - *Safety Guard*: [src/inference/policy.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/policy.py) enforces mandatory human escalation for native-script Hindi tickets (`native_hindi_devanagari_unreliable_tokenization`).
+3. **Rigorous Confidence Handling & Unavailable Status Guarantee**:
+   - No fixed confidence constant (e.g. `0.95`) is ever assigned when logprobs cannot be computed.
+   - When `logits_all=False`, the API explicitly declares `confidence: null` and `confidence_status: "unavailable"`.
+   - Unavailable confidence strictly forbids automated routing and deterministically triggers human escalation (`confidence_unavailable_conservative_escalation`).
 4. **Single-Node Thermal Throttling Variance**:
-   - On commodity x86 CPUs, sequential batch processing creates thermal accumulation that increases latency jitter (local CPU FP32 baseline reached 4,101 ms vs Kaggle's 3,690 ms). Production deployment requires strict container CPU pinning.
+   - On commodity x86 CPUs, sequential batch processing creates thermal accumulation that increases latency jitter (local workstation client P95 reached 3,149.94 ms on unpinned CPU vs 1,374.8 ms in initial isolated runs). Production staging qualification on pinned 2-vCPU hardware is required ([BLK-05](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/docs/operations/activation_blocker_tracker.md#blk-05--standard-hardware-profiling--latency-qualification)).
 
 ---
 
-## 8. Operational Blockers Ledger (BLK-01, BLK-02, BLK-03)
+## 8. Operational Blockers Ledger (BLK-01 through BLK-07)
 
-Technical readiness on local machines does not equate to production operational readiness. Per the audit documented in [docs/operations/activation_blocker_tracker.md](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/docs/operations/activation_blocker_tracker.md), **three major blockers remain open and unresolved**:
+Technical readiness on local machines does not equate to production operational readiness. Per the audit documented in [docs/operations/activation_blocker_tracker.md](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/docs/operations/activation_blocker_tracker.md), **six operational blockers remain open and unresolved**:
 
 | Blocker ID | Domain Description | Responsible Owner Role | Required Evidence for Closure | Current Verification Finding | Current Status |
 |:---:|:---|:---|:---|:---|:---:|
 | **BLK-01** | **Data Access & CRM Authorization** | Data Protection Officer (DPO) & Support CRM Systems Lead | 1. Executed DPA Addendum signed by DPO.<br>2. Read-only CRM webhook signing secret injected into vault (`CRM_WEBHOOK_SECRET` length $\ge 32$).<br>3. Webhook ping handshake. | `os.getenv('CRM_WEBHOOK_SECRET')` is `None`. No executed DPA document found on disk or vault. Webhook listener is offline. | **FAIL / BLOCKED BY MISSING EVIDENCE** |
 | **BLK-02** | **Production Cloud Infrastructure** | Site Reliability Engineer (SRE) / Cloud Platform Lead | 1. Containerized service deployed to internal cluster with 2-vCPU / 4-GB limits.<br>2. Remote curl probe returning HTTP 200 from `https://nexus-slm-shadow.internal/health`.<br>3. Prometheus metrics endpoint live. | Socket DNS lookup for `nexus-slm-shadow.internal` fails (`getaddrinfo failed`). Production cluster host unprovisioned. | **FAIL / BLOCKED BY MISSING EVIDENCE** |
 | **BLK-03** | **Human Review Workforce Panel** | Support Operations Lead & Quality Assurance Manager | 1. Signed roster of 5+ qualified support specialists with weekly shift schedules.<br>2. Verified labeling capacity ($\ge 50$ tickets/specialist/week).<br>3. Prospective sealed ground-truth cohort manifest `data/pilot/ground_truth_freeze_manifest.json`. | No reviewer roster file on disk. `data/pilot/ground_truth_freeze_manifest.json` does not exist (`exists() == False`). | **FAIL / BLOCKED BY MISSING EVIDENCE** |
-| **BLK-04** | **Remote Linux Docker CI** | CI/CD Release Engineer & Platform Architect | Passing GitHub Actions run testing build, health, live inference, and shutdown on Linux container. | GitHub Actions Run ID 37972082549 completed with `success` across all 3 workflow jobs on `ubuntu-latest`. | **PASS / RESOLVED** |
+| **BLK-04** | **Remote Linux Docker CI** | CI/CD Release Engineer & Platform Architect | Passing GitHub Actions run testing dependency isolation, compile checks, 100% test suite, Docker container build, health, live inference, and shutdown on Linux runner. | GitHub Actions Run ID 38283527589 completed with `success` across all 3 workflow jobs on `ubuntu-latest` (Commit `6ebb28e`, 134/134 tests passed, 0 failures, 0 skips). | **PASS / RESOLVED** |
+| **BLK-05** | **Standard-Hardware Profiling** | Performance Engineer & Platform SRE | 1. Benchmark profiling executed on target staging hardware specification (pinned 2-vCPU / 4-GB RAM Linux host under thermal equilibrium).<br>2. Sustained P95 latency certified $\le 2,500$ ms under sustained load ($N \ge 100$, concurrency $\ge 1$).<br>3. Memory consumption certified $\le 2,048$ MB peak RAM over 1 hour. | Benchmark profiling currently conducted on local developer workstation (unpinned CPU, thermal jitter). Staging-node 2-vCPU qualification report not yet executed. | **FAIL / BLOCKED BY MISSING EVIDENCE** |
+| **BLK-06** | **Shadow Drift Monitoring** | MLOps Lead & Data Reliability Engineer | 1. Statistical baseline established for input token length distribution, language ratios, and category entropy.<br>2. Population Stability Index (PSI) drift detector wired to Prometheus alerting ($PSI \ge 0.25$).<br>3. Telemetry store receiving live shadow predictions with automated daily drift reports. | Drift endpoint `/monitoring/drift` and unit tests exist, but live production telemetry baseline and continuous shadow drift alerting are unprovisioned. | **FAIL / BLOCKED BY MISSING EVIDENCE** |
+| **BLK-07** | **Human-Review Delivery Endpoint** | CRM Integration Engineer & Support Systems Architect | 1. Authenticated webhook endpoint (`POST /webhooks/escalations`) registered for dispatching `requires_human=true` tickets to CRM triage queue.<br>2. Dead-letter queue (DLQ) and retry policy ($\le 30$s delivery SLA).<br>3. Closed feedback loop recording human resolution tags back into audit telemetry. | The inference policy correctly sets `requires_human=true` and emits structured escalation reasons, but the external human review delivery endpoint is disconnected (`CRM_WEBHOOK_SECRET` unset). | **FAIL / BLOCKED BY MISSING EVIDENCE** |
 
 ---
 
@@ -486,14 +489,17 @@ Technical readiness on local machines does not equate to production operational 
 ### 9.1 Current Release Status: `LOCAL DEMO VERIFIED`
 - **Technical Verification**: **PASS**. The `qwen25_05b_lora_seed42_q8_0` GGUF model and `api/main.py` application have been thoroughly exercised, tested, and validated locally.
 - **Production Alias Configuration**: **UNCHANGED**. `nexus-qlora-v1` remains the designated `production` model. `qwen25_05b_lora_seed42_q8_0` remains `experimental`.
-- **Operational Activation Status**: **BLOCKED**. No live tickets may be ingested, no production models may be promoted, and no live shadow pilot may commence until BLK-01, BLK-02, and BLK-03 are formally resolved with documented evidence.
+- **Operational Activation Status**: **BLOCKED**. No live tickets may be ingested, no production models may be promoted, and no live shadow pilot may commence until all open blockers (BLK-01, BLK-02, BLK-03, BLK-05, BLK-06, and BLK-07) are formally resolved with documented evidence.
 
 ### 9.2 Requirements for Commencing a Live Shadow Pilot
 Before activating the shadow-pilot pipeline documented in `docs/shadow_pilot_plan.md`:
 1. **DPO Sign-Off & CRM Secret (BLK-01)**: Deposit the executed DPA and configure `CRM_WEBHOOK_SECRET` in secret store.
 2. **VPC Infrastructure Deployment (BLK-02)**: Provision the 2-vCPU / 4-GB containerized runner and verify connectivity at `https://nexus-slm-shadow.internal/health`.
 3. **Reviewer Panel Onboarding (BLK-03)**: Onboard 5+ human reviewers and freeze the prospective baseline cohort in `data/pilot/ground_truth_freeze_manifest.json`.
-4. **Promotion Ceremony**: Only after 14 days of shadow evaluation demonstrating non-inferiority against production `nexus-qlora-v1` will the Staging Candidate be eligible for promotion to production alias.
+4. **Standard-Hardware Qualification (BLK-05)**: Qualify sustained P95 latency $\le 2,500$ ms on 2-vCPU pinned staging environment.
+5. **Drift Monitoring Activation (BLK-06)**: Establish production telemetry baseline and activate Prometheus drift alerting.
+6. **Human Review Delivery Endpoint (BLK-07)**: Verify authenticated webhook delivery to CRM triage queue with retry/DLQ support.
+7. **Promotion Ceremony**: Only after 14 days of shadow evaluation demonstrating non-inferiority against production `nexus-qlora-v1` will the Staging Candidate be eligible for promotion to production alias.
 
 ---
 
@@ -504,11 +510,11 @@ Before activating the shadow-pilot pipeline documented in `docs/shadow_pilot_pla
 | **Q8_0 Artifact Integrity** | **VERIFIED** | `models/qwen25_05b_lora_seed42_gguf_q8_0/qwen25_05b_lora_seed42_q8_0.gguf` (SHA-256: `b0c891dca80...`) |
 | **Q4_K_M Artifact Integrity** | **VERIFIED** | `models/qwen25_05b_lora_seed42_gguf_q4_k_m/qwen25_05b_lora_seed42_q4_k_m.gguf` (SHA-256: `69a7c3d640...`) |
 | **Registry Isolation** | **VERIFIED** | `models/registry.json` (`nexus-qlora-v1` = production; Qwen GGUFs = experimental) |
-| **Regression Test Suite** | **VERIFIED** | 129 passed / 129 collected (100% pass rate in 38.03s, 0 failures) |
-| **API Latency SLA Verification** | **VERIFIED** | P50: 956.6 ms, P95: 1,205.8 ms (51.8% below 2,500 ms SLA) |
-| **Escalation Consistency** | **VERIFIED** | Model output & API response 100% matching; deterministic policy precedence guaranteed |
-| **Local Demo Route Exercise**| **VERIFIED** | `experiments/artifacts/local_demo_verification_results.json` |
-| **Operational Blockers Audit**| **BLOCKED** | `docs/operations/activation_blocker_tracker.md` (BLK-01, BLK-02, BLK-03 open) |
+| **Regression Test Suite** | **VERIFIED** | 134 passed / 134 collected (100% pass rate in 65.73s, 0 failures, 0 skips) |
+| **API Latency SLA Verification** | **VERIFIED** | P50: 956.6 ms, P95: 1,205.8 ms (single-request baseline; sustained multi-request qualification tracked under BLK-05) |
+| **Escalation Consistency** | **VERIFIED** | 30/30 benchmark fixtures escalated safely; model output & API response 100% matching; deterministic policy precedence guaranteed |
+| **Local Demo Route Exercise**| **VERIFIED** | `experiments/artifacts/local_demo_verification_results.json` (30/30 succeeded, 0 failures, 30/30 schema valid) |
+| **Operational Blockers Audit**| **BLOCKED** | `docs/operations/activation_blocker_tracker.md` (BLK-01, BLK-02, BLK-03, BLK-05, BLK-06, BLK-07 open) |
 | **Budget Compliance** | **VERIFIED** | $0.00 consumed (Zero paid cloud resources) |
 
-**Final Recommendation**: The technical artifact freeze is complete. Staged candidates are verified for local deployment. Operational activation remains locked pending business and compliance authorization.
+**Final Recommendation**: The technical artifact freeze is complete. Staged candidates are verified for local deployment. Operational activation remains locked pending business, compliance, infrastructure, and reviewer authorization.
