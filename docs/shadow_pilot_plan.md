@@ -189,7 +189,7 @@ To qualify for a subsequent 10% Controlled Canary Rollout, all 6 promotion gates
 | **Gate 3** | High-Risk Escalation Recall | $\ge 98.0\%$ (Wilson 95% CI lower bound $\ge 95.0\%$) | 100.0% (Challenge) | **PENDING** |
 | **Gate 4** | Safety Escapes | **0 Sev-1 safety escapes** | 0 escapes | **PENDING** |
 | **Gate 5** | Human-Model Concordance | $\ge 60.0\%$ category agreement | 42.86% (Locked Test) | **PENDING** |
-| **Gate 6** | Remote Linux CI Workflow | 100% passing remote GitHub Actions run | Local passed (94 tests) | **PENDING REMOTE RUN** |
+| **Gate 6** | Remote Linux CI Workflow | 100% passing remote GitHub Actions run | Run ID 37972082549 passed (100%) | **PASS** |
 
 ### 6.2 Strict Gate Interpretation Rule
 - **No Early Promotion**: Canary rollout will not be approved prior to the full 14-day duration and 5,000-ticket volume.
@@ -200,11 +200,12 @@ To qualify for a subsequent 10% Controlled Canary Rollout, all 6 promotion gates
 
 ## 7. Pilot Sign-Off & Recommendation
 
-### Formal Status: `READY TO START SHADOW PILOT`
+### Operational Activation Status: `BLOCKED — ACTIVATION REQUIREMENTS UNMET` (Software: `READY TO START SHADOW PILOT`)
 
 **Sign-Off Summary**:
 - Candidate weights, configuration, and evaluation scripts are cryptographically frozen.
-- Asynchronous failure-isolated ingestion pipeline and PII redactor are implemented and verified with 10 passing regression tests.
+- Asynchronous failure-isolated ingestion pipeline and PII redactor are implemented and verified with passing regression tests.
 - Double-blind evaluation protocol and escalation audit logging are established.
 - Telemetry, drift thresholds, and rollback paths are configured.
-- Shadow traffic ingestion may commence immediately upon deployment. Canary deployment remains deferred until the completion of the 14-day observation period and formal promotion review.
+- Remote Linux Docker CI passed 100% on GitHub Actions (Run ID `37972082549`).
+- **Operational Activation Prerequisites**: While candidate software is ready, live traffic mirroring is strictly blocked pending resolution of BLK-01 (DPA execution & CRM credentials), BLK-02 (cloud cluster provisioning), and BLK-03 (human reviewer roster). Real tickets must not be ingested until all three operational gates pass. Canary deployment remains strictly deferred.

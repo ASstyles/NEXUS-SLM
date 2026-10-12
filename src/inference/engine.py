@@ -63,31 +63,53 @@ class InferenceEngine:
         # 1. Format ChatML prompt
         prompt = PromptFormatter.format_prompt(text, tokenizer=self.tokenizer)
 
-        # 2. Tokenize
-        inputs = self.tokenizer(prompt, return_tensors="pt")
-        device = next(self.model.parameters()).device
-        inputs = {k: v.to(device) for k, v in inputs.items()}
-        prompt_length = inputs["input_ids"].shape[1]
-
-        # 3. Model Generation
-        with torch.no_grad():
-            output = self.model.generate(
-                **inputs,
-                max_new_tokens=self.max_new_tokens,
-                do_sample=(self.temperature > 0),
-                temperature=self.temperature if self.temperature > 0 else None,
-                pad_token_id=self.tokenizer.pad_token_id,
-                eos_token_id=self.tokenizer.eos_token_id,
-                return_dict_in_generate=True,
-                output_scores=True,
+        if hasattr(self.model, "create_completion"):
+            import math
+            res = self.model(
+                prompt,
+                max_tokens=self.max_new_tokens,
+                stop=["<|im_end|>", "<|endoftext|>"],
+                temperature=self.temperature if self.temperature > 0 else 0.0,
+                logprobs=1,
             )
+            choice = res["choices"][0]
+            raw_text = choice["text"].strip()
+            latency_ms = round((time.perf_counter() - start_time) * 1000, 2)
+            token_logprobs = choice.get("logprobs", {}).get("token_logprobs", []) if choice.get("logprobs") else []
+            probs = [math.exp(lp) for lp in token_logprobs if lp is not None]
+            confidence = round(sum(probs) / len(probs), 4) if probs else 0.90
+        else:
+            # 2. Tokenize
+            inputs = self.tokenizer(prompt, return_tensors="pt")
+            if hasattr(self.model, "parameters"):
+                try:
+                    device = next(self.model.parameters()).device
+                except (StopIteration, TypeError):
+                    device = getattr(self.model, "device", torch.device("cpu"))
+            else:
+                device = getattr(self.model, "device", torch.device("cpu"))
+            inputs = {k: v.to(device) for k, v in inputs.items()}
+            prompt_length = inputs["input_ids"].shape[1]
 
-        # 4. Extract generated tokens
-        generated_tokens = output.sequences[0][prompt_length:]
-        raw_text = self.tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
+            # 3. Model Generation
+            with torch.no_grad():
+                output = self.model.generate(
+                    **inputs,
+                    max_new_tokens=self.max_new_tokens,
+                    do_sample=(self.temperature > 0),
+                    temperature=self.temperature if self.temperature > 0 else None,
+                    pad_token_id=self.tokenizer.pad_token_id,
+                    eos_token_id=self.tokenizer.eos_token_id,
+                    return_dict_in_generate=True,
+                    output_scores=True,
+                )
 
-        latency_ms = round((time.perf_counter() - start_time) * 1000, 2)
-        confidence = self._compute_confidence(output.scores)
+            # 4. Extract generated tokens
+            generated_tokens = output.sequences[0][prompt_length:]
+            raw_text = self.tokenizer.decode(generated_tokens, skip_special_tokens=True).strip()
+
+            latency_ms = round((time.perf_counter() - start_time) * 1000, 2)
+            confidence = self._compute_confidence(output.scores)
 
         # 5. Parse and strictly validate JSON
         is_valid, parsed_data, err = self.parser.parse_and_validate(raw_text)

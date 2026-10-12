@@ -142,3 +142,38 @@ The Docker container and FastAPI service support standard POSIX termination sign
 docker stop --time 15 nexus-slm-service
 ```
 This flushes in-flight telemetry logs to disk and terminates cleanly.
+
+---
+
+## 8. Authorised Internal Cloud Deployment Prerequisites
+
+> **Notice:** Cloud deployment is currently **UNPROVISIONED**. NEXUS-SLM remains in Day 0 development and local sandbox mode. Do not claim a running cloud cluster exists.
+
+Before any internal staging or shadow cloud deployment can proceed, the following external infrastructure prerequisites must be satisfied:
+
+1. **Approved Cloud Infrastructure Provisioning (BLK-02):**
+   - Formal Terraform/Helm repository for internal cloud Kubernetes or ECS/Cloud Run cluster.
+   - Resource quota allocation: minimum 4 vCPU, 8 GB RAM per inference replica.
+   - Private VPC peering with egress security groups blocking unauthorized outbound connections.
+2. **Secrets & Identity Management:**
+   - Secrets must be injected via AWS Secrets Manager, GCP Secret Manager, or HashiCorp Vault.
+   - Zero hardcoded API keys or plaintext credentials in environment variables or container layers.
+3. **Network Isolation & Ingress Security:**
+   - mTLS or internal API Gateway authentication on all ingress routes.
+   - Reverse proxy rate limiting (120 req/min/IP) and WAF protection against prompt-injection probing.
+4. **CRM Mirror Authorization (BLK-01):**
+   - Signed Data Protection Agreement (DPA) and formal Data Processing Addendum.
+   - Read-only webhook authorization on synthetic/shadow queues only.
+
+---
+
+## 9. Public Demo Deployment Security & Safeguards
+
+If deploying an external demonstration instance for stakeholder evaluation:
+1. **Synthetic Data Exclusivity:** The public demo must strictly operate on synthetic test fixtures. Real CRM connectivity is prohibited.
+2. **Abuse & Resource Limits:**
+   - Restrict max request length to 1,000 characters.
+   - Strict client rate limiting (10 requests per minute per IP).
+   - In-memory circuit breaker to prevent denial-of-service CPU exhaustion.
+3. **No Credential Exposure:** Container images must be audited to ensure zero repository secrets, private certificates, or internal URLs are bundled.
+

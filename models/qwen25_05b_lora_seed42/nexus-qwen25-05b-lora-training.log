@@ -1,0 +1,111 @@
+[{"stream_name":"stderr","time":8.436910713,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":8.43697334,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":8.436979788,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":8.436983837,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stderr","time":9.091943043,"data":"0.00s - Debugger warning: It seems that frozen modules are being used, which may\n"}
+,{"stream_name":"stderr","time":9.091971604,"data":"0.00s - make the debugger miss breakpoints. Please pass -Xfrozen_modules=off\n"}
+,{"stream_name":"stderr","time":9.091976082,"data":"0.00s - to python to disable frozen modules.\n"}
+,{"stream_name":"stderr","time":9.09197976,"data":"0.00s - Note: Debugging will proceed. Set PYDEVD_DISABLE_FILE_VALIDATION=1 to disable this validation.\n"}
+,{"stream_name":"stdout","time":18.414426526,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":18.414461711,"data":"NEXUS-SLM GPU PREFLIGHT VERIFICATION\n"}
+,{"stream_name":"stdout","time":18.41446675,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":18.414470721,"data":"Platform:       Linux 6.18.48+ (x86_64)\n"}
+,{"stream_name":"stdout","time":18.414478774,"data":"Python:         3.13.15\n"}
+,{"stream_name":"stdout","time":18.414481501,"data":"PyTorch:        2.11.0+cu128\n"}
+,{"stream_name":"stdout","time":18.414484193,"data":"CUDA Available: True\n"}
+,{"stream_name":"stdout","time":18.557896706,"data":"Active GPU:     Tesla T4\n"}
+,{"stream_name":"stdout","time":18.557927448,"data":"Total VRAM:     14.56 GB\n"}
+,{"stream_name":"stdout","time":18.557932488,"data":"Free VRAM:      14.46 GB\n"}
+,{"stream_name":"stdout","time":18.557936951,"data":"bfloat16:       True\n"}
+,{"stream_name":"stdout","time":18.557940661,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":18.557944532,"data":"GPU Preflight PASSED!\n"}
+,{"stream_name":"stdout","time":21.286060898,"data":"\u001b[?25l   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.0/1.8 MB\u001b[0m \u001b[31m?\u001b[0m eta \u001b[36m-:--:--\u001b[0m\r\u001b[2K   \u001b[91m━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.1/1.8 MB\u001b[0m \u001b[31m3.6 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m\u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m0.7/1.8 MB\u001b[0m \u001b[31m9.9 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[91m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m\u001b[91m╸\u001b[0m \u001b[32m1.8/1.8 MB\u001b[0m \u001b[31m19.8 MB/s\u001b[0m eta \u001b[36m0:00:01\u001b[0m\r\u001b[2K   \u001b[90m━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\u001b[0m \u001b[32m1.8/1.8 MB\u001b[0m \u001b[31m15.5 MB/s\u001b[0m eta \u001b[36m0:00:00\u001b[0m\r\n"}
+,{"stream_name":"stdout","time":47.107009273,"data":"\u001b[?25h\u001b[31mERROR: pip's dependency resolver does not currently take into account all the packages that are installed. This behaviour is the source of the following dependency conflicts.\r\n"}
+,{"stream_name":"stdout","time":47.107062274,"data":"bigframes 2.48.0 requires google-cloud-bigquery-storage\u003c3.0.0,\u003e=2.30.0, which is not installed.\r\n"}
+,{"stream_name":"stdout","time":47.107069109,"data":"pathos 0.3.5 requires dill\u003e=0.4.1, but you have dill 0.3.8 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.10707314,"data":"pathos 0.3.5 requires multiprocess\u003e=0.70.19, but you have multiprocess 0.70.16 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107076619,"data":"s3fs 2025.12.0 requires fsspec==2025.12.0, but you have fsspec 2024.9.0 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107080473,"data":"category-encoders 2.11.1 requires scikit-learn\u003e=1.6.0, but you have scikit-learn 1.5.2 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107083993,"data":"litellm 1.85.7 requires tokenizers\u003c1.0,\u003e=0.21.0, but you have tokenizers 0.20.3 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107087553,"data":"tpot 1.1.0 requires dill\u003e=0.3.9, but you have dill 0.3.8 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107091158,"data":"tpot 1.1.0 requires scikit-learn\u003e=1.6, but you have scikit-learn 1.5.2 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107094919,"data":"gradio 6.26.0 requires huggingface-hub\u003c2.0,\u003e=1.16.0, but you have huggingface-hub 0.36.2 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107098484,"data":"umap-learn 0.5.12 requires scikit-learn\u003e=1.6, but you have scikit-learn 1.5.2 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107102043,"data":"diffusers 0.40.0 requires huggingface-hub\u003c2.0,\u003e=1.23.0, but you have huggingface-hub 0.36.2 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107105849,"data":"gcsfs 2025.12.0 requires fsspec==2025.12.0, but you have fsspec 2024.9.0 which is incompatible.\r\n"}
+,{"stream_name":"stdout","time":47.107109415,"data":"hdbscan 0.8.44 requires scikit-learn\u003e=1.6, but you have scikit-learn 1.5.2 which is incompatible.\u001b[0m\u001b[31m\r\n"}
+,{"stream_name":"stdout","time":47.509728509,"data":"\u001b[0mStandalone cloud runtime detected. Self-extracting canonical verified datasets...\n"}
+,{"stream_name":"stdout","time":47.509762308,"data":"Self-extraction complete!\n"}
+,{"stream_name":"stdout","time":47.509767494,"data":"Train hash:      11df262072d7243f623bfd829b407a8dbd2c5a3087ed697a836a7152c7688967 -\u003e VERIFIED\n"}
+,{"stream_name":"stdout","time":47.509772032,"data":"Validation hash: 2e349ad3b1330aec224c266460d2e4189b94138a1d63146a10bd8f45ea65508e -\u003e VERIFIED\n"}
+,{"stream_name":"stdout","time":47.50977631,"data":"Test hash:       edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4 -\u003e VERIFIED\n"}
+,{"stream_name":"stdout","time":48.617430461,"data":"Loading model config and tokenizer for: Qwen/Qwen2.5-0.5B-Instruct\n"}
+,{"stream_name":"stdout","time":49.574099619,"data":"model.config.vocab_size: 151,936\n"}
+,{"stream_name":"stdout","time":49.574133708,"data":"len(tokenizer):          151,665\n"}
+,{"stream_name":"stdout","time":49.574139869,"data":"pad_token:               \u003c|endoftext|\u003e (id=151643)\n"}
+,{"stream_name":"stdout","time":49.574145101,"data":"eos_token:               \u003c|im_end|\u003e (id=151645)\n"}
+,{"stream_name":"stdout","time":49.574149923,"data":"\n"}
+,{"stream_name":"stdout","time":49.574153665,"data":"ChatML Formatting Sample:\n"}
+,{"stream_name":"stdout","time":49.574157442,"data":"\u003c|im_start|\u003esystem\n"}
+,{"stream_name":"stdout","time":49.574161474,"data":"You are NEXUS-SLM.\u003c|im_end|\u003e\n"}
+,{"stream_name":"stdout","time":49.574183239999996,"data":"\u003c|im_start|\u003euser\n"}
+,{"stream_name":"stdout","time":49.574188439,"data":"Payment debited but order failed.\u003c|im_end|\u003e\n"}
+,{"stream_name":"stdout","time":49.574193019,"data":"\u003c|im_start|\u003eassistant\n"}
+,{"stream_name":"stdout","time":49.574196856,"data":"\n"}
+,{"stream_name":"stdout","time":51.558155162,"data":"Prepared Train Dataset: 316 examples\n"}
+,{"stream_name":"stdout","time":51.558188301,"data":"Prepared Val Dataset:   44 examples\n"}
+,{"stream_name":"stdout","time":51.558193305,"data":"Sample 0 Token Count: 166 | Prompt Masked (-100): 138 | Completion Active: 28\n"}
+,{"stream_name":"stdout","time":80.885622238,"data":"Executing GPU smoke test...\n"}
+,{"stream_name":"stdout","time":90.224589798,"data":"Smoke test PASSED! Forward loss: 1.3338, Gradients computed successfully.\n"}
+,{"stream_name":"stdout","time":91.985905304,"data":"Loading base model in torch.bfloat16...\n"}
+,{"stream_name":"stdout","time":93.67143656,"data":"trainable params: 8,798,208 || all params: 502,830,976 || trainable%: 1.7497\n"}
+,{"stream_name":"stdout","time":93.671474823,"data":"Starting training execution...\n"}
+,{"stream_name":"stdout","time":362.698162161,"data":"Training finished in 264.29s! Train Loss: 0.1490, Eval Loss: 0.0773\n"}
+,{"stream_name":"stdout","time":362.900459629,"data":"Saving trained adapter to /kaggle/working/nexus_training/nexus_qwen25_05b_lora_seed42...\n"}
+,{"stream_name":"stdout","time":363.23630805,"data":"Export complete!\n"}
+,{"stream_name":"stdout","time":363.236338481,"data":"  tokenizer.json                : 9c5ae00e602b8860cbd784ba82a8aa14e8feecec692e7076590d014d7b7fdafa\n"}
+,{"stream_name":"stdout","time":363.23634526,"data":"  special_tokens_map.json       : 76862e765266b85aa9459767e33cbaf13970f327a0e88d1c65846c2ddd3a1ecd\n"}
+,{"stream_name":"stdout","time":363.236350541,"data":"  tokenizer_config.json         : 7e88129d9769a0b14b1587a7d5e829fe93ac0e1511636471fdfc0811951418e6\n"}
+,{"stream_name":"stdout","time":363.236356362,"data":"  added_tokens.json             : 58b54bbe36fc752f79a24a271ef66a0a0830054b4dfad94bde757d851968060b\n"}
+,{"stream_name":"stdout","time":363.236361372,"data":"  vocab.json                    : ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910\n"}
+,{"stream_name":"stdout","time":363.236366738,"data":"  adapter_model.safetensors     : 8a30ceafc32c2180d7414a7bdaa5199162921f4960ecd7eef34eed3a49f91a0a\n"}
+,{"stream_name":"stdout","time":363.236372167,"data":"  README.md                     : f1b8f55c0353211887f8595b09ee2f44ebaa632f11dc0b7d8cf68cd523364e73\n"}
+,{"stream_name":"stdout","time":363.236377077,"data":"  merges.txt                    : 8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5\n"}
+,{"stream_name":"stdout","time":363.236381951,"data":"  adapter_config.json           : 51f5eaea09f409d7849d457fb4ac7ad09c65b6a8223a931f21ef44910c24363b\n"}
+,{"stream_name":"stdout","time":363.437137648,"data":"Evaluating on Validation Split (N=44) for Model Selection...\n"}
+,{"stream_name":"stderr","time":363.472124961,"data":"/usr/local/lib/python3.13/dist-packages/transformers/generation/configuration_utils.py:595: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.8` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.\n"}
+,{"stream_name":"stderr","time":363.472162113,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":363.472166063,"data":"/usr/local/lib/python3.13/dist-packages/transformers/generation/configuration_utils.py:612: UserWarning: `do_sample` is set to `False`. However, `top_k` is set to `20` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_k`.\n"}
+,{"stream_name":"stderr","time":363.472179703,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":363.472182139,"data":"\n"}
+,{"stream_name":"stderr","time":363.472184349,"data":"/usr/local/lib/python3.13/dist-packages/transformers/generation/configuration_utils.py:595: UserWarning: `do_sample` is set to `False`. However, `top_p` is set to `0.8` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_p`.\n"}
+,{"stream_name":"stderr","time":363.472187151,"data":"  warnings.warn(\n"}
+,{"stream_name":"stderr","time":363.472189405,"data":"/usr/local/lib/python3.13/dist-packages/transformers/generation/configuration_utils.py:612: UserWarning: `do_sample` is set to `False`. However, `top_k` is set to `20` -- this flag is only used in sample-based generation modes. You should set `do_sample=True` or unset `top_k`.\n"}
+,{"stream_name":"stderr","time":363.472192019,"data":"  warnings.warn(\n"}
+,{"stream_name":"stdout","time":457.134698965,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":457.134758086,"data":"Validation Category Accuracy: 0.8636\n"}
+,{"stream_name":"stdout","time":457.134764958,"data":"Validation Macro-F1:          0.8413\n"}
+,{"stream_name":"stdout","time":457.134770172,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":457.134775258,"data":"\n"}
+,{"stream_name":"stdout","time":457.134780545,"data":"Candidate Acceptance Gates Check:\n"}
+,{"stream_name":"stdout","time":457.134785554,"data":"  Gate 1 (Val Macro-F1 \u003e= 0.55): PASS (Measured: 0.8413)\n"}
+,{"stream_name":"stdout","time":459.474545351,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":459.474573886,"data":"ARTIFACT RETRIEVAL COMMANDS\n"}
+,{"stream_name":"stdout","time":459.474580211,"data":"======================================================================\n"}
+,{"stream_name":"stdout","time":459.474586021,"data":"Zip archive created at: /kaggle/working/nexus_training/nexus_qwen25_05b_lora_seed42.zip\n"}
+,{"stream_name":"stdout","time":459.474591293,"data":"\n"}
+,{"stream_name":"stdout","time":459.474596629,"data":"1. To retrieve via Kaggle API:\n"}
+,{"stream_name":"stdout","time":459.474602119,"data":"   kaggle kernels output \u003cyour-username\u003e/\u003ckernel-slug\u003e -p models/qwen25_05b_lora_seed42/\n"}
+,{"stream_name":"stdout","time":459.474608436,"data":"\n"}
+,{"stream_name":"stdout","time":459.474613534,"data":"2. To unpack locally into NEXUS-SLM:\n"}
+,{"stream_name":"stdout","time":459.474618227,"data":"   Expand-Archive -Path models/qwen25_05b_lora_seed42/nexus_qwen25_05b_lora_seed42.zip -DestinationPath models/qwen25_05b_lora_seed42/\n"}
+,{"stream_name":"stdout","time":459.474623549,"data":"======================================================================\n"}
+,{"stream_name":"stderr","time":465.005684292,"data":"/usr/local/lib/python3.13/dist-packages/mistune.py:435: SyntaxWarning: invalid escape sequence '\\|'\n"}
+,{"stream_name":"stderr","time":465.005747093,"data":"  cells[i][c] = re.sub('\\\\\\\\\\|', '|', cell)\n"}
+,{"stream_name":"stderr","time":465.172254831,"data":"/usr/local/lib/python3.13/dist-packages/nbconvert/filters/filter_links.py:36: SyntaxWarning: invalid escape sequence '\\_'\n"}
+,{"stream_name":"stderr","time":465.172278278,"data":"  text = re.sub(r'_', '\\_', text) # Escape underscores in display text\n"}
+,{"stream_name":"stderr","time":465.962536533,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to notebook\n"}
+,{"stream_name":"stderr","time":466.057042119,"data":"[NbConvertApp] Writing 147741 bytes to __notebook__.ipynb\n"}
+,{"stream_name":"stderr","time":468.500905024,"data":"[NbConvertApp] Converting notebook __notebook__.ipynb to html\n"}
+,{"stream_name":"stderr","time":469.09446514,"data":"[NbConvertApp] Writing 457258 bytes to __results__.html\n"}
+]

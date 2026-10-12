@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-09T16:24:11Z",
+  "timestamp": "2026-10-11T14:31:48Z",
   "e2e_pipeline_status": "PASS",
   "system_health": {
     "status": "healthy",
@@ -12,7 +12,7 @@
       "platform_machine": "AMD64",
       "cpu_count": 12,
       "ram_total_gb": 15.65,
-      "ram_available_gb": 2.0,
+      "ram_available_gb": 0.94,
       "cuda_available": false,
       "cuda_version": null,
       "gpu_count": 0,
@@ -43,14 +43,14 @@
         "priority": "high",
         "language": "english",
         "requires_human": false,
-        "confidence": 0.7499,
-        "calibrated_confidence": 0.7499,
+        "confidence": 0.9998,
+        "calibrated_confidence": null,
         "escalation_reason": "automated_routing_permitted",
-        "latency_ms": 1679.24,
-        "roundtrip_total_ms": 1686.85,
+        "latency_ms": 1514.65,
+        "roundtrip_total_ms": 1523.15,
         "model_version": "nexus-qlora-v1",
         "inference_mode": "neural",
-        "request_id": "961ffa05-19dc-4ed9-b810-e46864ae74dc"
+        "request_id": "abf0422e-7a7d-4a69-806d-6f0fe240c276"
       }
     },
     {
@@ -64,7 +64,7 @@
         "SmolLM Tokenizer (ChatML template applied)",
         "NEXUS-SLM Model Execution (neural)",
         "OutputParser (JSON substring extraction & taxonomy verification: PASSED)",
-        "HumanEscalationPolicy (Result: automated_routing_permitted)",
+        "HumanEscalationPolicy (Result: high_impact_financial_dispute)",
         "Telemetry Logger (Trace ID recorded, content excluded)",
         "HTTP Response Delivered"
       ],
@@ -72,15 +72,15 @@
         "category": "payment_failure",
         "priority": "high",
         "language": "hinglish",
-        "requires_human": false,
-        "confidence": 0.7498,
-        "calibrated_confidence": 0.7498,
-        "escalation_reason": "automated_routing_permitted",
-        "latency_ms": 1695.83,
-        "roundtrip_total_ms": 1704.19,
+        "requires_human": true,
+        "confidence": 0.9997,
+        "calibrated_confidence": null,
+        "escalation_reason": "high_impact_financial_dispute",
+        "latency_ms": 1431.45,
+        "roundtrip_total_ms": 1436.59,
         "model_version": "nexus-qlora-v1",
         "inference_mode": "neural",
-        "request_id": "0ccec577-25ab-4b17-825b-f221b3ab1662"
+        "request_id": "ae7367ac-93c2-4ec6-8857-458cb7b4602b"
       }
     },
     {
@@ -94,23 +94,23 @@
         "SmolLM Tokenizer (ChatML template applied)",
         "NEXUS-SLM Model Execution (neural)",
         "OutputParser (JSON substring extraction & taxonomy verification: PASSED)",
-        "HumanEscalationPolicy (Result: automated_routing_permitted)",
+        "HumanEscalationPolicy (Result: native_hindi_devanagari_unreliable_tokenization)",
         "Telemetry Logger (Trace ID recorded, content excluded)",
         "HTTP Response Delivered"
       ],
       "response": {
-        "category": "account_access",
+        "category": "refund_request",
         "priority": "medium",
         "language": "hindi",
-        "requires_human": false,
-        "confidence": 0.7356,
-        "calibrated_confidence": 0.7356,
-        "escalation_reason": "automated_routing_permitted",
-        "latency_ms": 2037.35,
-        "roundtrip_total_ms": 2042.75,
+        "requires_human": true,
+        "confidence": 0.9806,
+        "calibrated_confidence": null,
+        "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+        "latency_ms": 1589.5,
+        "roundtrip_total_ms": 1595.09,
         "model_version": "nexus-qlora-v1",
         "inference_mode": "neural",
-        "request_id": "f05becdc-dff1-406b-ad78-f178eb8d95d7"
+        "request_id": "e63cd48e-ae03-4183-9986-0f7f1cc95582"
       }
     },
     {
@@ -133,14 +133,14 @@
         "priority": "high",
         "language": "english",
         "requires_human": true,
-        "confidence": 0.699,
-        "calibrated_confidence": 0.699,
+        "confidence": 0.9986,
+        "calibrated_confidence": null,
         "escalation_reason": "short_input_context_sparsity",
-        "latency_ms": 1470.57,
-        "roundtrip_total_ms": 1476.13,
+        "latency_ms": 1399.51,
+        "roundtrip_total_ms": 1404.33,
         "model_version": "nexus-qlora-v1",
         "inference_mode": "neural",
-        "request_id": "25e76f88-a54b-4f0c-a9ce-8c41f2681271"
+        "request_id": "a63c2917-cd87-44e7-b472-23cf3f7abe6c"
       }
     },
     {
@@ -163,14 +163,14 @@
         "priority": "high",
         "language": "english",
         "requires_human": true,
-        "confidence": 0.9,
-        "calibrated_confidence": 0.9,
+        "confidence": 0.9982,
+        "calibrated_confidence": null,
         "escalation_reason": "legal_or_account_closure_action",
-        "latency_ms": 1483.86,
-        "roundtrip_total_ms": 1488.81,
+        "latency_ms": 1521.64,
+        "roundtrip_total_ms": 1526.59,
         "model_version": "nexus-qlora-v1",
         "inference_mode": "neural",
-        "request_id": "b36d23f5-5a91-4837-8edc-b1d61bd6ecb3"
+        "request_id": "36bf8a86-23bb-44d9-a3c1-f81ca2f8b670"
       }
     },
     {
@@ -184,7 +184,7 @@
         "SmolLM Tokenizer (ChatML template applied)",
         "NEXUS-SLM Model Execution (neural)",
         "OutputParser (JSON substring extraction & taxonomy verification: PASSED)",
-        "HumanEscalationPolicy (Result: parse_or_schema_validation_failure)",
+        "HumanEscalationPolicy (Result: adversarial_prompt_injection_detected)",
         "Telemetry Logger (Trace ID recorded, content excluded)",
         "HTTP Response Delivered"
       ],
@@ -194,22 +194,22 @@
         "language": "english",
         "requires_human": true,
         "confidence": 0.0,
-        "calibrated_confidence": 0.0,
-        "escalation_reason": "parse_or_schema_validation_failure",
-        "latency_ms": 853.26,
-        "roundtrip_total_ms": 857.9,
+        "calibrated_confidence": null,
+        "escalation_reason": "adversarial_prompt_injection_detected",
+        "latency_ms": 840.5,
+        "roundtrip_total_ms": 845.12,
         "model_version": "nexus-qlora-v1",
         "inference_mode": "neural",
-        "request_id": "fd36b425-8aa8-47c7-b23f-b67a6837504e"
+        "request_id": "748d7349-42b3-452f-9cd0-ae4b6c150026"
       }
     }
   ],
   "telemetry_snapshot": {
-    "total_requests": 214,
-    "error_rate": 0.1028,
-    "p50_latency_ms": 1721.01,
-    "p95_latency_ms": 2318.14,
-    "human_escalation_rate": 0.5514
+    "total_requests": 750,
+    "error_rate": 0.168,
+    "p50_latency_ms": 42.02,
+    "p95_latency_ms": 2747.35,
+    "human_escalation_rate": 0.6147
   },
   "drift_status": "DRIFT_ALERT"
 }

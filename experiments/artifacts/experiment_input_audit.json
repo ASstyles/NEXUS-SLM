@@ -1,0 +1,1036 @@
+{
+  "file_hashes": {
+    "train_v1": "11df262072d7243f623bfd829b407a8dbd2c5a3087ed697a836a7152c7688967",
+    "val_v1": "2e349ad3b1330aec224c266460d2e4189b94138a1d63146a10bd8f45ea65508e",
+    "test_v1": "edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4",
+    "v2_train": "db392a62cfa41eb4115db1af674a64d0c5ba6dd6dc8d21baabd213245e1b388a",
+    "v2_val": "8c6e2fff62163c8c9ccad9b220488b4d87dd783c0f413ed4df4f5a3117a4891a",
+    "v2_test": "bbb0c028c0954f6dcda809d0eacb6d8be286d2e2f8e0a1ae943bab40fea149a5",
+    "challenge_70": "70b43711fd2f515bdd27d6daa8e604698a109f6093cdaea7f85bd584339dbc5b"
+  },
+  "audits": {
+    "train_v1": {
+      "name": "train_v1",
+      "count": 316,
+      "category_distribution": {
+        "technical_issue": 15,
+        "account_access": 24,
+        "password_reset": 22,
+        "delivery_issue": 22,
+        "payment_failure": 32,
+        "account_closure": 28,
+        "billing": 18,
+        "refund_request": 28,
+        "order_tracking": 21,
+        "subscription": 19,
+        "fraud_report": 20,
+        "order_cancel": 29,
+        "general_query": 18,
+        "product_complaint": 20
+      },
+      "priority_distribution": {
+        "medium": 123,
+        "high": 115,
+        "critical": 23,
+        "low": 55
+      },
+      "language_distribution": {
+        "hinglish": 108,
+        "english": 100,
+        "hindi": 108
+      },
+      "devanagari_script_count": 108,
+      "human_escalation_distribution": {
+        "false": 108,
+        "true": 208
+      },
+      "invalid_categories_count": 0,
+      "invalid_priorities_count": 0,
+      "invalid_languages_count": 0,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_total_excess": 0,
+      "conflicting_labels_count": 0,
+      "conflicting_labels": [],
+      "near_duplicate_count": 13,
+      "near_duplicates_sample": [
+        {
+          "id1": "ticket_000453",
+          "id2": "ticket_000747",
+          "sim": 0.867,
+          "t1": "\u092e \u0905\u092a\u0928 \u092a\u0938\u0935\u0930\u0921 \u092d\u0932 \u0917\u092f \u0939 \u0915\u092a\u092f \u0930\u0938\u091f \u0932\u0915 \u092e\u0930 \u0908\u092e\u0932 \u092a\u0930 \u092d\u091c",
+          "t2": "plz help \u092e \u0905\u092a\u0928 \u092a\u0938\u0935\u0930\u0921 \u092d\u0932 \u0917\u092f \u0939 \u0915\u092a\u092f \u0930\u0938\u091f \u0932\u0915 \u092e\u0930 \u0908\u092e\u0932 \u092a\u0930 ",
+          "c1": "password_reset",
+          "c2": "password_reset"
+        },
+        {
+          "id1": "ticket_000294",
+          "id2": "ticket_000604",
+          "sim": 0.867,
+          "t1": "plz help \u0916\u0930\u092c \u092a\u0930\u0921\u0915\u091f \u092e\u0932 \u0925 \u091c\u0938 \u092e\u0928 \u0932\u091f \u0926\u092f \u0930\u092b\u0921 \u0915 \u0915\u092f \u0938\u091f\u091f\u0938 ",
+          "t2": "\u0916\u0930\u092c \u092a\u0930\u0921\u0915\u091f \u092e\u0932 \u0925 \u091c\u0938 \u092e\u0928 \u0932\u091f \u0926\u092f \u0930\u092b\u0921 \u0915 \u0915\u092f \u0938\u091f\u091f\u0938 \u0939",
+          "c1": "refund_request",
+          "c2": "refund_request"
+        },
+        {
+          "id1": "ticket_001172",
+          "id2": "ticket_000240",
+          "sim": 0.857,
+          "t1": "plz help \u0928\u092f \u092a\u0938\u0935\u0930\u0921 \u0938\u091f \u0915\u0930\u0928 \u0915 \u0915\u0936\u0936 \u0915\u0930 \u0930\u0939 \u0939 \u0932\u0915\u0928 \u090f\u0930\u0930 \u0906 \u0930",
+          "t2": "\u0928\u092f \u092a\u0938\u0935\u0930\u0921 \u0938\u091f \u0915\u0930\u0928 \u0915 \u0915\u0936\u0936 \u0915\u0930 \u0930\u0939 \u0939 \u0932\u0915\u0928 \u090f\u0930\u0930 \u0906 \u0930\u0939 \u0939",
+          "c1": "password_reset",
+          "c2": "password_reset"
+        },
+        {
+          "id1": "ticket_000173",
+          "id2": "ticket_000303",
+          "sim": 0.867,
+          "t1": "plz help \u092e \u0905\u092a\u0928 \u0916\u0924 \u0938\u0925\u092f \u0930\u092a \u0938 \u0939\u091f\u0928 \u091a\u0939\u0924 \u0939 \u0914\u0930 \u0935\u092f\u0915\u0924\u0917\u0924 \u0921\u091f ",
+          "t2": "\u092e \u0905\u092a\u0928 \u0916\u0924 \u0938\u0925\u092f \u0930\u092a \u0938 \u0939\u091f\u0928 \u091a\u0939\u0924 \u0939 \u0914\u0930 \u0935\u092f\u0915\u0924\u0917\u0924 \u0921\u091f \u092e\u091f\u0928 \u091a\u0939\u0924 \u0939",
+          "c1": "account_closure",
+          "c2": "account_closure"
+        },
+        {
+          "id1": "ticket_000034",
+          "id2": "ticket_000297",
+          "sim": 0.882,
+          "t1": "\u0910\u092a \u092e \u0915\u0938\u0932 \u092c\u091f\u0928 \u0928\u0939 \u0926\u0916 \u0930\u0939 \u0939 \u0915\u092f \u0906\u092a \u0907\u0938 \u0911\u0930\u0921\u0930 \u0915 \u0930\u0915 \u0938\u0915\u0924 \u0939",
+          "t2": "hello sir \u0910\u092a \u092e \u0915\u0938\u0932 \u092c\u091f\u0928 \u0928\u0939 \u0926\u0916 \u0930\u0939 \u0939 \u0915\u092f \u0906\u092a \u0907\u0938 \u0911\u0930\u0921\u0930 \u0915 ",
+          "c1": "order_cancel",
+          "c2": "order_cancel"
+        }
+      ],
+      "mean_word_length": 13.5,
+      "mean_char_length": 75.7,
+      "provenance_breakdown": {
+        "synthetic": 316
+      }
+    },
+    "val_v1": {
+      "name": "val_v1",
+      "count": 44,
+      "category_distribution": {
+        "fraud_report": 3,
+        "refund_request": 3,
+        "subscription": 3,
+        "billing": 3,
+        "account_access": 3,
+        "delivery_issue": 3,
+        "general_query": 3,
+        "payment_failure": 4,
+        "password_reset": 3,
+        "order_tracking": 3,
+        "technical_issue": 3,
+        "account_closure": 3,
+        "product_complaint": 3,
+        "order_cancel": 4
+      },
+      "priority_distribution": {
+        "critical": 5,
+        "medium": 17,
+        "low": 8,
+        "high": 14
+      },
+      "language_distribution": {
+        "hindi": 14,
+        "english": 15,
+        "hinglish": 15
+      },
+      "devanagari_script_count": 14,
+      "human_escalation_distribution": {
+        "true": 29,
+        "false": 15
+      },
+      "invalid_categories_count": 0,
+      "invalid_priorities_count": 0,
+      "invalid_languages_count": 0,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_total_excess": 0,
+      "conflicting_labels_count": 0,
+      "conflicting_labels": [],
+      "near_duplicate_count": 0,
+      "near_duplicates_sample": [],
+      "mean_word_length": 12.6,
+      "mean_char_length": 68.1,
+      "provenance_breakdown": {
+        "synthetic": 44
+      }
+    },
+    "test_v1": {
+      "name": "test_v1",
+      "count": 42,
+      "category_distribution": {
+        "payment_failure": 3,
+        "refund_request": 3,
+        "account_access": 3,
+        "password_reset": 3,
+        "order_cancel": 3,
+        "order_tracking": 3,
+        "subscription": 3,
+        "billing": 3,
+        "technical_issue": 3,
+        "fraud_report": 3,
+        "delivery_issue": 3,
+        "account_closure": 3,
+        "product_complaint": 3,
+        "general_query": 3
+      },
+      "priority_distribution": {
+        "high": 16,
+        "medium": 16,
+        "low": 7,
+        "critical": 3
+      },
+      "language_distribution": {
+        "english": 14,
+        "hinglish": 14,
+        "hindi": 14
+      },
+      "devanagari_script_count": 14,
+      "human_escalation_distribution": {
+        "true": 17,
+        "false": 25
+      },
+      "invalid_categories_count": 0,
+      "invalid_priorities_count": 0,
+      "invalid_languages_count": 0,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_total_excess": 0,
+      "conflicting_labels_count": 0,
+      "conflicting_labels": [],
+      "near_duplicate_count": 0,
+      "near_duplicates_sample": [],
+      "mean_word_length": 12.5,
+      "mean_char_length": 70.0,
+      "provenance_breakdown": {
+        "curated": 42
+      }
+    },
+    "v2_train_1000": {
+      "name": "v2_train_1000",
+      "count": 1000,
+      "category_distribution": {
+        "order_tracking": 69,
+        "subscription": 67,
+        "delivery_issue": 79,
+        "product_complaint": 71,
+        "payment_failure": 76,
+        "password_reset": 67,
+        "account_closure": 76,
+        "fraud_report": 75,
+        "general_query": 70,
+        "refund_request": 77,
+        "order_cancel": 65,
+        "account_access": 73,
+        "technical_issue": 62,
+        "billing": 73
+      },
+      "priority_distribution": {
+        "low": 206,
+        "high": 199,
+        "medium": 533,
+        "critical": 62
+      },
+      "language_distribution": {
+        "english": 293,
+        "roman_hindi": 204,
+        "hindi": 251,
+        "hinglish": 252
+      },
+      "devanagari_script_count": 251,
+      "human_escalation_distribution": {
+        "false": 739,
+        "true": 261
+      },
+      "invalid_categories_count": 0,
+      "invalid_priorities_count": 0,
+      "invalid_languages_count": 0,
+      "exact_duplicate_groups": 220,
+      "exact_duplicate_total_excess": 470,
+      "conflicting_labels_count": 0,
+      "conflicting_labels": [],
+      "near_duplicate_count": 128,
+      "near_duplicates_sample": [
+        {
+          "id1": "v2_001663",
+          "id2": "v2_001377",
+          "sim": 0.909,
+          "t1": "\u092e\u0930 \u092a\u0924 \u092a\u0930 \u0915\u0908 \u0921\u0932\u0935\u0930 \u090f\u091c\u091f \u0928\u0939 \u0906\u092f \u092b\u0930 \u092d \u0938\u091f\u091f\u0938 \u0921\u0932\u0935\u0930 \u0939 \u091a\u0915 \u0939 \u0915",
+          "t2": "\u092e\u0930 \u092a\u0924 \u092a\u0930 \u0915\u0908 \u0921\u0932\u0935\u0930 \u090f\u091c\u091f \u0928\u0939 \u0906\u092f \u092b\u0930 \u092d \u0938\u091f\u091f\u0938 \u0921\u0932\u0935\u0930 \u0939 \u091a\u0915 \u0939 \u0915",
+          "c1": "delivery_issue",
+          "c2": "delivery_issue"
+        },
+        {
+          "id1": "v2_001033",
+          "id2": "v2_001168",
+          "sim": 0.923,
+          "t1": "i accidentally ordered the wrong size and color on",
+          "t2": "i accidentally ordered the wrong size and color on",
+          "c1": "order_cancel",
+          "c2": "order_cancel"
+        },
+        {
+          "id1": "v2_001033",
+          "id2": "v2_001123",
+          "sim": 0.923,
+          "t1": "i accidentally ordered the wrong size and color on",
+          "t2": "i accidentally ordered the wrong size and color on",
+          "c1": "order_cancel",
+          "c2": "order_cancel"
+        },
+        {
+          "id1": "v2_002201",
+          "id2": "v2_002193",
+          "sim": 0.905,
+          "t1": "\u092e\u0930 \u092a\u091c\u0915\u0924 \u0916\u0924 user_338gmailcom \u0915 \u092a\u0938\u0935\u0930\u0921 \u0938\u0939 \u0939\u0928 \u092a\u0930 \u092d \u0916\u0924 ",
+          "t2": "\u092e\u0930 \u092a\u091c\u0915\u0924 \u0916\u0924 user_399gmailcom \u0915 \u092a\u0938\u0935\u0930\u0921 \u0938\u0939 \u0939\u0928 \u092a\u0930 \u092d \u0916\u0924 ",
+          "c1": "account_access",
+          "c2": "account_access"
+        },
+        {
+          "id1": "v2_002201",
+          "id2": "v2_002393",
+          "sim": 0.905,
+          "t1": "\u092e\u0930 \u092a\u091c\u0915\u0924 \u0916\u0924 user_338gmailcom \u0915 \u092a\u0938\u0935\u0930\u0921 \u0938\u0939 \u0939\u0928 \u092a\u0930 \u092d \u0916\u0924 ",
+          "t2": "\u092e\u0930 \u092a\u091c\u0915\u0924 \u0916\u0924 user_282gmailcom \u0915 \u092a\u0938\u0935\u0930\u0921 \u0938\u0939 \u0939\u0928 \u092a\u0930 \u092d \u0916\u0924 ",
+          "c1": "account_access",
+          "c2": "account_access"
+        }
+      ],
+      "mean_word_length": 9.5,
+      "mean_char_length": 55.2,
+      "provenance_breakdown": {
+        "curated_multilingual_template_synthesis": 1000
+      }
+    },
+    "v2_val": {
+      "name": "v2_val",
+      "count": 500,
+      "category_distribution": {
+        "general_query": 30,
+        "order_cancel": 53,
+        "account_access": 42,
+        "billing": 38,
+        "order_tracking": 34,
+        "account_closure": 28,
+        "password_reset": 33,
+        "fraud_report": 27,
+        "subscription": 42,
+        "product_complaint": 35,
+        "delivery_issue": 32,
+        "technical_issue": 40,
+        "refund_request": 41,
+        "payment_failure": 25
+      },
+      "priority_distribution": {
+        "medium": 270,
+        "low": 117,
+        "high": 96,
+        "critical": 17
+      },
+      "language_distribution": {
+        "roman_hindi": 94,
+        "english": 156,
+        "hinglish": 134,
+        "hindi": 116
+      },
+      "devanagari_script_count": 116,
+      "human_escalation_distribution": {
+        "false": 387,
+        "true": 113
+      },
+      "invalid_categories_count": 0,
+      "invalid_priorities_count": 0,
+      "invalid_languages_count": 0,
+      "exact_duplicate_groups": 104,
+      "exact_duplicate_total_excess": 159,
+      "conflicting_labels_count": 0,
+      "conflicting_labels": [],
+      "near_duplicate_count": 39,
+      "near_duplicates_sample": [
+        {
+          "id1": "v2_000889",
+          "id2": "v2_000912",
+          "sim": 0.923,
+          "t1": "i accidentally ordered the wrong size and color on",
+          "t2": "i accidentally ordered the wrong size and color on",
+          "c1": "order_cancel",
+          "c2": "order_cancel"
+        },
+        {
+          "id1": "v2_002148",
+          "id2": "v2_002167",
+          "sim": 0.905,
+          "t1": "\u092e\u0930 \u092a\u091c\u0915\u0924 \u0916\u0924 user_245gmailcom \u0915 \u092a\u0938\u0935\u0930\u0921 \u0938\u0939 \u0939\u0928 \u092a\u0930 \u092d \u0916\u0924 ",
+          "t2": "\u092e\u0930 \u092a\u091c\u0915\u0924 \u0916\u0924 user_260gmailcom \u0915 \u092a\u0938\u0935\u0930\u0921 \u0938\u0939 \u0939\u0928 \u092a\u0930 \u092d \u0916\u0924 ",
+          "c1": "account_access",
+          "c2": "account_access"
+        },
+        {
+          "id1": "v2_000162",
+          "id2": "v2_000373",
+          "sim": 0.857,
+          "t1": "mera cred se paise kat gaya aur app pe failed bol ",
+          "t2": "mera razorpay se paise kat gaya aur app pe failed ",
+          "c1": "payment_failure",
+          "c2": "payment_failure"
+        },
+        {
+          "id1": "v2_003621",
+          "id2": "v2_003609",
+          "sim": 0.905,
+          "t1": "\u0911\u0930\u0921\u0930 ord413685 \u0915 \u0905\u0924\u092e \u092c\u0932 \u092e \u0921\u0932\u0935\u0930 \u0936\u0932\u0915 \u091c\u0921 \u0926\u092f \u0917\u092f \u0939 \u091c\u092c\u0915 ",
+          "t2": "\u0911\u0930\u0921\u0930 ord426908 \u0915 \u0905\u0924\u092e \u092c\u0932 \u092e \u0921\u0932\u0935\u0930 \u0936\u0932\u0915 \u091c\u0921 \u0926\u092f \u0917\u092f \u0939 \u091c\u092c\u0915 ",
+          "c1": "billing",
+          "c2": "billing"
+        },
+        {
+          "id1": "v2_003621",
+          "id2": "v2_003773",
+          "sim": 0.905,
+          "t1": "\u0911\u0930\u0921\u0930 ord413685 \u0915 \u0905\u0924\u092e \u092c\u0932 \u092e \u0921\u0932\u0935\u0930 \u0936\u0932\u0915 \u091c\u0921 \u0926\u092f \u0917\u092f \u0939 \u091c\u092c\u0915 ",
+          "t2": "\u0911\u0930\u0921\u0930 ord785216 \u0915 \u0905\u0924\u092e \u092c\u0932 \u092e \u0921\u0932\u0935\u0930 \u0936\u0932\u0915 \u091c\u0921 \u0926\u092f \u0917\u092f \u0939 \u091c\u092c\u0915 ",
+          "c1": "billing",
+          "c2": "billing"
+        }
+      ],
+      "mean_word_length": 10.2,
+      "mean_char_length": 58.8,
+      "provenance_breakdown": {
+        "curated_multilingual_template_synthesis": 500
+      }
+    },
+    "v2_test": {
+      "name": "v2_test",
+      "count": 492,
+      "category_distribution": {
+        "account_access": 40,
+        "refund_request": 40,
+        "billing": 26,
+        "password_reset": 41,
+        "order_cancel": 31,
+        "technical_issue": 31,
+        "fraud_report": 28,
+        "order_tracking": 30,
+        "delivery_issue": 34,
+        "product_complaint": 40,
+        "payment_failure": 46,
+        "subscription": 37,
+        "general_query": 35,
+        "account_closure": 33
+      },
+      "priority_distribution": {
+        "medium": 248,
+        "high": 101,
+        "critical": 25,
+        "low": 118
+      },
+      "language_distribution": {
+        "english": 163,
+        "hindi": 108,
+        "hinglish": 125,
+        "roman_hindi": 96
+      },
+      "devanagari_script_count": 108,
+      "human_escalation_distribution": {
+        "false": 366,
+        "true": 126
+      },
+      "invalid_categories_count": 0,
+      "invalid_priorities_count": 0,
+      "invalid_languages_count": 0,
+      "exact_duplicate_groups": 104,
+      "exact_duplicate_total_excess": 159,
+      "conflicting_labels_count": 0,
+      "conflicting_labels": [],
+      "near_duplicate_count": 53,
+      "near_duplicates_sample": [
+        {
+          "id1": "v2_002225",
+          "id2": "v2_002392",
+          "sim": 0.933,
+          "t1": "i have been trying to log into my registered accou",
+          "t2": "i have been trying to log into my registered accou",
+          "c1": "account_access",
+          "c2": "account_access"
+        },
+        {
+          "id1": "v2_002225",
+          "id2": "v2_002247",
+          "sim": 0.933,
+          "t1": "i have been trying to log into my registered accou",
+          "t2": "i have been trying to log into my registered accou",
+          "c1": "account_access",
+          "c2": "account_access"
+        },
+        {
+          "id1": "v2_002225",
+          "id2": "v2_002562",
+          "sim": 0.933,
+          "t1": "i have been trying to log into my registered accou",
+          "t2": "i have been trying to log into my registered accou",
+          "c1": "account_access",
+          "c2": "account_access"
+        },
+        {
+          "id1": "v2_002648",
+          "id2": "v2_002597",
+          "sim": 0.867,
+          "t1": "password reset link sent to my email user_324gmail",
+          "t2": "password reset link sent to my email user_202gmail",
+          "c1": "password_reset",
+          "c2": "password_reset"
+        },
+        {
+          "id1": "v2_002648",
+          "id2": "v2_002683",
+          "sim": 0.867,
+          "t1": "password reset link sent to my email user_324gmail",
+          "t2": "password reset link sent to my email user_789gmail",
+          "c1": "password_reset",
+          "c2": "password_reset"
+        }
+      ],
+      "mean_word_length": 9.8,
+      "mean_char_length": 57.2,
+      "provenance_breakdown": {
+        "curated_multilingual_template_synthesis": 492
+      }
+    },
+    "challenge_70": {
+      "name": "challenge_70",
+      "count": 70,
+      "category_distribution": {
+        "fraud_report": 17,
+        "account_access": 6,
+        "account_closure": 4,
+        "refund_request": 1,
+        "general_query": 15,
+        "delivery_issue": 6,
+        "payment_failure": 6,
+        "subscription": 1,
+        "billing": 6,
+        "password_reset": 2,
+        "product_complaint": 3,
+        "order_cancel": 1,
+        "technical_issue": 1,
+        "order_tracking": 1
+      },
+      "priority_distribution": {
+        "critical": 18,
+        "high": 32,
+        "medium": 9,
+        "low": 11
+      },
+      "language_distribution": {
+        "english": 53,
+        "hinglish": 11,
+        "hindi": 6
+      },
+      "devanagari_script_count": 6,
+      "human_escalation_distribution": {
+        "true": 60,
+        "false": 10
+      },
+      "invalid_categories_count": 0,
+      "invalid_priorities_count": 0,
+      "invalid_languages_count": 0,
+      "exact_duplicate_groups": 0,
+      "exact_duplicate_total_excess": 0,
+      "conflicting_labels_count": 0,
+      "conflicting_labels": [],
+      "near_duplicate_count": 0,
+      "near_duplicates_sample": [],
+      "mean_word_length": 14.1,
+      "mean_char_length": 84.8,
+      "provenance_breakdown": {
+        "unspecified": 70
+      }
+    }
+  },
+  "leakage_results": [
+    {
+      "train_set": "v2_train_1000",
+      "eval_set": "test_v1",
+      "exact_leakage_count": 0,
+      "near_leakage_count": 0,
+      "exact_leakages": [],
+      "near_leakages": [],
+      "is_leakage_free": true
+    },
+    {
+      "train_set": "v2_train_1000",
+      "eval_set": "val_v1",
+      "exact_leakage_count": 0,
+      "near_leakage_count": 0,
+      "exact_leakages": [],
+      "near_leakages": [],
+      "is_leakage_free": true
+    },
+    {
+      "train_set": "v2_train_1000",
+      "eval_set": "v2_val",
+      "exact_leakage_count": 894,
+      "near_leakage_count": 252,
+      "exact_leakages": [
+        {
+          "train_id": "v2_004814",
+          "eval_id": "v2_005128",
+          "train_text": "Defective product received",
+          "eval_text": "Defective product received....",
+          "train_cat": "product_complaint",
+          "eval_cat": "product_complaint"
+        },
+        {
+          "train_id": "v2_002767",
+          "eval_id": "v2_002910",
+          "train_text": "Security questions verification fails during password change process.",
+          "eval_text": "Security questions verification fails during password change process.",
+          "train_cat": "password_reset",
+          "eval_cat": "password_reset"
+        },
+        {
+          "train_id": "v2_005712",
+          "eval_id": "v2_005869",
+          "train_text": "\u0916\u093e\u0924\u093e \u092c\u0902\u0926 \u0915\u0930\u0947\u0902!!!",
+          "eval_text": "\u0916\u093e\u0924\u093e \u092c\u0902\u0926 \u0915\u0930\u0947\u0902",
+          "train_cat": "account_closure",
+          "eval_cat": "account_closure"
+        },
+        {
+          "train_id": "v2_002656",
+          "eval_id": "v2_002849",
+          "train_text": "Password bhool gaya",
+          "eval_text": "Password bhool gaya",
+          "train_cat": "password_reset",
+          "eval_cat": "password_reset"
+        },
+        {
+          "train_id": "v2_004455",
+          "eval_id": "v2_004669",
+          "train_text": "\u0915\u093f\u0938\u0940 \u0905\u091c\u094d\u091e\u093e\u0924 \u0935\u094d\u092f\u0915\u094d\u0924\u093f \u0928\u0947 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u0938\u0947 \u0905\u0928\u094d\u092f \u092a\u0924\u0947 \u092a\u0930 \u0938\u093e\u092e\u093e\u0928 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930 \u0926\u093f\u092f\u093e \u0939\u0948, \u0916\u093e\u0924\u093e \u092b\u094d\u0930\u0940\u091c \u0915\u0930\u0947\u0902\u0964",
+          "eval_text": "\u0915\u093f\u0938\u0940 \u0905\u091c\u094d\u091e\u093e\u0924 \u0935\u094d\u092f\u0915\u094d\u0924\u093f \u0928\u0947 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u0938\u0947 \u0905\u0928\u094d\u092f \u092a\u0924\u0947 \u092a\u0930 \u0938\u093e\u092e\u093e\u0928 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930 \u0926\u093f\u092f\u093e \u0939\u0948, \u0916\u093e\u0924\u093e \u092b\u094d\u0930\u0940\u091c \u0915\u0930\u0947\u0902\u0964",
+          "train_cat": "fraud_report",
+          "eval_cat": "fraud_report"
+        }
+      ],
+      "near_leakages": [
+        {
+          "train_id": "v2_004100",
+          "eval_id": "v2_004030",
+          "similarity": 0.833,
+          "train_text": "How do I pause or cancel my annual premium subscription plan?",
+          "eval_text": "How do I pause or cancle my annual premium subscription plan?",
+          "train_cat": "subscription",
+          "eval_cat": "subscription"
+        },
+        {
+          "train_id": "v2_001720",
+          "eval_id": "v2_001999",
+          "similarity": 0.81,
+          "train_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-899081 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Hyderabad \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "eval_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-144374 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Ahmedabad \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001033",
+          "eval_id": "v2_000889",
+          "similarity": 0.923,
+          "train_text": "I accidentally ordered the wrong size and color on order ORD-425387. The shipment has not been dispatched yet. Please cancel this order and ensure I am not charged for delivery.",
+          "eval_text": "I accidentally ordered the wrong size and color on order ORD-322713. The shipment has not been dispatched yet. Please cancel this order and ensure I am not charged for delivery.",
+          "train_cat": "order_cancel",
+          "eval_cat": "order_cancel"
+        },
+        {
+          "train_id": "v2_001033",
+          "eval_id": "v2_000912",
+          "similarity": 0.923,
+          "train_text": "I accidentally ordered the wrong size and color on order ORD-425387. The shipment has not been dispatched yet. Please cancel this order and ensure I am not charged for delivery.",
+          "eval_text": "I accidentally ordered the wrong size and color on order ORD-969742. The shipment has not been dispatched yet. Please cancel this order and ensure I am not charged for delivery.",
+          "train_cat": "order_cancel",
+          "eval_cat": "order_cancel"
+        },
+        {
+          "train_id": "v2_002201",
+          "eval_id": "v2_002148",
+          "similarity": 0.905,
+          "train_text": "\u092e\u0947\u0930\u0947 \u092a\u0902\u091c\u0940\u0915\u0943\u0924 \u0916\u093e\u0924\u0947 user_338@gmail.com \u0915\u093e \u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0938\u0939\u0940 \u0939\u094b\u0928\u0947 \u092a\u0930 \u092d\u0940 \u0916\u093e\u0924\u093e \u0928\u093f\u0937\u094d\u0915\u094d\u0930\u093f\u092f \u0926\u093f\u0916\u093e \u0930\u0939\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u092e\u0941\u091d\u0947 \u0932\u0949\u0917\u093f\u0928 \u090f\u0915\u094d\u0938\u0947\u0938 \u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u0930\u0947\u0902\u0964",
+          "eval_text": "\u092e\u0947\u0930\u0947 \u092a\u0902\u091c\u0940\u0915\u0943\u0924 \u0916\u093e\u0924\u0947 user_245@gmail.com \u0915\u093e \u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0938\u0939\u0940 \u0939\u094b\u0928\u0947 \u092a\u0930 \u092d\u0940 \u0916\u093e\u0924\u093e \u0928\u093f\u0937\u094d\u0915\u094d\u0930\u093f\u092f \u0926\u093f\u0916\u093e \u0930\u0939\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u092e\u0941\u091d\u0947 \u0932\u0949\u0917\u093f\u0928 \u090f\u0915\u094d\u0938\u0947\u0938 \u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u0930\u0947\u0902\u0964",
+          "train_cat": "account_access",
+          "eval_cat": "account_access"
+        }
+      ],
+      "is_leakage_free": false
+    },
+    {
+      "train_set": "v2_train_1000",
+      "eval_set": "v2_test",
+      "exact_leakage_count": 915,
+      "near_leakage_count": 217,
+      "exact_leakages": [
+        {
+          "train_id": "v2_001995",
+          "eval_id": "v2_001756",
+          "train_text": "Delivery status please",
+          "eval_text": "Delivery status please",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001995",
+          "eval_id": "v2_001946",
+          "train_text": "Delivery status please",
+          "eval_text": "Delivery status please",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001995",
+          "eval_id": "v2_001992",
+          "train_text": "Delivery status please",
+          "eval_text": "Delivery status please",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_004814",
+          "eval_id": "v2_004748",
+          "train_text": "Defective product received",
+          "eval_text": "Defective product received",
+          "train_cat": "product_complaint",
+          "eval_cat": "product_complaint"
+        },
+        {
+          "train_id": "v2_000108",
+          "eval_id": "v2_000139",
+          "train_text": "Payment reject hua checkout pe but paise deduct ho gaye, please check karo....",
+          "eval_text": "Payment reject hua checkout pe but paise deduct ho gaye, please check karo.",
+          "train_cat": "payment_failure",
+          "eval_cat": "payment_failure"
+        }
+      ],
+      "near_leakages": [
+        {
+          "train_id": "v2_001720",
+          "eval_id": "v2_002134",
+          "similarity": 0.81,
+          "train_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-899081 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Hyderabad \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "eval_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-932830 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Pune \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964!!!",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001720",
+          "eval_id": "v2_001888",
+          "similarity": 0.81,
+          "train_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-899081 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Hyderabad \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "eval_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-947352 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Bengaluru \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001663",
+          "eval_id": "v2_001576",
+          "similarity": 0.909,
+          "train_text": "\u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u094b\u0908 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u090f\u091c\u0947\u0902\u091f \u0928\u0939\u0940\u0902 \u0906\u092f\u093e \u092b\u093f\u0930 \u092d\u0940 \u0938\u094d\u091f\u0947\u091f\u0938 \u0921\u093f\u0932\u0940\u0935\u0930 \u0939\u094b \u091a\u0941\u0915\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u0906\u0926\u0947\u0936 ORD-426804 \u0915\u0947 \u0938\u0902\u092c\u0902\u0927 \u092e\u0947\u0902 \u091c\u093e\u0902\u091a \u0915\u0930\u0947\u0902\u0964",
+          "eval_text": "\u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u094b\u0908 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u090f\u091c\u0947\u0902\u091f \u0928\u0939\u0940\u0902 \u0906\u092f\u093e \u092b\u093f\u0930 \u092d\u0940 \u0938\u094d\u091f\u0947\u091f\u0938 \u0921\u093f\u0932\u0940\u0935\u0930 \u0939\u094b \u091a\u0941\u0915\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u0906\u0926\u0947\u0936 ORD-217791 \u0915\u0947 \u0938\u0902\u092c\u0902\u0927 \u092e\u0947\u0902 \u091c\u093e\u0902\u091a \u0915\u0930\u0947\u0902\u0964",
+          "train_cat": "delivery_issue",
+          "eval_cat": "delivery_issue"
+        },
+        {
+          "train_id": "v2_001663",
+          "eval_id": "v2_001701",
+          "similarity": 0.909,
+          "train_text": "\u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u094b\u0908 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u090f\u091c\u0947\u0902\u091f \u0928\u0939\u0940\u0902 \u0906\u092f\u093e \u092b\u093f\u0930 \u092d\u0940 \u0938\u094d\u091f\u0947\u091f\u0938 \u0921\u093f\u0932\u0940\u0935\u0930 \u0939\u094b \u091a\u0941\u0915\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u0906\u0926\u0947\u0936 ORD-426804 \u0915\u0947 \u0938\u0902\u092c\u0902\u0927 \u092e\u0947\u0902 \u091c\u093e\u0902\u091a \u0915\u0930\u0947\u0902\u0964",
+          "eval_text": "\u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u094b\u0908 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u090f\u091c\u0947\u0902\u091f \u0928\u0939\u0940\u0902 \u0906\u092f\u093e \u092b\u093f\u0930 \u092d\u0940 \u0938\u094d\u091f\u0947\u091f\u0938 \u0921\u093f\u0932\u0940\u0935\u0930 \u0939\u094b \u091a\u0941\u0915\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u0906\u0926\u0947\u0936 ORD-753887 \u0915\u0947 \u0938\u0902\u092c\u0902\u0927 \u092e\u0947\u0902 \u091c\u093e\u0902\u091a \u0915\u0930\u0947\u0902\u0964",
+          "train_cat": "delivery_issue",
+          "eval_cat": "delivery_issue"
+        },
+        {
+          "train_id": "v2_002101",
+          "eval_id": "v2_001989",
+          "similarity": 0.857,
+          "train_text": "Mera order ORD-440215 abhi kahan par hai? Tracking link update nahi ho rahi.",
+          "eval_text": "Mera order ORD-679383 abhi kahan par hai? Tracking link update nahi ho rahi.",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        }
+      ],
+      "is_leakage_free": false
+    },
+    {
+      "train_set": "v2_train_1000",
+      "eval_set": "challenge_70",
+      "exact_leakage_count": 0,
+      "near_leakage_count": 0,
+      "exact_leakages": [],
+      "near_leakages": [],
+      "is_leakage_free": true
+    },
+    {
+      "train_set": "train_v1",
+      "eval_set": "test_v1",
+      "exact_leakage_count": 0,
+      "near_leakage_count": 0,
+      "exact_leakages": [],
+      "near_leakages": [],
+      "is_leakage_free": true
+    },
+    {
+      "train_set": "train_v1",
+      "eval_set": "val_v1",
+      "exact_leakage_count": 0,
+      "near_leakage_count": 8,
+      "exact_leakages": [],
+      "near_leakages": [
+        {
+          "train_id": "ticket_000444",
+          "eval_id": "ticket_000183",
+          "similarity": 0.833,
+          "train_text": "hey team \u0915\u093f\u0938\u0940 \u0928\u0947 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u092e\u0947\u0902 \u0905\u0928\u0927\u093f\u0915\u0943\u0924 \u0930\u0942\u092a \u0938\u0947 \u0932\u0949\u0917\u093f\u0928 \u0915\u0930\u0915\u0947 \u092b\u094b\u0928 \u0928\u0902\u092c\u0930 \u092c\u0926\u0932 \u0926\u093f\u092f\u093e \u0939\u0948\u0964 \ud83d\ude4f",
+          "eval_text": "bro \u0915\u093f\u0938\u0940 \u0928\u0947 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u092e\u0947\u0902 \u0905\u0928\u0927\u093f\u0915\u0943\u0924 \u0930\u0942\u092a \u0938\u0947 \u0932\u0949\u0917\u093f\u0928 \u0915\u0930\u0915\u0947 \u092b\u094b\u0928 \u0928\u0902\u092c\u0930 \u092c\u0926\u0932 \u0926\u093f\u092f\u093e \u0939\u0948\u0964 \ud83d\ude4f",
+          "train_cat": "fraud_report",
+          "eval_cat": "fraud_report"
+        },
+        {
+          "train_id": "ticket_000753",
+          "eval_id": "ticket_000183",
+          "similarity": 0.833,
+          "train_text": "hello sir \u0915\u093f\u0938\u0940 \u0928\u0947 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u092e\u0947\u0902 \u0905\u0928\u0927\u093f\u0915\u0943\u0924 \u0930\u0942\u092a \u0938\u0947 \u0932\u0949\u0917\u093f\u0928 \u0915\u0930\u0915\u0947 \u092b\u094b\u0928 \u0928\u0902\u092c\u0930 \u092c\u0926\u0932 \u0926\u093f\u092f\u093e \u0939\u0948\u0964 !!",
+          "eval_text": "bro \u0915\u093f\u0938\u0940 \u0928\u0947 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u092e\u0947\u0902 \u0905\u0928\u0927\u093f\u0915\u0943\u0924 \u0930\u0942\u092a \u0938\u0947 \u0932\u0949\u0917\u093f\u0928 \u0915\u0930\u0915\u0947 \u092b\u094b\u0928 \u0928\u0902\u092c\u0930 \u092c\u0926\u0932 \u0926\u093f\u092f\u093e \u0939\u0948\u0964 \ud83d\ude4f",
+          "train_cat": "fraud_report",
+          "eval_cat": "fraud_report"
+        },
+        {
+          "train_id": "ticket_000669",
+          "eval_id": "ticket_000144",
+          "similarity": 0.818,
+          "train_text": "plz help Family plan me upgrade karne ka process kya hai? \u26a0\ufe0f",
+          "eval_text": "Family plan me upgrade karne ka process kya hai?",
+          "train_cat": "subscription",
+          "eval_cat": "subscription"
+        },
+        {
+          "train_id": "ticket_000021",
+          "eval_id": "ticket_000273",
+          "similarity": 0.818,
+          "train_text": "\u092e\u0948\u0902 \u0905\u092a\u0928\u093e \u092e\u093e\u0938\u093f\u0915 \u092a\u094d\u0930\u0940\u092e\u093f\u092f\u092e \u0938\u092c\u094d\u0938\u0915\u094d\u0930\u093f\u092a\u094d\u0936\u0928 \u0930\u0926\u094d\u0926 \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0924\u093e \u0939\u0942\u0901\u0964",
+          "eval_text": "hey team \u092e\u0948\u0902 \u0905\u092a\u0928\u093e \u092e\u093e\u0938\u093f\u0915 \u092a\u094d\u0930\u0940\u092e\u093f\u092f\u092e \u0938\u092c\u094d\u0938\u0915\u094d\u0930\u093f\u092a\u094d\u0936\u0928 \u0930\u0926\u094d\u0926 \u0915\u0930\u0928\u093e \u091a\u093e\u0939\u0924\u093e \u0939\u0942\u0901\u0964 \ud83d\ude2d",
+          "train_cat": "subscription",
+          "eval_cat": "subscription"
+        },
+        {
+          "train_id": "ticket_000034",
+          "eval_id": "ticket_000985",
+          "similarity": 0.882,
+          "train_text": "\u0910\u092a \u092e\u0947\u0902 \u0915\u0948\u0902\u0938\u093f\u0932 \u092c\u091f\u0928 \u0928\u0939\u0940\u0902 \u0926\u093f\u0916 \u0930\u0939\u093e \u0939\u0948, \u0915\u094d\u092f\u093e \u0906\u092a \u0907\u0938 \u0911\u0930\u094d\u0921\u0930 \u0915\u094b \u0930\u094b\u0915 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902?",
+          "eval_text": "plz help \u0910\u092a \u092e\u0947\u0902 \u0915\u0948\u0902\u0938\u093f\u0932 \u092c\u091f\u0928 \u0928\u0939\u0940\u0902 \u0926\u093f\u0916 \u0930\u0939\u093e \u0939\u0948, \u0915\u094d\u092f\u093e \u0906\u092a \u0907\u0938 \u0911\u0930\u094d\u0921\u0930 \u0915\u094b \u0930\u094b\u0915 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902? \u26a0\ufe0f",
+          "train_cat": "order_cancel",
+          "eval_cat": "order_cancel"
+        }
+      ],
+      "is_leakage_free": false
+    },
+    {
+      "train_set": "v2_train",
+      "eval_set": "test_v1",
+      "exact_leakage_count": 0,
+      "near_leakage_count": 0,
+      "exact_leakages": [],
+      "near_leakages": [],
+      "is_leakage_free": true
+    },
+    {
+      "train_set": "v2_train",
+      "eval_set": "v2_val",
+      "exact_leakage_count": 4455,
+      "near_leakage_count": 1270,
+      "exact_leakages": [
+        {
+          "train_id": "v2_004814",
+          "eval_id": "v2_005128",
+          "train_text": "Defective product received",
+          "eval_text": "Defective product received....",
+          "train_cat": "product_complaint",
+          "eval_cat": "product_complaint"
+        },
+        {
+          "train_id": "v2_002767",
+          "eval_id": "v2_002910",
+          "train_text": "Security questions verification fails during password change process.",
+          "eval_text": "Security questions verification fails during password change process.",
+          "train_cat": "password_reset",
+          "eval_cat": "password_reset"
+        },
+        {
+          "train_id": "v2_005712",
+          "eval_id": "v2_005869",
+          "train_text": "\u0916\u093e\u0924\u093e \u092c\u0902\u0926 \u0915\u0930\u0947\u0902!!!",
+          "eval_text": "\u0916\u093e\u0924\u093e \u092c\u0902\u0926 \u0915\u0930\u0947\u0902",
+          "train_cat": "account_closure",
+          "eval_cat": "account_closure"
+        },
+        {
+          "train_id": "v2_002656",
+          "eval_id": "v2_002849",
+          "train_text": "Password bhool gaya",
+          "eval_text": "Password bhool gaya",
+          "train_cat": "password_reset",
+          "eval_cat": "password_reset"
+        },
+        {
+          "train_id": "v2_004455",
+          "eval_id": "v2_004669",
+          "train_text": "\u0915\u093f\u0938\u0940 \u0905\u091c\u094d\u091e\u093e\u0924 \u0935\u094d\u092f\u0915\u094d\u0924\u093f \u0928\u0947 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u0938\u0947 \u0905\u0928\u094d\u092f \u092a\u0924\u0947 \u092a\u0930 \u0938\u093e\u092e\u093e\u0928 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930 \u0926\u093f\u092f\u093e \u0939\u0948, \u0916\u093e\u0924\u093e \u092b\u094d\u0930\u0940\u091c \u0915\u0930\u0947\u0902\u0964",
+          "eval_text": "\u0915\u093f\u0938\u0940 \u0905\u091c\u094d\u091e\u093e\u0924 \u0935\u094d\u092f\u0915\u094d\u0924\u093f \u0928\u0947 \u092e\u0947\u0930\u0947 \u0916\u093e\u0924\u0947 \u0938\u0947 \u0905\u0928\u094d\u092f \u092a\u0924\u0947 \u092a\u0930 \u0938\u093e\u092e\u093e\u0928 \u0911\u0930\u094d\u0921\u0930 \u0915\u0930 \u0926\u093f\u092f\u093e \u0939\u0948, \u0916\u093e\u0924\u093e \u092b\u094d\u0930\u0940\u091c \u0915\u0930\u0947\u0902\u0964",
+          "train_cat": "fraud_report",
+          "eval_cat": "fraud_report"
+        }
+      ],
+      "near_leakages": [
+        {
+          "train_id": "v2_004100",
+          "eval_id": "v2_004030",
+          "similarity": 0.833,
+          "train_text": "How do I pause or cancel my annual premium subscription plan?",
+          "eval_text": "How do I pause or cancle my annual premium subscription plan?",
+          "train_cat": "subscription",
+          "eval_cat": "subscription"
+        },
+        {
+          "train_id": "v2_001720",
+          "eval_id": "v2_001999",
+          "similarity": 0.81,
+          "train_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-899081 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Hyderabad \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "eval_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-144374 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Ahmedabad \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001033",
+          "eval_id": "v2_000889",
+          "similarity": 0.923,
+          "train_text": "I accidentally ordered the wrong size and color on order ORD-425387. The shipment has not been dispatched yet. Please cancel this order and ensure I am not charged for delivery.",
+          "eval_text": "I accidentally ordered the wrong size and color on order ORD-322713. The shipment has not been dispatched yet. Please cancel this order and ensure I am not charged for delivery.",
+          "train_cat": "order_cancel",
+          "eval_cat": "order_cancel"
+        },
+        {
+          "train_id": "v2_001033",
+          "eval_id": "v2_000912",
+          "similarity": 0.923,
+          "train_text": "I accidentally ordered the wrong size and color on order ORD-425387. The shipment has not been dispatched yet. Please cancel this order and ensure I am not charged for delivery.",
+          "eval_text": "I accidentally ordered the wrong size and color on order ORD-969742. The shipment has not been dispatched yet. Please cancel this order and ensure I am not charged for delivery.",
+          "train_cat": "order_cancel",
+          "eval_cat": "order_cancel"
+        },
+        {
+          "train_id": "v2_002201",
+          "eval_id": "v2_002148",
+          "similarity": 0.905,
+          "train_text": "\u092e\u0947\u0930\u0947 \u092a\u0902\u091c\u0940\u0915\u0943\u0924 \u0916\u093e\u0924\u0947 user_338@gmail.com \u0915\u093e \u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0938\u0939\u0940 \u0939\u094b\u0928\u0947 \u092a\u0930 \u092d\u0940 \u0916\u093e\u0924\u093e \u0928\u093f\u0937\u094d\u0915\u094d\u0930\u093f\u092f \u0926\u093f\u0916\u093e \u0930\u0939\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u092e\u0941\u091d\u0947 \u0932\u0949\u0917\u093f\u0928 \u090f\u0915\u094d\u0938\u0947\u0938 \u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u0930\u0947\u0902\u0964",
+          "eval_text": "\u092e\u0947\u0930\u0947 \u092a\u0902\u091c\u0940\u0915\u0943\u0924 \u0916\u093e\u0924\u0947 user_245@gmail.com \u0915\u093e \u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0938\u0939\u0940 \u0939\u094b\u0928\u0947 \u092a\u0930 \u092d\u0940 \u0916\u093e\u0924\u093e \u0928\u093f\u0937\u094d\u0915\u094d\u0930\u093f\u092f \u0926\u093f\u0916\u093e \u0930\u0939\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u092e\u0941\u091d\u0947 \u0932\u0949\u0917\u093f\u0928 \u090f\u0915\u094d\u0938\u0947\u0938 \u092a\u094d\u0930\u0926\u093e\u0928 \u0915\u0930\u0947\u0902\u0964",
+          "train_cat": "account_access",
+          "eval_cat": "account_access"
+        }
+      ],
+      "is_leakage_free": false
+    },
+    {
+      "train_set": "v2_train",
+      "eval_set": "v2_test",
+      "exact_leakage_count": 4545,
+      "near_leakage_count": 1079,
+      "exact_leakages": [
+        {
+          "train_id": "v2_001995",
+          "eval_id": "v2_001756",
+          "train_text": "Delivery status please",
+          "eval_text": "Delivery status please",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001995",
+          "eval_id": "v2_001946",
+          "train_text": "Delivery status please",
+          "eval_text": "Delivery status please",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001995",
+          "eval_id": "v2_001992",
+          "train_text": "Delivery status please",
+          "eval_text": "Delivery status please",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_004814",
+          "eval_id": "v2_004748",
+          "train_text": "Defective product received",
+          "eval_text": "Defective product received",
+          "train_cat": "product_complaint",
+          "eval_cat": "product_complaint"
+        },
+        {
+          "train_id": "v2_000108",
+          "eval_id": "v2_000139",
+          "train_text": "Payment reject hua checkout pe but paise deduct ho gaye, please check karo....",
+          "eval_text": "Payment reject hua checkout pe but paise deduct ho gaye, please check karo.",
+          "train_cat": "payment_failure",
+          "eval_cat": "payment_failure"
+        }
+      ],
+      "near_leakages": [
+        {
+          "train_id": "v2_001720",
+          "eval_id": "v2_002134",
+          "similarity": 0.81,
+          "train_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-899081 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Hyderabad \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "eval_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-932830 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Pune \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964!!!",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001720",
+          "eval_id": "v2_001888",
+          "similarity": 0.81,
+          "train_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-899081 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Hyderabad \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "eval_text": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-947352 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Bengaluru \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u093f\u0938 \u0924\u093e\u0930\u0940\u0916 \u0924\u0915 \u092a\u0939\u0941\u0902\u091a\u0947\u0917\u093e\u0964",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        },
+        {
+          "train_id": "v2_001663",
+          "eval_id": "v2_001576",
+          "similarity": 0.909,
+          "train_text": "\u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u094b\u0908 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u090f\u091c\u0947\u0902\u091f \u0928\u0939\u0940\u0902 \u0906\u092f\u093e \u092b\u093f\u0930 \u092d\u0940 \u0938\u094d\u091f\u0947\u091f\u0938 \u0921\u093f\u0932\u0940\u0935\u0930 \u0939\u094b \u091a\u0941\u0915\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u0906\u0926\u0947\u0936 ORD-426804 \u0915\u0947 \u0938\u0902\u092c\u0902\u0927 \u092e\u0947\u0902 \u091c\u093e\u0902\u091a \u0915\u0930\u0947\u0902\u0964",
+          "eval_text": "\u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u094b\u0908 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u090f\u091c\u0947\u0902\u091f \u0928\u0939\u0940\u0902 \u0906\u092f\u093e \u092b\u093f\u0930 \u092d\u0940 \u0938\u094d\u091f\u0947\u091f\u0938 \u0921\u093f\u0932\u0940\u0935\u0930 \u0939\u094b \u091a\u0941\u0915\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u0906\u0926\u0947\u0936 ORD-217791 \u0915\u0947 \u0938\u0902\u092c\u0902\u0927 \u092e\u0947\u0902 \u091c\u093e\u0902\u091a \u0915\u0930\u0947\u0902\u0964",
+          "train_cat": "delivery_issue",
+          "eval_cat": "delivery_issue"
+        },
+        {
+          "train_id": "v2_001663",
+          "eval_id": "v2_001701",
+          "similarity": 0.909,
+          "train_text": "\u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u094b\u0908 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u090f\u091c\u0947\u0902\u091f \u0928\u0939\u0940\u0902 \u0906\u092f\u093e \u092b\u093f\u0930 \u092d\u0940 \u0938\u094d\u091f\u0947\u091f\u0938 \u0921\u093f\u0932\u0940\u0935\u0930 \u0939\u094b \u091a\u0941\u0915\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u0906\u0926\u0947\u0936 ORD-426804 \u0915\u0947 \u0938\u0902\u092c\u0902\u0927 \u092e\u0947\u0902 \u091c\u093e\u0902\u091a \u0915\u0930\u0947\u0902\u0964",
+          "eval_text": "\u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930 \u0915\u094b\u0908 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u090f\u091c\u0947\u0902\u091f \u0928\u0939\u0940\u0902 \u0906\u092f\u093e \u092b\u093f\u0930 \u092d\u0940 \u0938\u094d\u091f\u0947\u091f\u0938 \u0921\u093f\u0932\u0940\u0935\u0930 \u0939\u094b \u091a\u0941\u0915\u093e \u0939\u0948\u0964 \u0915\u0943\u092a\u092f\u093e \u0906\u0926\u0947\u0936 ORD-753887 \u0915\u0947 \u0938\u0902\u092c\u0902\u0927 \u092e\u0947\u0902 \u091c\u093e\u0902\u091a \u0915\u0930\u0947\u0902\u0964",
+          "train_cat": "delivery_issue",
+          "eval_cat": "delivery_issue"
+        },
+        {
+          "train_id": "v2_002101",
+          "eval_id": "v2_001989",
+          "similarity": 0.857,
+          "train_text": "Mera order ORD-440215 abhi kahan par hai? Tracking link update nahi ho rahi.",
+          "eval_text": "Mera order ORD-679383 abhi kahan par hai? Tracking link update nahi ho rahi.",
+          "train_cat": "order_tracking",
+          "eval_cat": "order_tracking"
+        }
+      ],
+      "is_leakage_free": false
+    }
+  ]
+}

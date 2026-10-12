@@ -201,6 +201,127 @@
       "macro_f1": 0.88
     },
     "deployment_status": "STAGING",
-    "registered_at": "2026-10-09T17:40:37.755671"
+    "registered_at": "2026-10-12T15:44:11.975005"
+  },
+  {
+    "version": "qwen25_05b_lora_seed42_int8",
+    "status": "experimental",
+    "lifecycle_stage": "experimental",
+    "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "adapter_path": "models/qwen25_05b_lora_seed42_int8",
+    "model_hash": "sha256_d38a4d687101c2529da7ad38a00d9fdfc69d113902ec6609e92877cfef61080f",
+    "dataset_version": "validation_n44",
+    "quantization": "onnx_dynamic_int8",
+    "training_config": {
+      "source_adapter": "models/qwen25_05b_lora_seed42",
+      "quantization_pipeline": "scripts/optimization/quantize_qwen_onnx.py",
+      "engine": "optimum.onnxruntime",
+      "qconfig": "AutoQuantizationConfig.avx512_vnni(is_static=False, per_channel=False)"
+    },
+    "evaluation_results": {
+      "model_name": "NEXUS-Qwen2.5-0.5B-LoRA-INT8",
+      "validation_sample_count": 44,
+      "macro_f1": 0.1823,
+      "weighted_f1": 0.2036,
+      "category_accuracy": 0.1818,
+      "json_validity_rate": 0.4091,
+      "exact_match_accuracy": 0.0682,
+      "hindi_accuracy": 0.0,
+      "high_risk_challenge_recall": 1.0,
+      "false_negatives": 0
+    },
+    "hardware_benchmark": {
+      "latency_p50_ms": 1568.7,
+      "latency_p95_ms": 2637.6,
+      "mean_latency_ms": 1753.3,
+      "model_artifact_size_mb": 488.19,
+      "peak_ram_mb": 1294.67,
+      "startup_time_sec": 3.14
+    },
+    "selection_rationale": "Retained as experimental candidate. ONNX dynamic INT8 quantization compressed artifact size from ~1.98 GB to 488 MB (4.05x reduction) and lowered peak RAM to 1294.7 MB (< 2048 MB SLA). However, dynamic per-tensor activation quantization caused severe quality collapse on causal autoregressive decoding (Macro-F1 fell from 0.8974 to 0.1823, JSON validity fell from 100% to 40.9%, and Hindi accuracy collapsed to 0.0%). All quality gates FAILED. Production model nexus-qlora-v1 remains active.",
+    "registered_at": "2026-10-12T14:53:00Z",
+    "updated_at": "2026-10-12T14:53:00Z"
+  },
+  {
+    "version": "qwen25_05b_lora_seed42_q4_k_m",
+    "status": "experimental",
+    "lifecycle_stage": "experimental",
+    "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "adapter_path": "models/qwen25_05b_lora_seed42_gguf_q4_k_m/qwen25_05b_lora_seed42_q4_k_m.gguf",
+    "model_hash": "sha256_69a7c3d640566738cbeaafa2400ebc5d9e19d5d3034e045369bb018e86a0a22d",
+    "dataset_version": "validation_n44",
+    "quantization": "gguf_weight_only_q4_k_m",
+    "training_config": {
+      "source_adapter": "models/qwen25_05b_lora_seed42",
+      "quantization_pipeline": "scripts/optimization/quantize_qwen_gguf.py",
+      "engine": "llama.cpp",
+      "qtype": "Q4_K_M (k-quant mixtures)"
+    },
+    "evaluation_results": {
+      "model_name": "NEXUS-Qwen2.5-0.5B-LoRA-GGUF-Q4_K_M",
+      "validation_sample_count": 44,
+      "macro_f1": 0.8449,
+      "weighted_f1": 0.8519,
+      "category_accuracy": 0.8636,
+      "json_validity_rate": 0.9773,
+      "exact_match_accuracy": 0.4318,
+      "hindi_accuracy": 0.9286,
+      "hinglish_accuracy": 0.8667,
+      "english_accuracy": 0.8,
+      "high_risk_challenge_recall": 1.0,
+      "false_negatives": 0
+    },
+    "hardware_benchmark": {
+      "latency_p50_ms": 1042.6,
+      "latency_p95_ms": 1266.8,
+      "mean_latency_ms": 1050.8,
+      "model_artifact_size_mb": 379.38,
+      "peak_ram_mb": 1385.23,
+      "startup_time_sec": 0.69
+    },
+    "selection_rationale": "Evaluated candidate. Weight-only 4-bit quantization with k-quant mixtures preserves activation dynamics. Macro-F1: 0.8449 (vs 0.55 gate), Hindi accuracy: 92.86% (vs 50% gate), JSON validity: 97.73% (vs 95% gate), Challenge recall: 1.00 (0 FN), CPU P95 latency: 1266.8 ms (vs 2500 ms SLA, 3.24x faster than FP32), Peak RAM: 1385.2 MB (< 2048 MB SLA). Passes all 6 acceptance gates. Retained as experimental per governance rules; ready for staging review.",
+    "registered_at": "2026-10-12T15:20:00Z",
+    "updated_at": "2026-10-12T15:20:00Z"
+  },
+  {
+    "version": "qwen25_05b_lora_seed42_q8_0",
+    "status": "experimental",
+    "lifecycle_stage": "experimental",
+    "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "adapter_path": "models/qwen25_05b_lora_seed42_gguf_q8_0/qwen25_05b_lora_seed42_q8_0.gguf",
+    "model_hash": "sha256_b0c891dca80498f95e97d37ace60b574860fbfc3100574aeb76bae524e79f6d8",
+    "dataset_version": "validation_n44",
+    "quantization": "gguf_weight_only_q8_0",
+    "training_config": {
+      "source_adapter": "models/qwen25_05b_lora_seed42",
+      "quantization_pipeline": "scripts/optimization/quantize_qwen_gguf.py",
+      "engine": "llama.cpp",
+      "qtype": "Q8_0"
+    },
+    "evaluation_results": {
+      "model_name": "NEXUS-Qwen2.5-0.5B-LoRA-GGUF-Q8_0",
+      "validation_sample_count": 44,
+      "macro_f1": 0.8974,
+      "weighted_f1": 0.9021,
+      "category_accuracy": 0.9091,
+      "json_validity_rate": 1.0,
+      "exact_match_accuracy": 0.4091,
+      "hindi_accuracy": 0.9286,
+      "hinglish_accuracy": 0.8667,
+      "english_accuracy": 0.9333,
+      "high_risk_challenge_recall": 1.0,
+      "false_negatives": 0
+    },
+    "hardware_benchmark": {
+      "latency_p50_ms": 1157.0,
+      "latency_p95_ms": 1374.8,
+      "mean_latency_ms": 1155.5,
+      "model_artifact_size_mb": 506.47,
+      "peak_ram_mb": 1479.39,
+      "startup_time_sec": 0.66
+    },
+    "selection_rationale": "Highest fidelity evaluated candidate. Weight-only 8-bit quantization achieves 100.0% retention of unquantized FP32 Macro-F1 (0.8974) and Category Accuracy (0.9091) with 100% JSON validity. CPU P95 latency is 1374.8 ms (2.98x faster than FP32, well within 2500 ms SLA) and peak RAM is 1479.4 MB (< 2048 MB SLA). Passes all 6 acceptance gates. Retained as experimental per governance rules; highest quality candidate.",
+    "registered_at": "2026-10-12T15:25:00Z",
+    "updated_at": "2026-10-12T15:25:00Z"
   }
 ]

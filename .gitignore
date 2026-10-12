@@ -46,13 +46,23 @@ env/
 mlruns/
 .mlflow/
 
-# PyTorch / checkpoints / weights (keep repo clean, track metadata instead)
+# PyTorch / checkpoints / weights / GGUF / ONNX (keep repo clean, track metadata instead)
 checkpoints/
 models/exported/
 *.pt
 *.bin
 *.safetensors
 *.pth
+*.gguf
+*.onnx
+*.onnx_data
+*.zip
+tools/
+models/scratch_merged_qwen/
+models/scratch_onnx_qwen/
+models/qwen25_05b_lora_seed42_int8/
+models/qwen25_05b_lora_seed42_gguf/
+models/qwen25_05b_lora_seed42/nexus_training/
 
 # Next.js / Node
 node_modules/

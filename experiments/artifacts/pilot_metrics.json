@@ -62,21 +62,22 @@
       "details": "Requires human-model category concordance >= 60% on prospective traffic."
     },
     "gate_6_remote_linux_ci_run": {
-      "status": "IN_PROGRESS",
-      "current_value": "RUN_ID_37970062092_IN_PROGRESS",
+      "status": "PASS",
+      "current_value": "RUN_ID_37972082549_SUCCESS",
       "required_value": "PASSING_REMOTE_RUN",
-      "details": "GitHub Actions workflow active on commit 8d6687b (94 tests passed, container build in progress)."
+      "details": "GitHub Actions workflow 37972082549 on commit 2696df8 completed with conclusion success (all 3 jobs passed: Python 3.10 Lint & Tests, Container Build & Health Validation, and Next.js Dashboard Build)."
     }
   },
   "activation_gate_audit": {
     "status": "BLOCKED — ACTIVATION REQUIREMENTS UNMET",
-    "blockers_count": 4,
-    "blocker_keys": ["BLK-01_UNAUTHORISED_TICKET_ACCESS", "BLK-02_PROD_CLUSTER_UNPROVISIONED", "BLK-03_REVIEWER_ROSTER_UNASSIGNED", "BLK-04_CI_RUN_PENDING_COMPLETION"],
+    "blockers_count": 3,
+    "blocker_keys": ["BLK-01_UNAUTHORISED_TICKET_ACCESS", "BLK-02_PROD_CLUSTER_UNPROVISIONED", "BLK-03_REVIEWER_ROSTER_UNASSIGNED"],
+    "resolved_keys": ["BLK-04_REMOTE_LINUX_CI_VERIFIED"],
     "live_ticket_intake_permitted": false
   },
   "promotion_decision": {
     "status": "BLOCKED — ACTIVATION REQUIREMENTS UNMET",
     "canary_rollout_permitted": false,
-    "rationale": "While all algorithmic candidate safeguards, failure-isolated pipelines, and double-blind protocols are verified, live shadow activation is blocked until production CRM ticket authorization (DPA), infrastructure provisioning, and reviewer rostering are completed."
+    "rationale": "While remote Linux CI (BLK-04) has successfully completed on GitHub Actions (Run ID 37972082549) and all algorithmic candidate safeguards, failure-isolated pipelines, and double-blind protocols are verified locally, live shadow activation remains strictly blocked due to 3 unmet operational prerequisites: unauthorized live CRM ticket access without signed DPA (BLK-01), unprovisioned cloud cluster infrastructure (BLK-02), and unassigned human reviewer panel (BLK-03)."
   }
 }

@@ -1,0 +1,166 @@
+{
+  "health": {
+    "status_code": 200,
+    "elapsed_ms": 6.08,
+    "body": {
+      "status": "healthy",
+      "model_loaded": true,
+      "model_version": "qwen25_05b_lora_seed42_q8_0",
+      "inference_mode": "neural",
+      "hardware": {
+        "os": "Windows",
+        "os_release": "10",
+        "platform_machine": "AMD64",
+        "cpu_count": 12,
+        "ram_total_gb": 15.65,
+        "ram_available_gb": 3.38,
+        "cuda_available": false,
+        "cuda_version": null,
+        "gpu_count": 0,
+        "gpus": [],
+        "bitsandbytes_available": false,
+        "recommended_precision": "fp32"
+      }
+    }
+  },
+  "model_info": {
+    "status_code": 200,
+    "elapsed_ms": 2.44,
+    "body": {
+      "active_version": "qwen25_05b_lora_seed42_q8_0",
+      "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+      "quantization": "gguf_weight_only_q8_0",
+      "model_hash": "sha256_b0c891dca80498f95e97d37ace60b574860fbfc3100574aeb76bae524e79f6d8",
+      "deployment_status": "experimental",
+      "dataset_version": "validation_n44",
+      "metrics": {
+        "model_name": "NEXUS-Qwen2.5-0.5B-LoRA-GGUF-Q8_0",
+        "validation_sample_count": 44,
+        "macro_f1": 0.8974,
+        "weighted_f1": 0.9021,
+        "category_accuracy": 0.9091,
+        "json_validity_rate": 1.0,
+        "exact_match_accuracy": 0.4091,
+        "hindi_accuracy": 0.9286,
+        "hinglish_accuracy": 0.8667,
+        "english_accuracy": 0.9333,
+        "high_risk_challenge_recall": 1.0,
+        "false_negatives": 0
+      }
+    }
+  },
+  "english_ticket": {
+    "payload": {
+      "ticket": "I would like to cancel my order #84920 and request a full refund to my original payment method because it has not shipped yet."
+    },
+    "response": {
+      "status_code": 200,
+      "elapsed_ms": 5576.69,
+      "body": {
+        "category": "refund_request",
+        "priority": "medium",
+        "language": "english",
+        "requires_human": true,
+        "confidence": 0.9624,
+        "latency_ms": 5572.2,
+        "model_version": "qwen25_05b_lora_seed42_q8_0",
+        "inference_mode": "neural",
+        "request_id": "5df61c3d-70f7-43d5-ae17-a22188a5bb02",
+        "calibrated_confidence": null,
+        "confidence_status": "uncalibrated_heuristic",
+        "escalation_reason": "ambiguous_ticket_requires_human_clarification",
+        "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"english\", \"requires_human\": true}"
+      }
+    }
+  },
+  "hinglish_ticket": {
+    "payload": {
+      "ticket": "Mera payment account se cut ho gaya hai but order confirm nahi hua, please jaldi refund karo ya update do."
+    },
+    "response": {
+      "status_code": 200,
+      "elapsed_ms": 5353.53,
+      "body": {
+        "category": "payment_failure",
+        "priority": "high",
+        "language": "hinglish",
+        "requires_human": false,
+        "confidence": 0.97,
+        "latency_ms": 5350.56,
+        "model_version": "qwen25_05b_lora_seed42_q8_0",
+        "inference_mode": "neural",
+        "request_id": "a52a2f3a-2a4f-466a-a4c5-8e12b67eaeb8",
+        "calibrated_confidence": null,
+        "confidence_status": "uncalibrated_heuristic",
+        "escalation_reason": "automated_routing_permitted",
+        "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+      }
+    }
+  },
+  "hindi_ticket": {
+    "payload": {
+      "ticket": "मेरा खाता ब्लॉक हो गया है और मैं लॉगिन नहीं कर पा रहा हूँ। कृपया मेरा पासवर्ड रीसेट करने में मदद करें।"
+    },
+    "response": {
+      "status_code": 200,
+      "elapsed_ms": 5785.24,
+      "body": {
+        "category": "account_access",
+        "priority": "medium",
+        "language": "hindi",
+        "requires_human": true,
+        "confidence": 0.9587,
+        "latency_ms": 5759.29,
+        "model_version": "qwen25_05b_lora_seed42_q8_0",
+        "inference_mode": "neural",
+        "request_id": "645dd435-347f-458b-bfef-a2b9689174ce",
+        "calibrated_confidence": null,
+        "confidence_status": "uncalibrated_heuristic",
+        "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+        "raw_output": "{\"category\": \"account_access\", \"priority\": \"medium\", \"language\": \"hindi\", \"requires_human\": true}"
+      }
+    }
+  },
+  "high_risk_ticket": {
+    "payload": {
+      "ticket": "CRITICAL EMERGENCY: Someone hacked my account, changed the 2FA phone number, and made an unauthorized transaction of $4,500. Lock my account immediately!"
+    },
+    "response": {
+      "status_code": 200,
+      "elapsed_ms": 5202.01,
+      "body": {
+        "category": "fraud_report",
+        "priority": "critical",
+        "language": "english",
+        "requires_human": true,
+        "confidence": 0.9884,
+        "latency_ms": 5186.7,
+        "model_version": "qwen25_05b_lora_seed42_q8_0",
+        "inference_mode": "neural",
+        "request_id": "f695470a-5753-47af-84c2-fef1849fbd4c",
+        "calibrated_confidence": null,
+        "confidence_status": "uncalibrated_heuristic",
+        "escalation_reason": "safety_critical_fraud_detection",
+        "raw_output": "{\"category\": \"fraud_report\", \"priority\": \"critical\", \"language\": \"english\", \"requires_human\": true}"
+      }
+    }
+  },
+  "missing_model_test": {
+    "status_code": 404,
+    "elapsed_ms": 21.88,
+    "body": {
+      "detail": "Target model version 'non_existent_candidate_v99' not registered."
+    }
+  },
+  "validation_error_test": {
+    "status_code": 422,
+    "elapsed_ms": 17.3,
+    "body": {
+      "error": "Request validation failed",
+      "error_code": "INVALID_INPUT_SCHEMA",
+      "detail": "1 validation error:\n  {'type': 'value_error', 'loc': ('body',), 'msg': \"Value error, Missing required input field: 'ticket'\", 'input': {'invalid_key': 12345}, 'ctx': {'error': ValueError(\"Missing required input field: 'ticket'\")}}\n\n  File \"C:\\Users\\avira\\OneDrive\\Desktop\\NEXUS-SLM\\api\\main.py\", line 277, in predict_ticket\n    POST /predict",
+      "request_id": "f54190a2-48e9-4f46-8f73-0904b206ed0e",
+      "timestamp": "2026-10-12T15:43:38.064881"
+    }
+  }
+}

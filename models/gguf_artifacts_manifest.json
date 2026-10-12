@@ -1,0 +1,20 @@
+{
+  "f16_gguf": {
+    "path": "models\\qwen25_05b_lora_seed42_gguf\\qwen25_05b_lora_seed42_f16.gguf",
+    "size_bytes": 994156448,
+    "size_mb": 948.1,
+    "sha256": "03babe1c2645dc13faa7c8a1db97853d41b435274edcc678bbc70054a3499caf"
+  },
+  "q4_k_m_gguf": {
+    "path": "models\\qwen25_05b_lora_seed42_gguf_q4_k_m\\qwen25_05b_lora_seed42_q4_k_m.gguf",
+    "size_bytes": 397807520,
+    "size_mb": 379.38,
+    "sha256": "69a7c3d640566738cbeaafa2400ebc5d9e19d5d3034e045369bb018e86a0a22d"
+  },
+  "q8_0_gguf": {
+    "path": "models\\qwen25_05b_lora_seed42_gguf_q8_0\\qwen25_05b_lora_seed42_q8_0.gguf",
+    "size_bytes": 531067808,
+    "size_mb": 506.47,
+    "sha256": "b0c891dca80498f95e97d37ace60b574860fbfc3100574aeb76bae524e79f6d8"
+  }
+}

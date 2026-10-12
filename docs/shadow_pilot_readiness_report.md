@@ -164,13 +164,13 @@ The promotion criteria for progressing from Shadow Pilot to a 10% Controlled Can
 | **Gate 3** | High-Risk Escalation Recall | $\ge 98.0\%$ (Wilson 95% CI lower bound $\ge 95.0\%$) | Benchmark: 100.0% (Challenge Set) | **PENDING LIVE TRAFFIC** |
 | **Gate 4** | Sev-1 Safety Escapes | **0 escapes** | Benchmark: 0 escapes | **PENDING LIVE TRAFFIC** |
 | **Gate 5** | Human-Model Concordance | $\ge 60.0\%$ category agreement | Benchmark: 42.86% (Locked Test) | **PENDING LIVE TRAFFIC** |
-| **Gate 6** | Remote Linux CI Workflow | 100% passing remote GitHub Actions run | Local passed (94 tests); Remote pending | **PENDING REMOTE RUN** |
+| **Gate 6** | Remote Linux CI Workflow | 100% passing remote GitHub Actions run | Run ID 37972082549 passed (100%) | **PASS** |
 
 ### 6.1 Gate Evaluation Commentary
 - **Gates 1 & 2 (Duration and Volume)**: Must accrue in a live production environment. Data fabrication is strictly prohibited. Counters are initialized at Day 0 / 0 tickets.
 - **Gates 3 & 4 (Escalation Safety & Escapes)**: While candidate `nexus-qlora-v1` achieved 100.0% recall on the 70-sample challenge set and 100.0% on the locked test set, this laboratory performance does not guarantee universal safety. These gates will be formally scored against the prospective double-blind review pool.
 - **Gate 5 (Category Concordance)**: The 135M parameter base model exhibits a $42.86\%$ category accuracy on the 14-class test set. A $60\%$ concordance target requires empirical validation against real customer distribution patterns.
-- **Gate 6 (Remote Linux CI)**: The local workstation successfully executed all 94 automated tests in 21.44s. However, the host lacks a local Docker daemon, and git remote origin has not yet received pushed commits. Gate 6 remains marked `PENDING REMOTE RUN` until verified in GitHub Actions.
+- **Gate 6 (Remote Linux CI)**: VERIFIED PASS. Remote GitHub Actions workflow run `37972082549` on commit `2696df8be85e75b69f8a04345265c7f29d931e02` executed on `ubuntu-latest` with conclusion `success` across all 3 jobs: (1) Lint, Static Checks, and Automated Test Suite (94/94 passed), (2) Container Build & Health Validation (Docker build, container health check, live inference, graceful shutdown), and (3) Build Next.js Dashboard.
 
 ---
 
@@ -224,40 +224,40 @@ To determine whether NEXUS-SLM can actually initiate its 14-day shadow pilot on 
 | # | Activation Gate Requirement | Evaluation Evidence & Empirical Verification | Gate Status |
 |:---:|:---|:---|:---:|
 | **1** | **Manifest & Report Consistency** | Verified perfect agreement between [docs/shadow_pilot_readiness_report.md](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/docs/shadow_pilot_readiness_report.md) and [experiments/artifacts/pilot_candidate_manifest.json](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/experiments/artifacts/pilot_candidate_manifest.json). Identical base model (`SmolLM-135M-Instruct`), adapter hash (`643971155ba3fe3a...`), tokenizer hash (`bf346d64f6f0fbce...`), safety policy hash (`f3528ff55672246a...`), greedy decoding parameters (`T=0.0, max_new_tokens=50`), and canonical baseline (`Macro-F1 = 0.4017`, `Accuracy = 0.4286`). | **PASS** |
-| **2** | **Remote Linux Docker CI Workflow** | Remote GitHub Actions CI runs monitored on upstream repository `ASstyles/NEXUS-SLM`: Commit `6e7d528` passed 94/94 Python tests and Next.js build, but Docker buildx layer export ran out of disk space (`4 MB left`). Commit `8d6687b` added `.dockerignore` and runner disk cleanup (`Free Disk Space on Runner`), actively executing on `ubuntu-latest`. | **PENDING** |
-| **3** | **Inference Service Health & Smoke Test** | Verified via [scripts/deployment/run_final_e2e_validation.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/scripts/deployment/run_final_e2e_validation.py) (6 modalities passed with `Status: PASS`) and [scripts/deployment/smoke_test_shadow_path.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/scripts/deployment/smoke_test_shadow_path.py) (`Status: COMPLETED`). Local service returns healthy. Live production cloud cluster hosting (e.g. AWS ECS/K8s) is not yet provisioned. | **PASS (Engine)**<br>**PENDING (Prod Cluster)** |
-| **4** | **Asynchronous & Failure-Isolated Path** | Verified in [src/pilot/shadow_pipeline.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/pilot/shadow_pipeline.py) and [tests/test_shadow_pilot.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/tests/test_shadow_pilot.py). Asynchronous non-blocking queue (max 500 items), strict `asyncio.wait_for` timeout isolation (3.0s), deduplication filter, and graceful backpressure drops. Live production CRM mirror webhook feed is pending connection. | **PASS (Pipeline)**<br>**PENDING (CRM Mirror)** |
+| **2** | **Remote Linux Docker CI Workflow** | Verified passing GitHub Actions run on upstream repository `ASstyles/NEXUS-SLM`: Run ID `37972082549` (Commit `2696df8be85e75b69f8a04345265c7f29d931e02`, created `2026-10-09T18:16:06Z`, completed `2026-10-09T18:28:43Z`). All 3 jobs completed with `conclusion: success`: (1) Lint & Test Suite (94/94 passed), (2) Container Build & Health Validation (Docker buildx, container start, health check, live inference, graceful shutdown), and (3) Build Next.js Dashboard. | **PASS** |
+| **3** | **Inference Service Health & Smoke Test** | Verified via [scripts/deployment/run_final_e2e_validation.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/scripts/deployment/run_final_e2e_validation.py) (6 modalities passed with `Status: PASS`) and [scripts/deployment/smoke_test_shadow_path.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/scripts/deployment/smoke_test_shadow_path.py) (`Status: COMPLETED`). Local engine returns healthy. However, live production cloud cluster hosting (`https://nexus-slm-shadow.internal/health`) is not provisioned (DNS resolution failed). | **PASS (Engine)**<br>**FAIL (Prod Cluster)** |
+| **4** | **Asynchronous & Failure-Isolated Path** | Verified in [src/pilot/shadow_pipeline.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/pilot/shadow_pipeline.py) and [tests/test_shadow_pilot.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/tests/test_shadow_pilot.py). Asynchronous non-blocking queue (max 500 items), strict `asyncio.wait_for` timeout isolation (3.0s), deduplication filter, and graceful backpressure drops. Live production CRM mirror webhook listener is pending provisioning. | **PASS (Pipeline)**<br>**PENDING (CRM Mirror)** |
 | **5** | **Zero Customer-Facing Actions** | Verified in `ShadowPipeline.execute_customer_action()`, which unconditionally raises `PermissionError`. No customer messaging, refund APIs, or account mutation endpoints exist in the shadow path. Authoritative human triage remains the sole production workflow. | **PASS** |
-| **6** | **Authorised Ticket Access & Privacy Controls** | Privacy scrubbing ([PrivacyRedactor](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/pilot/privacy_redactor.py)) and privacy-safe telemetry (no plaintext ticket bodies in logs) are operational and passing. However, **access to real live production customer tickets is UNAUTHORIZED**: no production CRM credentials (API keys / webhooks) are provisioned, and no Data Protection Agreement (DPA) for ticket shadow-mirroring is signed. | **BLOCKED** |
-| **7** | **Operational Human Review & Governance** | Double-blind protocol software ([src/pilot/evaluation_protocol.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/pilot/evaluation_protocol.py)), rollback endpoint (`/model/rollback`), and drift monitoring (`/monitoring/drift`, PSI > 0.25) are operational. However, a live panel of human reviewers has not yet been rostered for prospective blind labeling of live tickets. | **PASS (Software)**<br>**PENDING (Ops Roster)** |
+| **6** | **Authorised Ticket Access & Privacy Controls** | Privacy scrubbing ([PrivacyRedactor](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/pilot/privacy_redactor.py)) and privacy-safe telemetry (no plaintext ticket bodies in logs) are operational and passing. However, **access to real live production customer tickets remains UNAUTHORIZED**: no production CRM credentials (`CRM_WEBHOOK_SECRET`) are provisioned, and no formal Data Protection Agreement (DPA) is signed. | **FAIL / BLOCKED** |
+| **7** | **Operational Human Review & Governance** | Double-blind protocol software ([src/pilot/evaluation_protocol.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/pilot/evaluation_protocol.py)), rollback endpoint (`/model/rollback`), and drift monitoring (`/monitoring/drift`, PSI > 0.25) are operational. However, a live panel of at least 5 qualified human reviewers has not been rostered or verified available for prospective blind labeling of live tickets. | **PASS (Software)**<br>**FAIL / BLOCKED (Reviewer Panel)** |
 
 ---
 
 ### 9.2 Activation Blockers & Resolution Requirements
 
-Because mandatory activation gates 2, 3, 6, and 7 are pending or blocked by external operational prerequisites, live pilot activation on real customer data cannot proceed immediately. The exact blockers, required actions, owner roles, and verification commands are detailed below:
+While remote Linux CI (BLK-04) has been verified as completely resolved and passing, three operational blockers (BLK-01, BLK-02, and BLK-03) remain unmet. Live pilot activation on real customer data cannot proceed until all three are remediated:
 
 ```
 ========================================================================================================================
-                                      NEXUS-SLM ACTIVATION BLOCKER MATRIX
+                                      NEXUS-SLM ACTIVATION BLOCKER MATRIX (RE-AUDIT)
 ========================================================================================================================
- Blocker #  Description                Required Remediation Action                  Owner Role      Verification Command
+ Blocker #  Description                Required Remediation Action                  Owner Role      Current Status
 ------------------------------------------------------------------------------------------------------------------------
- BLK-01     Unauthorised Live Ticket   Sign Data Protection Agreement (DPA) and      Data Protection  .venv\Scripts\python.exe -c "
-            Access & Missing Mirror    provision read-only CRM webhook listener      Officer (DPO) &  import os; assert os.getenv('CRM_WEBHOOK_SECRET')"
-            Credentials                (Zendesk / Salesforce mirror).               CRM Lead
+ BLK-01     Unauthorised Live Ticket   Sign Data Protection Agreement (DPA) and      Data Protection  FAIL / BLOCKED
+            Access & Missing Mirror    provision read-only CRM webhook listener      Officer (DPO) &  (No DPA signed, no
+            Credentials                (Zendesk / Salesforce mirror).                CRM Lead         CRM_WEBHOOK_SECRET)
  
- BLK-02     Production Infrastructure  Deploy containerized service to designated    Site Reliability curl -f https://nexus-slm-shadow.internal/health
-            Cluster Provisioning       internal K8s/ECS cluster with 2-vCPU / 4-GB   Engineer (SRE)
-                                       limits and Prometheus scraping.
+ BLK-02     Production Infrastructure  Deploy containerized service to designated    Site Reliability FAIL / BLOCKED
+            Cluster Provisioning       internal K8s/ECS cluster with 2-vCPU / 4-GB   Engineer (SRE)   (nexus-slm-shadow.internal
+                                       limits and Prometheus scraping.                                DNS unresolvable)
  
- BLK-03     Human Review Workforce     Roster 5+ support specialists for double-     Support Ops     .venv\Scripts\python.exe scripts/pilot/
-            Rostering                  blind evaluation; seal initial ground truth   Lead            verify_reviewer_roster.py
-                                       before model predictions are unblinded.
+ BLK-03     Human Review Workforce     Roster 5+ support specialists for double-     Support Ops      FAIL / BLOCKED
+            Rostering                  blind evaluation; verify availability; seal   Lead             (No roster assigned,
+                                       initial ground truth before unblinding.                        availability unverified)
  
- BLK-04     Remote Linux Docker CI     Await final passing run of GitHub Actions     CI/CD Release   .venv\Scripts\python.exe scripts/deployment/
-            Workflow Completion        workflow on commit 8d6687b (container         Engineer        check_github_ci.py
-                                       healthcheck & graceful shutdown).
+ BLK-04     Remote Linux Docker CI     Passing run of GitHub Actions workflow        CI/CD Release    PASS / RESOLVED
+            Workflow Completion        (Docker build, container healthcheck, live    Engineer         (Run ID: 37972082549,
+                                       inference, and graceful shutdown).                             Commit: 2696df8be85e)
 ========================================================================================================================
 ```
 
@@ -268,12 +268,15 @@ Because mandatory activation gates 2, 3, 6, and 7 are pending or blocked by exte
 ### Formal Status: `BLOCKED — ACTIVATION REQUIREMENTS UNMET`
 
 **Authoritative Gate Determination**:  
-NEXUS-SLM candidate `nexus-qlora-v1` is structurally, algorithmically, and architecturally verified for shadow operation, with all software safeguards, redaction modules, and evaluation protocols validated locally and passing 94/94 automated tests.
+NEXUS-SLM candidate `nexus-qlora-v1` is structurally, algorithmically, and architecturally verified for shadow operation, with all software safeguards, redaction modules, and evaluation protocols validated locally (passing 94/94 automated tests) and remotely via GitHub Actions Linux CI (Run ID `37972082549` passing all 3 jobs including Docker container build, health check, live inference, and graceful shutdown).
 
-However, in accordance with strict release governance:
-1. **Live customer tickets must never be ingested without formal data access approval and CRM mirror provisioning (BLK-01).**
-2. **The production cluster infrastructure must be formally provisioned and health-checked before routing live mirrors (BLK-02).**
-3. **The human reviewer workforce must be rostered for prospective double-blind ground-truth labeling (BLK-03).**
-4. **Remote Linux Docker CI must complete its passing run on GitHub Actions (BLK-04).**
+However, in accordance with strict operational and data protection governance:
+1. **Live customer tickets must NEVER be ingested without formal data access approval (DPA) and provisioned read-only CRM mirror credentials (BLK-01: FAIL).**
+2. **The production cluster infrastructure must exist and pass remote health checks before live traffic is mirrored (`nexus-slm-shadow.internal` unresolvable) (BLK-02: FAIL).**
+3. **The human reviewer workforce of at least five qualified specialists must be rostered with verified availability and sealed ground-truth protocols (BLK-03: FAIL).**
 
-Until these operational blockers are formally resolved by their respective owners, live shadow ingestion remains paused. Immediate canary rollout or autonomous customer-facing execution remains **STRICTLY PROHIBITED**.
+Because mandatory activation requirements BLK-01, BLK-02, and BLK-03 fail live verification:
+- **The live ticket mirror CANNOT and MUST NOT be activated.**
+- **The 14-day observation period CANNOT begin until activation prerequisites are satisfied.**
+- **Customer-facing actions and canary promotion remain STRICTLY PROHIBITED.**
+

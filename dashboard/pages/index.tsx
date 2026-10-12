@@ -9,9 +9,12 @@ import {
   Database,
   DollarSign,
   Globe,
+  History,
+  Info,
   Layers,
   Play,
   RefreshCw,
+  RotateCcw,
   Server,
   ShieldAlert,
   Zap,
@@ -26,6 +29,18 @@ interface TriageResult {
   latency_ms: number;
   model_version: string;
   raw_output?: string;
+  inference_mode?: string;
+  confidence_status?: string;
+  escalation_reason?: string;
+  request_id?: string;
+  calibrated_confidence?: number | null;
+}
+
+interface HistoryItem {
+  id: string;
+  timestamp: string;
+  ticket: string;
+  result: TriageResult;
 }
 
 interface BenchmarkData {
@@ -48,11 +63,17 @@ export default function Dashboard() {
   const [apiConnected, setApiConnected] = useState<boolean>(false);
   const [hardwareInfo, setHardwareInfo] = useState<any>(null);
 
-  // Analysis State
+  // Analysis & Demo State
   const [ticketInput, setTicketInput] = useState<string>('Mera payment kat gaya but order confirm nahi hua.');
   const [isAnalyzing, setIsAnalyzing] = useState<boolean>(false);
   const [analysisResult, setAnalysisResult] = useState<TriageResult | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
+  const [activeModelVersion, setActiveModelVersion] = useState<string>('nexus-qlora-v1');
+  const [isRollingBack, setIsRollingBack] = useState<boolean>(false);
+  const [rollbackSuccessMsg, setRollbackSuccessMsg] = useState<string | null>(null);
+  const [predictionHistory, setPredictionHistory] = useState<HistoryItem[]>([]);
+  const [selectedLanguageFilter, setSelectedLanguageFilter] = useState<'all' | 'english' | 'hinglish' | 'hindi'>('all');
+  const [selectedCategoryFilter, setSelectedCategoryFilter] = useState<string>('all');
 
   // Data states
   const [benchmarkData, setBenchmarkData] = useState<BenchmarkData | null>(null);
@@ -84,6 +105,9 @@ export default function Dashboard() {
         const data = await res.json();
         setApiConnected(true);
         setHardwareInfo(data.hardware);
+        if (data.model_version) {
+          setActiveModelVersion(data.model_version);
+        }
       } else {
         setApiConnected(false);
       }
@@ -143,13 +167,23 @@ export default function Dashboard() {
       const res = await fetch(`${API_BASE}/predict`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ text: ticketInput }),
+        body: JSON.stringify({ ticket: ticketInput }),
       });
       if (!res.ok) {
         throw new Error(`Inference returned HTTP ${res.status}`);
       }
       const data: TriageResult = await res.json();
       setAnalysisResult(data);
+      if (data.model_version) {
+        setActiveModelVersion(data.model_version);
+      }
+      const historyItem: HistoryItem = {
+        id: data.request_id || Math.random().toString(36).substring(2, 9),
+        timestamp: new Date().toLocaleTimeString(),
+        ticket: ticketInput,
+        result: data,
+      };
+      setPredictionHistory(prev => [historyItem, ...prev.slice(0, 19)]);
       fetchDashboardData();
     } catch (err: any) {
       setAnalysisError(err.message || 'Failed to execute triage');
@@ -157,6 +191,30 @@ export default function Dashboard() {
       setIsAnalyzing(false);
     }
   };
+
+  const handleRollback = async (targetVersion: string) => {
+    setIsRollingBack(true);
+    setRollbackSuccessMsg(null);
+    try {
+      const res = await fetch(`${API_BASE}/model/rollback?target_version=${encodeURIComponent(targetVersion)}`, {
+        method: 'POST',
+      });
+      if (!res.ok) {
+        const err = await res.json().catch(() => ({ detail: 'Rollback failed' }));
+        throw new Error(err.detail || `HTTP ${res.status}`);
+      }
+      const data = await res.json();
+      setActiveModelVersion(data.active_version);
+      setRollbackSuccessMsg(`Model successfully switched to "${data.active_version}" (${data.inference_mode} mode). Zero-downtime rollback executed.`);
+      checkHealth();
+      fetchDashboardData();
+    } catch (err: any) {
+      setAnalysisError(`Rollback error: ${err.message}`);
+    } finally {
+      setIsRollingBack(false);
+    }
+  };
+
 
   const getPriorityBadgeClass = (prio: string) => {
     switch (prio.toLowerCase()) {
@@ -383,10 +441,10 @@ export default function Dashboard() {
                   Active Model
                 </span>
                 <div style={{ fontSize: '1.25rem', fontWeight: 600, marginTop: '8px', fontFamily: 'var(--font-heading)', color: '#c7d2fe' }}>
-                  Qwen2.5-1.5B (4-bit)
+                  {activeModelVersion}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: '4px' }}>
-                  Tag: nexus-v1.0
+                  {activeModelVersion === 'nexus-qlora-v1' ? 'Production Candidate (Locked)' : 'Alternate / Fallback Engine'}
                 </div>
               </div>
             </div>
@@ -413,149 +471,433 @@ export default function Dashboard() {
           </div>
         )}
 
-        {/* 2. ANALYZE TAB */}
+        {/* 2. ANALYZE TAB — INTERACTIVE DEMO */}
         {activeTab === 'analyze' && (
-          <div className="fade-in" style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '28px' }}>
-            {/* Input Column */}
-            <div className="glass-panel" style={{ padding: '28px' }}>
-              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
-                <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem' }}>
-                  Enter Support Ticket
-                </h2>
-                <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                  Accepts English, Hindi (Devanagari), & Hinglish
-                </span>
-              </div>
-
-              {/* Sample Preset Chips */}
-              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
-                {[
-                  { label: 'Hinglish Payment', text: 'Mera payment kat gaya but order confirm nahi hua.' },
-                  { label: 'Hindi Payment', text: 'मेरा payment कट गया लेकिन order confirm नहीं हुआ।' },
-                  { label: 'English Payment', text: 'My payment was deducted but my order was not confirmed.' },
-                  { label: 'Fraud Alert', text: 'Urgent: Unauthorized charges of $450 detected on my credit card!' },
-                  { label: 'Damaged Item', text: 'Delivery boy delivered a broken packet and refused to take return.' },
-                  { label: 'Hinglish Refund', text: 'Item return pickup ho gaya tha 4 din pehle par refund nahi aaya.' },
-                ].map((preset, idx) => (
-                  <button
-                    key={idx}
-                    className="btn-secondary"
-                    style={{ fontSize: '0.75rem', padding: '6px 12px' }}
-                    onClick={() => setTicketInput(preset.text)}
-                  >
-                    {preset.label}
-                  </button>
-                ))}
-              </div>
-
-              <textarea
-                value={ticketInput}
-                onChange={(e) => setTicketInput(e.target.value)}
-                rows={6}
-                placeholder="Type or paste a customer support message..."
-                style={{
-                  width: '100%',
-                  background: 'rgba(7, 9, 14, 0.7)',
-                  border: '1px solid var(--border-subtle)',
-                  borderRadius: '12px',
-                  color: 'var(--text-main)',
-                  padding: '16px',
-                  fontSize: '0.95rem',
-                  fontFamily: 'var(--font-body)',
-                  resize: 'vertical',
-                  outline: 'none',
-                  boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)'
-                }}
-              />
-
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '20px' }}>
-                <button
-                  className="btn-primary"
-                  onClick={handleAnalyze}
-                  disabled={isAnalyzing || !ticketInput.trim()}
-                  style={{ minWidth: '150px' }}
-                >
-                  {isAnalyzing ? (
-                    <>
-                      <RefreshCw size={16} className="pulse-glow" style={{ animation: 'spin 1s linear infinite' }} /> Analyzing...
-                    </>
-                  ) : (
-                    <>
-                      <Zap size={16} /> ANALYZE TICKET
-                    </>
-                  )}
-                </button>
-                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                  Active Model: nexus-v1.0 (Qwen2.5-1.5B)
-                </span>
-              </div>
-
-              {analysisError && (
+          <div className="fade-in" style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+            {/* Synthetic Environment Notice Banner */}
+            <div className="glass-panel" style={{
+              padding: '16px 24px',
+              background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.12) 0%, rgba(6, 182, 212, 0.08) 100%)',
+              border: '1px solid rgba(99, 102, 241, 0.3)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'space-between',
+              flexWrap: 'wrap',
+              gap: '12px'
+            }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                 <div style={{
-                  marginTop: '16px',
-                  padding: '12px 16px',
-                  borderRadius: '8px',
-                  background: 'rgba(239, 68, 68, 0.15)',
-                  border: '1px solid rgba(239, 68, 68, 0.3)',
-                  color: '#fca5a5',
-                  fontSize: '0.85rem'
+                  width: '36px',
+                  height: '36px',
+                  borderRadius: '10px',
+                  background: 'rgba(99, 102, 241, 0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  color: '#818cf8'
                 }}>
-                  {analysisError}
+                  <Info size={20} />
+                </div>
+                <div>
+                  <div style={{ fontSize: '0.92rem', fontWeight: 600, color: '#f8fafc' }}>
+                    Synthetic Local Demonstration Mode — No Live CRM Integration
+                  </div>
+                  <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Inference executes against local SLM weights. Deterministic safety policies govern escalation. Confidence scores are uncalibrated heuristics. Native Devanagari Hindi mandates human escalation.
+                  </div>
+                </div>
+              </div>
+
+              <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>Offline Air-Gapped</span>
+                <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>10 Categories</span>
+                <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>EN / Hinglish / Hindi</span>
+              </div>
+            </div>
+
+            {/* Model Operations & Zero-Downtime Rollback Demonstration Card */}
+            <div className="glass-panel" style={{ padding: '20px 24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <RotateCcw size={18} color="#818cf8" />
+                    <h3 style={{ fontSize: '1.05rem', fontWeight: 600 }}>
+                      Model Version & Zero-Downtime Rollback Demonstration
+                    </h3>
+                  </div>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.8rem', marginTop: '4px' }}>
+                    Hot-swap active model versions on live API without container restarts or downtime.
+                  </p>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
+                  <div style={{ fontSize: '0.82rem', color: 'var(--text-muted)' }}>
+                    Active Version: <strong style={{ color: '#818cf8' }}>{activeModelVersion}</strong>
+                  </div>
+
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    {[
+                      { id: 'nexus-qlora-v1', label: 'nexus-qlora-v1 (Production LoRA)' },
+                      { id: 'baseline-smollm-135m', label: 'baseline-smollm-135m (Base Fallback)' },
+                      { id: 'nexus-qlora-v2', label: 'nexus-qlora-v2 (Retrained QLoRA)' },
+                    ].map((m) => (
+                      <button
+                        key={m.id}
+                        onClick={() => handleRollback(m.id)}
+                        disabled={isRollingBack || activeModelVersion === m.id}
+                        className={activeModelVersion === m.id ? 'btn-primary' : 'btn-secondary'}
+                        style={{
+                          fontSize: '0.75rem',
+                          padding: '6px 12px',
+                          opacity: activeModelVersion === m.id ? 1 : 0.85,
+                        }}
+                      >
+                        {isRollingBack && activeModelVersion !== m.id ? 'Switching...' : m.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {rollbackSuccessMsg && (
+                <div style={{
+                  marginTop: '12px',
+                  padding: '8px 14px',
+                  borderRadius: '8px',
+                  background: 'rgba(16, 185, 129, 0.15)',
+                  border: '1px solid rgba(16, 185, 129, 0.3)',
+                  color: '#34d399',
+                  fontSize: '0.8rem',
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: '8px',
+                }}>
+                  <CheckCircle2 size={14} />
+                  {rollbackSuccessMsg}
                 </div>
               )}
             </div>
 
-            {/* Results Column */}
-            <div className="glass-panel" style={{ padding: '28px' }}>
-              <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', marginBottom: '20px' }}>
-                Triage Intelligence Output
-              </h2>
-
-              {analysisResult ? (
-                <div style={{ display: 'flex', flexDirection: 'column', gap: '18px' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: '1px solid var(--border-subtle)' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Category</span>
-                    <span className={`badge ${getCategoryBadgeClass(analysisResult.category)}`} style={{ fontSize: '0.85rem' }}>
-                      {analysisResult.category.toUpperCase()}
+            {/* Interactive Triage Main Grid */}
+            <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px' }}>
+              {/* Input & Presets Column */}
+              <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '18px' }}>
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px' }}>
+                    <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem' }}>
+                      Support Ticket Input
+                    </h2>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      Accepts English, Hinglish, & Hindi (Devanagari)
                     </span>
                   </div>
+                  <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+                    Type a ticket or select from the synthetic multi-lingual fixture catalog below.
+                  </p>
+                </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: '1px solid var(--border-subtle)' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Priority</span>
-                    <span className={`badge ${getPriorityBadgeClass(analysisResult.priority)}`} style={{ fontSize: '0.85rem' }}>
-                      {analysisResult.priority.toUpperCase()}
+                {/* Preset Filters Bar */}
+                <div style={{ display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '8px' }}>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase' }}>
+                      Language Filter:
                     </span>
+                    <div style={{ display: 'flex', gap: '6px' }}>
+                      {[
+                        { id: 'all', label: 'All (30)' },
+                        { id: 'english', label: 'English (10)' },
+                        { id: 'hinglish', label: 'Hinglish (10)' },
+                        { id: 'hindi', label: 'Hindi Devanagari (10)' },
+                      ].map((lf) => (
+                        <button
+                          key={lf.id}
+                          onClick={() => setSelectedLanguageFilter(lf.id as any)}
+                          style={{
+                            padding: '4px 10px',
+                            borderRadius: '6px',
+                            fontSize: '0.72rem',
+                            fontWeight: 500,
+                            cursor: 'pointer',
+                            border: '1px solid var(--border-subtle)',
+                            background: selectedLanguageFilter === lf.id ? 'var(--accent-primary)' : 'rgba(255,255,255,0.03)',
+                            color: selectedLanguageFilter === lf.id ? '#ffffff' : 'var(--text-muted)',
+                          }}
+                        >
+                          {lf.label}
+                        </button>
+                      ))}
+                    </div>
                   </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: '1px solid var(--border-subtle)' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Language Modality</span>
-                    <span className="badge badge-default" style={{ fontSize: '0.85rem' }}>
-                      <Globe size={12} style={{ marginRight: '4px' }} />
-                      {analysisResult.language.toUpperCase()}
-                    </span>
-                  </div>
+                  {/* Preset Buttons Grid */}
+                  <div style={{
+                    maxHeight: '180px',
+                    overflowY: 'auto',
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fill, minmax(210px, 1fr))',
+                    gap: '8px',
+                    padding: '8px',
+                    background: 'rgba(0,0,0,0.25)',
+                    borderRadius: '8px',
+                    border: '1px solid var(--border-subtle)'
+                  }}>
+                    {[
+                      { cat: 'payment_failure', lang: 'english', label: 'EN Payment Failure', text: 'My payment of $49.99 was deducted from my account but the order status is still pending.' },
+                      { cat: 'payment_failure', lang: 'hinglish', label: 'Hinglish Payment', text: 'Mera payment kat gaya bank se par app me order confirm nahi hua.' },
+                      { cat: 'payment_failure', lang: 'hindi', label: 'Hindi Payment (Devanagari)', text: 'मेरे खाते से पैसे कट गए हैं लेकिन ऑर्डर अभी तक कन्फर्म नहीं हुआ है।' },
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: '1px solid var(--border-subtle)' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Human Escalation</span>
-                    {analysisResult.requires_human ? (
-                      <span className="badge badge-high" style={{ fontSize: '0.82rem' }}>
-                        <ShieldAlert size={12} style={{ marginRight: '4px' }} /> ESCALATE TO HUMAN
-                      </span>
+                      { cat: 'refund_request', lang: 'english', label: 'EN Refund Request', text: 'I returned the item three days ago. When will the refund be credited back to my original payment method?' },
+                      { cat: 'refund_request', lang: 'hinglish', label: 'Hinglish Refund', text: 'Item courier wale ne pickup kar liya tha par mera refund status abhi tak update nahi hua.' },
+                      { cat: 'refund_request', lang: 'hindi', label: 'Hindi Refund (Devanagari)', text: 'मैंने सामान वापस भेज दिया है, कृपया मेरे रिफंड की स्थिति की जानकारी दें।' },
+
+                      { cat: 'account_access', lang: 'english', label: 'EN Account Locked', text: 'My account is locked due to suspicious activity and I cannot receive the SMS verification code.' },
+                      { cat: 'account_access', lang: 'hinglish', label: 'Hinglish Account OTP', text: 'Main apne account me login nahi kar pa raha hu, OTP sms receive nahi ho raha mere phone par.' },
+                      { cat: 'account_access', lang: 'hindi', label: 'Hindi Account Lock', text: 'मेरा अकाउंट लॉक हो गया है और लॉगिन करने पर ओटीपी प्राप्त नहीं हो रहा है।' },
+
+                      { cat: 'password_reset', lang: 'english', label: 'EN Password Reset', text: 'Please send a password reset link to my registered email address as I forgot my old password.' },
+                      { cat: 'password_reset', lang: 'hinglish', label: 'Hinglish Password Reset', text: 'Mujhe password reset karna hai par reset email inbox me show nahi ho rahi.' },
+                      { cat: 'password_reset', lang: 'hindi', label: 'Hindi Password Reset', text: 'मैं अपना पासवर्ड भूल गया हूँ, कृपया पासवर्ड रीसेट करने का लिंक भेजें।' },
+
+                      { cat: 'subscription', lang: 'english', label: 'EN Subscription Pause', text: 'How do I pause or downgrade my monthly premium subscription before the next renewal date?' },
+                      { cat: 'subscription', lang: 'hinglish', label: 'Hinglish Subscription Cancel', text: 'Mera monthly subscription plan mujhe cancel karna hai renewal date se pehle.' },
+                      { cat: 'subscription', lang: 'hindi', label: 'Hindi Subscription', text: 'कृपया मेरे मासिक सब्सक्रिप्शन प्लान को अगले नवीनीकरण से पहले रद्द कर दें।' },
+
+                      { cat: 'delivery_issue', lang: 'english', label: 'EN Delivery Tampered', text: 'The courier marked my package as delivered today but the box was empty and the security seal was broken.' },
+                      { cat: 'delivery_issue', lang: 'hinglish', label: 'Hinglish Delivery Broken', text: 'Delivery boy delivered a broken packet and packet ki seal tooti hui thi.' },
+                      { cat: 'delivery_issue', lang: 'hindi', label: 'Hindi Delivery Tampered', text: 'डिलीवरी वाले ने टूटा हुआ पार्सल दिया है और अंदर का सामान गायब है।' },
+
+                      { cat: 'technical_issue', lang: 'english', label: 'EN App Crash 500', text: 'The mobile app keeps crashing with error 500 every time I open the checkout page.' },
+                      { cat: 'technical_issue', lang: 'hinglish', label: 'Hinglish App Crash', text: 'Checkout page open karte hi app bar bar crash ho jata hai aur blank screen aati hai.' },
+                      { cat: 'technical_issue', lang: 'hindi', label: 'Hindi App Crash', text: 'ऐप में सर्च करने पर सिर्फ सफेद स्क्रीन दिख रही है और ऐप बार-बार क्रैश हो रहा है।' },
+
+                      { cat: 'fraud_report', lang: 'english', label: 'EN Fraud Urgent $450', text: 'Urgent: Unauthorized charges of $450 detected on my credit card without my OTP or permission!' },
+                      { cat: 'fraud_report', lang: 'hinglish', label: 'Hinglish Fraud Alert', text: 'Fraud alert: Kisi aur ne unauthorized card charge kar liya hai mere account se bina kisi otp ke!' },
+                      { cat: 'fraud_report', lang: 'hindi', label: 'Hindi Fraud Alert', text: 'धोखाधड़ी की सूचना: मेरे कार्ड से अनधिकृत लेन-देन हुआ है, तुरंत मेरा खाता सुरक्षित करें।' },
+
+                      { cat: 'account_closure', lang: 'english', label: 'EN GDPR Account Delete', text: 'Please delete my account and permanently erase all my personal information under GDPR.' },
+                      { cat: 'account_closure', lang: 'hinglish', label: 'Hinglish Account Delete', text: 'Mujhe apna account delete karna hai aur saare saved address aur card data erase karne hain.' },
+                      { cat: 'account_closure', lang: 'hindi', label: 'Hindi Account Delete', text: 'कृपया मेरा खाता स्थायी रूप से बंद करें और मेरी व्यक्तिगत जानकारी हटा दें।' },
+
+                      { cat: 'general_query', lang: 'english', label: 'EN Support Hours', text: 'What are your customer support operating hours and what is your contact phone number?' },
+                      { cat: 'general_query', lang: 'hinglish', label: 'Hinglish Support Hours', text: 'Aapka customer care support weekend par open rehta hai kya?' },
+                      { cat: 'general_query', lang: 'hindi', label: 'Hindi Support Hours', text: 'क्या ग्राहक सहायता सेवा सप्ताहांत पर भी उपलब्ध रहती है?' },
+                    ]
+                      .filter(p => selectedLanguageFilter === 'all' || p.lang === selectedLanguageFilter)
+                      .map((preset, idx) => (
+                        <button
+                          key={idx}
+                          className="btn-secondary"
+                          style={{
+                            fontSize: '0.72rem',
+                            padding: '6px 10px',
+                            textAlign: 'left',
+                            display: 'flex',
+                            flexDirection: 'column',
+                            gap: '2px',
+                            background: ticketInput === preset.text ? 'rgba(99, 102, 241, 0.25)' : 'rgba(255,255,255,0.03)',
+                            borderColor: ticketInput === preset.text ? 'var(--accent-primary)' : 'var(--border-subtle)',
+                          }}
+                          onClick={() => setTicketInput(preset.text)}
+                        >
+                          <span style={{ fontWeight: 600, color: '#c7d2fe' }}>{preset.label}</span>
+                          <span style={{ fontSize: '0.68rem', color: 'var(--text-muted)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '180px' }}>
+                            {preset.text}
+                          </span>
+                        </button>
+                      ))}
+                  </div>
+                </div>
+
+                <textarea
+                  value={ticketInput}
+                  onChange={(e) => setTicketInput(e.target.value)}
+                  rows={5}
+                  placeholder="Type or paste a customer support message..."
+                  style={{
+                    width: '100%',
+                    background: 'rgba(7, 9, 14, 0.7)',
+                    border: '1px solid var(--border-subtle)',
+                    borderRadius: '12px',
+                    color: 'var(--text-main)',
+                    padding: '14px',
+                    fontSize: '0.92rem',
+                    fontFamily: 'var(--font-body)',
+                    resize: 'vertical',
+                    outline: 'none',
+                    boxShadow: 'inset 0 2px 4px rgba(0,0,0,0.5)'
+                  }}
+                />
+
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <button
+                    className="btn-primary"
+                    onClick={handleAnalyze}
+                    disabled={isAnalyzing || !ticketInput.trim()}
+                    style={{ minWidth: '160px' }}
+                  >
+                    {isAnalyzing ? (
+                      <>
+                        <RefreshCw size={16} className="pulse-glow" style={{ animation: 'spin 1s linear infinite' }} /> Triaging...
+                      </>
                     ) : (
-                      <span className="badge badge-low" style={{ fontSize: '0.82rem' }}>
-                        <CheckCircle2 size={12} style={{ marginRight: '4px' }} /> AUTO-RESOLVE OK
-                      </span>
+                      <>
+                        <Zap size={16} /> ANALYZE TICKET
+                      </>
                     )}
-                  </div>
+                  </button>
+                  <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
+                    Active Engine: <strong style={{ color: '#818cf8' }}>{activeModelVersion}</strong>
+                  </span>
+                </div>
 
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: '1px solid var(--border-subtle)' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Model Confidence</span>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                {analysisError && (
+                  <div style={{
+                    padding: '12px 16px',
+                    borderRadius: '8px',
+                    background: 'rgba(239, 68, 68, 0.15)',
+                    border: '1px solid rgba(239, 68, 68, 0.3)',
+                    color: '#fca5a5',
+                    fontSize: '0.82rem'
+                  }}>
+                    {analysisError}
+                  </div>
+                )}
+              </div>
+
+              {/* Triage Intelligence Output Column */}
+              <div className="glass-panel" style={{ padding: '24px', display: 'flex', flexDirection: 'column', gap: '16px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', paddingBottom: '12px', borderBottom: '1px solid var(--border-subtle)' }}>
+                  <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.15rem' }}>
+                    Triage Intelligence Output
+                  </h2>
+                  {analysisResult && (
+                    <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>
+                      Latency: {analysisResult.latency_ms} ms
+                    </span>
+                  )}
+                </div>
+
+                {analysisResult ? (
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
+                    {/* Primary Predictions Row */}
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '10px' }}>
+                      <div style={{ background: 'rgba(0,0,0,0.3)', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Category</div>
+                        <div style={{ marginTop: '4px' }}>
+                          <span className={`badge ${getCategoryBadgeClass(analysisResult.category)}`} style={{ fontSize: '0.78rem' }}>
+                            {analysisResult.category}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style={{ background: 'rgba(0,0,0,0.3)', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Priority</div>
+                        <div style={{ marginTop: '4px' }}>
+                          <span className={`badge ${getPriorityBadgeClass(analysisResult.priority)}`} style={{ fontSize: '0.78rem' }}>
+                            {analysisResult.priority.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+
+                      <div style={{ background: 'rgba(0,0,0,0.3)', padding: '10px 14px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase' }}>Language</div>
+                        <div style={{ marginTop: '4px' }}>
+                          <span className="badge badge-default" style={{ fontSize: '0.78rem' }}>
+                            <Globe size={11} style={{ marginRight: '4px' }} />
+                            {analysisResult.language.toUpperCase()}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Human Escalation Decision Row */}
+                    <div style={{
+                      padding: '12px 16px',
+                      borderRadius: '10px',
+                      background: analysisResult.requires_human ? 'rgba(239, 68, 68, 0.12)' : 'rgba(16, 185, 129, 0.12)',
+                      border: `1px solid ${analysisResult.requires_human ? 'rgba(239, 68, 68, 0.35)' : 'rgba(16, 185, 129, 0.35)'}`,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'space-between',
+                      flexWrap: 'wrap',
+                      gap: '8px'
+                    }}>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                        {analysisResult.requires_human ? (
+                          <ShieldAlert size={18} color="#ef4444" />
+                        ) : (
+                          <CheckCircle2 size={18} color="#10b981" />
+                        )}
+                        <div>
+                          <div style={{ fontSize: '0.85rem', fontWeight: 600, color: analysisResult.requires_human ? '#fca5a5' : '#86efac' }}>
+                            {analysisResult.requires_human ? 'HUMAN ESCALATION REQUIRED' : 'AUTOMATED RESOLUTION PERMITTED'}
+                          </div>
+                          <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>
+                            {analysisResult.requires_human
+                              ? 'Safety policy intercepted ticket. Model confidence cannot bypass human review.'
+                              : 'Standard routine ticket. No critical security triggers detected.'}
+                          </div>
+                        </div>
+                      </div>
+
+                      <span className={`badge ${analysisResult.requires_human ? 'badge-high' : 'badge-low'}`} style={{ fontSize: '0.75rem' }}>
+                        {analysisResult.requires_human ? 'REQUIRES HUMAN' : 'AUTO RESOLVE'}
+                      </span>
+                    </div>
+
+                    {/* Escalation Reason Panel */}
+                    <div style={{ background: 'rgba(0,0,0,0.3)', padding: '12px 16px', borderRadius: '10px', border: '1px solid var(--border-subtle)' }}>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', marginBottom: '4px' }}>
+                        Escalation Policy Reasoning
+                      </div>
+                      <div style={{ fontSize: '0.84rem', color: '#c7d2fe', fontFamily: 'var(--font-mono)' }}>
+                        {analysisResult.escalation_reason || (analysisResult.requires_human ? 'high_priority_or_low_confidence' : 'none_automated_routing')}
+                      </div>
+                      <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                        {analysisResult.escalation_reason === 'native_hindi_devanagari_unreliable_tokenization' &&
+                          'Policy safeguard: Native Devanagari Hindi text detected. Due to BPE subword token fragmentation on non-Latin script, deterministic safety rules require human review.'}
+                        {analysisResult.escalation_reason === 'safety_critical_fraud_detection' &&
+                          'Policy safeguard: Zero-tolerance financial security pattern detected. Unauthorized transactions mandate human investigation.'}
+                        {analysisResult.escalation_reason === 'financial_dispute_keyword_match' &&
+                          'Policy safeguard: Double-charge / money deduction dispute detected. Requires human verification before financial adjustments.'}
+                        {analysisResult.escalation_reason === 'account_security_keyword_match' &&
+                          'Policy safeguard: Authentication lockout / MFA failure detected. Account security rules require human routing.'}
+                        {analysisResult.escalation_reason === 'delivery_integrity_compromise' &&
+                          'Policy safeguard: Tampered package, broken seal, or stolen parcel reported. Mandatory physical verification.'}
+                        {analysisResult.escalation_reason === 'legal_or_account_closure_action' &&
+                          'Policy safeguard: GDPR / right to erasure / formal account deletion requested. Legal compliance requires human review.'}
+                        {!analysisResult.requires_human &&
+                          'Standard operational routing: Ticket satisfies automated resolution criteria with no high-risk flags.'}
+                      </div>
+                    </div>
+
+                    {/* Model Confidence & Heuristic Warning Banner */}
+                    <div style={{
+                      padding: '12px 16px',
+                      borderRadius: '10px',
+                      background: 'rgba(245, 158, 11, 0.1)',
+                      border: '1px solid rgba(245, 158, 11, 0.3)',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '8px'
+                    }}>
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                          <AlertTriangle size={14} color="#f59e0b" />
+                          <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#fde68a' }}>
+                            Model Confidence: {(analysisResult.confidence * 100).toFixed(1)}%
+                          </span>
+                        </div>
+                        <span className="badge badge-refund" style={{ fontSize: '0.68rem' }}>
+                          {analysisResult.confidence_status || 'uncalibrated_heuristic'}
+                        </span>
+                      </div>
+
                       <div style={{
-                        width: '100px',
-                        height: '8px',
+                        width: '100%',
+                        height: '6px',
                         background: 'rgba(255,255,255,0.1)',
-                        borderRadius: '4px',
+                        borderRadius: '3px',
                         overflow: 'hidden'
                       }}>
                         <div style={{
@@ -564,56 +906,160 @@ export default function Dashboard() {
                           background: analysisResult.confidence > 0.85 ? '#10b981' : '#f59e0b',
                         }} />
                       </div>
-                      <span style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', fontWeight: 600 }}>
-                        {(analysisResult.confidence * 100).toFixed(1)}%
+
+                      <div style={{ fontSize: '0.72rem', color: '#fde68a', lineHeight: 1.4 }}>
+                        <strong>Uncalibrated Heuristic Notice:</strong> Softmax output probability from language head. Does not reflect calibrated Bayesian posterior. Model confidence cannot bypass deterministic human escalation rules.
+                      </div>
+                    </div>
+
+                    {/* Metadata & Raw JSON View */}
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      <span>Model Version: <strong style={{ color: '#818cf8' }}>{analysisResult.model_version}</strong></span>
+                      <span>Mode: <strong style={{ color: '#818cf8' }}>{analysisResult.inference_mode || 'neural'}</strong></span>
+                      <span>Latency: <strong style={{ color: '#a5f3fc' }}>{analysisResult.latency_ms} ms</strong></span>
+                    </div>
+
+                    <div>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                        Validated JSON Payload:
                       </span>
+                      <pre style={{
+                        marginTop: '4px',
+                        background: 'rgba(0,0,0,0.5)',
+                        padding: '10px 12px',
+                        borderRadius: '8px',
+                        fontFamily: 'var(--font-mono)',
+                        fontSize: '0.75rem',
+                        color: '#93c5fd',
+                        overflowX: 'auto',
+                        border: '1px solid rgba(255,255,255,0.05)',
+                        maxHeight: '140px'
+                      }}>
+                        {JSON.stringify({
+                          category: analysisResult.category,
+                          priority: analysisResult.priority,
+                          language: analysisResult.language,
+                          requires_human: analysisResult.requires_human,
+                          escalation_reason: analysisResult.escalation_reason,
+                          confidence: analysisResult.confidence,
+                          confidence_status: analysisResult.confidence_status || 'uncalibrated_heuristic',
+                          latency_ms: analysisResult.latency_ms,
+                          model_version: analysisResult.model_version,
+                          inference_mode: analysisResult.inference_mode || 'neural',
+                        }, null, 2)}
+                      </pre>
                     </div>
                   </div>
-
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '14px', borderBottom: '1px solid var(--border-subtle)' }}>
-                    <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>Inference Latency</span>
-                    <span style={{ fontFamily: 'var(--font-mono)', color: '#a5f3fc', fontSize: '0.9rem' }}>
-                      {analysisResult.latency_ms} ms
-                    </span>
+                ) : (
+                  <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-faint)' }}>
+                    <Zap size={36} style={{ opacity: 0.3, marginBottom: '12px' }} />
+                    <p style={{ fontSize: '0.9rem' }}>Select any synthetic preset or enter a ticket, then click <strong>ANALYZE TICKET</strong>.</p>
                   </div>
+                )}
+              </div>
+            </div>
 
-                  {/* Raw JSON View */}
-                  <div style={{ marginTop: '10px' }}>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                      Validated JSON Payload:
-                    </span>
-                    <pre style={{
-                      marginTop: '6px',
-                      background: 'rgba(0,0,0,0.4)',
-                      padding: '12px',
-                      borderRadius: '8px',
-                      fontFamily: 'var(--font-mono)',
-                      fontSize: '0.8rem',
-                      color: '#93c5fd',
-                      overflowX: 'auto',
-                      border: '1px solid rgba(255,255,255,0.05)'
-                    }}>
-                      {JSON.stringify({
-                        category: analysisResult.category,
-                        priority: analysisResult.priority,
-                        language: analysisResult.language,
-                        requires_human: analysisResult.requires_human,
-                        confidence: analysisResult.confidence,
-                        latency_ms: analysisResult.latency_ms,
-                        model_version: analysisResult.model_version
-                      }, null, 2)}
-                    </pre>
-                  </div>
+            {/* Synthetic Session Prediction History */}
+            <div className="glass-panel" style={{ padding: '20px 24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '14px' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <History size={18} color="#818cf8" />
+                  <h3 style={{ fontSize: '1.05rem', fontWeight: 600 }}>
+                    Synthetic Session Prediction History
+                  </h3>
+                  <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>
+                    {predictionHistory.length} Recorded
+                  </span>
+                </div>
+
+                {predictionHistory.length > 0 && (
+                  <button
+                    onClick={() => setPredictionHistory([])}
+                    className="btn-secondary"
+                    style={{ fontSize: '0.72rem', padding: '4px 10px' }}
+                  >
+                    Clear History
+                  </button>
+                )}
+              </div>
+
+              {predictionHistory.length === 0 ? (
+                <div style={{ textAlign: 'center', padding: '24px', color: 'var(--text-faint)', fontSize: '0.85rem' }}>
+                  No predictions made in this synthetic session yet. Execute a triage query above to log history.
                 </div>
               ) : (
-                <div style={{ textAlign: 'center', padding: '60px 20px', color: 'var(--text-faint)' }}>
-                  <Zap size={36} style={{ opacity: 0.3, marginBottom: '12px' }} />
-                  <p>Enter a customer ticket on the left and click <strong>ANALYZE</strong> to execute inference.</p>
+                <div style={{ overflowX: 'auto' }}>
+                  <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.8rem' }}>
+                    <thead>
+                      <tr style={{ borderBottom: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.02)' }}>
+                        <th style={{ padding: '8px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Time</th>
+                        <th style={{ padding: '8px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Ticket Text Snippet</th>
+                        <th style={{ padding: '8px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Category</th>
+                        <th style={{ padding: '8px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Priority</th>
+                        <th style={{ padding: '8px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Language</th>
+                        <th style={{ padding: '8px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Human Review?</th>
+                        <th style={{ padding: '8px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Reason</th>
+                        <th style={{ padding: '8px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Latency</th>
+                        <th style={{ padding: '8px 12px', color: 'var(--text-muted)', fontWeight: 600 }}>Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {predictionHistory.map((item) => (
+                        <tr key={item.id} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                          <td style={{ padding: '8px 12px', color: 'var(--text-muted)', fontFamily: 'var(--font-mono)' }}>{item.timestamp}</td>
+                          <td style={{ padding: '8px 12px', maxWidth: '280px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={item.ticket}>
+                            {item.ticket}
+                          </td>
+                          <td style={{ padding: '8px 12px' }}>
+                            <span className={`badge ${getCategoryBadgeClass(item.result.category)}`} style={{ fontSize: '0.7rem' }}>
+                              {item.result.category}
+                            </span>
+                          </td>
+                          <td style={{ padding: '8px 12px' }}>
+                            <span className={`badge ${getPriorityBadgeClass(item.result.priority)}`} style={{ fontSize: '0.7rem' }}>
+                              {item.result.priority.toUpperCase()}
+                            </span>
+                          </td>
+                          <td style={{ padding: '8px 12px' }}>
+                            <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>
+                              {item.result.language.toUpperCase()}
+                            </span>
+                          </td>
+                          <td style={{ padding: '8px 12px' }}>
+                            {item.result.requires_human ? (
+                              <span className="badge badge-high" style={{ fontSize: '0.7rem' }}>ESCALATE</span>
+                            ) : (
+                              <span className="badge badge-low" style={{ fontSize: '0.7rem' }}>AUTO OK</span>
+                            )}
+                          </td>
+                          <td style={{ padding: '8px 12px', color: 'var(--text-muted)', fontSize: '0.72rem', fontFamily: 'var(--font-mono)' }}>
+                            {item.result.escalation_reason || '—'}
+                          </td>
+                          <td style={{ padding: '8px 12px', fontFamily: 'var(--font-mono)', color: '#a5f3fc' }}>
+                            {item.result.latency_ms} ms
+                          </td>
+                          <td style={{ padding: '8px 12px' }}>
+                            <button
+                              onClick={() => {
+                                setTicketInput(item.ticket);
+                                setAnalysisResult(item.result);
+                              }}
+                              className="btn-secondary"
+                              style={{ fontSize: '0.68rem', padding: '3px 8px' }}
+                            >
+                              Load
+                            </button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
                 </div>
               )}
             </div>
           </div>
         )}
+
 
         {/* 3. BENCHMARK TAB */}
         {activeTab === 'benchmark' && (

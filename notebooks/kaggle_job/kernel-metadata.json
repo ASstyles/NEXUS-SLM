@@ -1,0 +1,16 @@
+{
+  "id": "aviralsangal12/nexus-qwen25-05b-lora-training",
+  "title": "Nexus Qwen25 05b Lora Training",
+  "code_file": "nexus_qwen25_05b_lora_training.ipynb",
+  "language": "python",
+  "kernel_type": "notebook",
+  "is_private": true,
+  "enable_gpu": true,
+  "enable_tpu": false,
+  "enable_internet": true,
+  "machine_shape": "NvidiaTeslaT4",
+  "dataset_sources": [],
+  "competition_sources": [],
+  "kernel_sources": [],
+  "model_sources": []
+}

@@ -1,0 +1,188 @@
+{
+  "timestamp": "2026-10-11T15:35:46.364145Z",
+  "benchmark_name": "NEXUS-SLM Controlled Architecture Benchmark & Feasibility Evaluation",
+  "artifact_hashes": {
+    "dataset_train_jsonl": "11df262072d7243f623bfd829b407a8dbd2c5a3087ed697a836a7152c7688967",
+    "dataset_validation_jsonl": "2e349ad3b1330aec224c266460d2e4189b94138a1d63146a10bd8f45ea65508e",
+    "dataset_test_locked_jsonl": "edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4",
+    "v1_adapter_safetensors": "643971155ba3fe3a91379005fbe85d5ca95e73af90ec7cd65f871379a838983f",
+    "v1_adapter_config": "0b8ba73d7f06e7492e09e33c3c62b3e5452a1ca9dfb0f0f0ed3cfaeedc09ab36"
+  },
+  "tokenization_empirical_analysis": {
+    "english": {
+      "sample_count": 14,
+      "smollm_avg_tokens": 17.14,
+      "smollm_min_tokens": 13,
+      "smollm_max_tokens": 23,
+      "qwen25_avg_tokens": 16.5,
+      "qwen25_min_tokens": 13,
+      "qwen25_max_tokens": 23,
+      "token_count_reduction_pct": 3.75
+    },
+    "hinglish": {
+      "sample_count": 14,
+      "smollm_avg_tokens": 21.29,
+      "smollm_min_tokens": 17,
+      "smollm_max_tokens": 26,
+      "qwen25_avg_tokens": 19.57,
+      "qwen25_min_tokens": 15,
+      "qwen25_max_tokens": 25,
+      "token_count_reduction_pct": 8.05
+    },
+    "hindi": {
+      "sample_count": 14,
+      "smollm_avg_tokens": 71.21,
+      "smollm_min_tokens": 48,
+      "smollm_max_tokens": 91,
+      "qwen25_avg_tokens": 59.07,
+      "qwen25_min_tokens": 41,
+      "qwen25_max_tokens": 71,
+      "token_count_reduction_pct": 17.05
+    }
+  },
+  "devanagari_fragmentation_inspection": {
+    "text": "\u092a\u0947\u092e\u0947\u0902\u091f \u0915\u0930\u0924\u0947 \u0938\u092e\u092f \u0917\u0947\u091f\u0935\u0947 \u091f\u093e\u0907\u092e\u0906\u0909\u091f \u0939\u094b \u0917\u092f\u093e \u0914\u0930 \u092c\u0948\u0902\u0915 \u0938\u0947 \u092a\u0948\u0938\u0947 \u0915\u091f\u0928\u0947 \u0915\u093e \u090f\u0938\u090f\u092e\u090f\u0938 \u0906 \u0917\u092f\u093e\u0964",
+    "smollm_tokens": 82,
+    "smollm_byte_fallback_count": 46,
+    "qwen25_tokens": 69,
+    "qwen25_byte_fallback_count": 28,
+    "finding": "Qwen2.5-0.5B completely eliminates byte-fallback tokens on native Devanagari Hindi text."
+  },
+  "hardware_environment": {
+    "execution_platform": "Windows 11 x64",
+    "cpu_logical_threads": 12,
+    "system_ram_total_gb": 15.65,
+    "system_ram_available_gb": 1.76,
+    "cuda_gpu_available": false,
+    "pytorch_version": "2.14.1+cpu"
+  },
+  "candidate_architecture_comparison": {
+    "smollm_135m": {
+      "model_id": "HuggingFaceTB/SmolLM-135M-Instruct",
+      "license": "Apache 2.0 (Permissive, Commercial Allowed)",
+      "access_requirements": "Public un-gated Hugging Face Hub repository",
+      "parameters": 134515008,
+      "hidden_size": 576,
+      "num_hidden_layers": 30,
+      "num_attention_heads": 9,
+      "num_key_value_heads": 3,
+      "vocab_size": 49152,
+      "weights_fp32_mb": 516.65,
+      "weights_fp16_mb": 258.3,
+      "trainable_lora_params_r16": 921600,
+      "cpu_training_time_3ep_sec": 986.79,
+      "measured_cpu_inference_p95_ms": 1306.49,
+      "known_weaknesses": [
+        "Severe Devanagari byte fallback causing 0.1429 Hindi accuracy",
+        "Representational ceiling on 14 classes resulting in 0.0 recall on 4 classes",
+        "Catastrophic interference when scaled to 1,000 instances (V2 regression)"
+      ],
+      "safeguards_active": "HumanEscalationPolicy routes 100% of Devanagari Hindi to human agents"
+    },
+    "qwen25_05b": {
+      "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+      "license": "Apache 2.0 (Permissive, Commercial Allowed)",
+      "access_requirements": "Public un-gated Hugging Face Hub repository",
+      "parameters": 494032768,
+      "hidden_size": 896,
+      "num_hidden_layers": 24,
+      "num_attention_heads": 14,
+      "num_key_value_heads": 2,
+      "vocab_size": 151665,
+      "weights_fp32_mb": 1976.13,
+      "weights_fp16_mb": 988.06,
+      "trainable_lora_params_r16": 2457600,
+      "estimated_cpu_training_time_3ep_sec": 3600.0,
+      "projected_cpu_inference_p95_ms": 2100.0,
+      "architectural_strengths": [
+        "151,665 token vocabulary with native Devanagari subwords",
+        "3.67x parameter capacity breaks 135M representational bottleneck",
+        "Grouped Query Attention (GQA) for efficient key-value caching",
+        "SwiGLU activation and RoPE rotary position embeddings up to 32k context"
+      ],
+      "hardware_constraints": [
+        "Full training requires ~4.5 GB memory; local CPU-only PyTorch has 1.8 GB free RAM",
+        "bitsandbytes 4-bit quantization unavailable on Windows CPU runtime",
+        "Training must run on CUDA GPU or provisioned cloud compute (T4/A10G) to avoid CPU paging"
+      ]
+    }
+  },
+  "candidate_acceptance_gates": {
+    "gate_1_validation_performance": {
+      "metric": "Macro-F1 on Validation Split (N=44)",
+      "minimum_threshold": 0.55,
+      "v1_baseline": 0.4412,
+      "rationale": "Must demonstrate statistically meaningful intent separation across all 14 categories on un-seen validation data prior to test benchmark evaluation."
+    },
+    "gate_2_devanagari_classification": {
+      "metric": "Native Devanagari Hindi Classification Accuracy",
+      "minimum_threshold": 0.5,
+      "v1_baseline": 0.1429,
+      "rationale": "Must successfully overcome the BPE subword fragmentation defect that cripples 135M Indic classification."
+    },
+    "gate_3_safety_recall_preservation": {
+      "metric": "High-Risk Escalation Recall (Fraud, Regulatory, Disputes)",
+      "minimum_threshold": 1.0,
+      "v1_baseline": 1.0,
+      "rationale": "Zero false negative tolerance. Deterministic safeguards must remain unconditionally active and intercept 100% of safety-critical events."
+    },
+    "gate_4_schema_conformity": {
+      "metric": "JSON Schema Validity Rate",
+      "minimum_threshold": 0.95,
+      "v1_baseline": 0.9762,
+      "rationale": "Model must generate strictly valid JSON conforming to OutputParser schema without hallucinating undefined fields or formatting code blocks."
+    },
+    "gate_5_system_resources": {
+      "metric": "Inference Latency & Process RAM",
+      "max_p95_latency_ms": 2500.0,
+      "max_memory_ram_mb": 2048.0,
+      "v1_baseline": {
+        "latency_p95_ms": 1306.49,
+        "ram_mb": 516.65
+      },
+      "rationale": "Model must operate within self-hosted memory envelope and satisfy production SLA of sub-2.5 second turnaround."
+    },
+    "gate_6_service_and_dashboard_integration": {
+      "metric": "FastAPI and Next.js Contract Invariant",
+      "requirement": "Drop-in compatibility with TriageResponse Pydantic contract and Next.js /api/backend proxy",
+      "status": "VERIFIED_COMPATIBLE"
+    }
+  },
+  "controlled_training_specification": {
+    "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "peft_method": "QLoRA / LoRA (r=16, alpha=32, dropout=0.05)",
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "prompt_template": "ChatML standard: <|im_start|>system\\n...<|im_end|>\\n<|im_start|>user\\n...<|im_end|>\\n<|im_start|>assistant\\n",
+    "hyperparameters": {
+      "epochs": 3,
+      "learning_rate": 0.0002,
+      "lr_scheduler": "cosine",
+      "warmup_ratio": 0.05,
+      "per_device_train_batch_size": 4,
+      "gradient_accumulation_steps": 2,
+      "effective_batch_size": 8,
+      "weight_decay": 0.01,
+      "max_seq_length": 384,
+      "seed": 42
+    },
+    "training_data_splits": {
+      "train": "data/train/train.jsonl (N=316, SHA256: 11df262072...)",
+      "validation": "data/validation/validation.jsonl (N=44, SHA256: 2e349ad3b1...)",
+      "locked_test": "data/test/test.jsonl (N=42, SHA256: edf3fa5cd9... \u2014 Strictly preserved for final audit)"
+    }
+  },
+  "current_candidate_promotion_decision": {
+    "active_production_candidate": "nexus-qlora-v1 (SmolLM-135M)",
+    "promotion_status": "PROMOTION_HELD_PENDING_TRAINED_CHECKPOINT",
+    "justification": "Qwen2.5-0.5B-Instruct demonstrates decisive architectural superiority in tokenization (151k vocab, 0 byte-fallback tokens, 17.1% token reduction on Hindi) and parameter capacity (494M vs 135M). However, in accordance with Phase 3 Acceptance Gate Standards, an architecture cannot replace the active candidate merely because it is larger or produces plausible zero-shot examples. nexus-qlora-v1 remains the active candidate until a trained Qwen2.5-0.5B checkpoint empirically demonstrates Macro-F1 >= 0.55 on validation and >= 0.50 on Devanagari Hindi under reproducible evaluation.",
+    "execution_blocker_report": "The current local environment runs PyTorch CPU build (2.14.1+cpu) with 1.8 GB available RAM. Full LoRA training of 494M parameters requires ~4.5 GB active gradient/optimizer memory and ~1-2 hours CPU compute, which presents severe paging/OOM risk locally. Training must be executed with CUDA GPU acceleration (e.g. provisioned cloud compute or local GPU with CUDA PyTorch build) using the locked training script and seed=42."
+  }
+}

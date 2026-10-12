@@ -21,6 +21,12 @@ class ModelLoader:
         from transformers import AutoTokenizer
 
         logger.info(f"Loading tokenizer from: {model_name_or_path}")
+        p = Path(model_name_or_path)
+        if p.is_file() and p.suffix == ".gguf":
+            model_name_or_path = str(p.parent)
+            p = Path(model_name_or_path)
+        if (p.is_absolute() or str(model_name_or_path).startswith("models") or "\\" in str(model_name_or_path)) and not p.exists():
+            raise FileNotFoundError(f"Model directory does not exist: {model_name_or_path}")
         tokenizer = AutoTokenizer.from_pretrained(
             model_name_or_path,
             trust_remote_code=trust_remote_code,
@@ -90,6 +96,29 @@ class ModelLoader:
             model_kwargs["device_map"] = device
         else:
             model_kwargs["device_map"] = None
+
+        if quantization.startswith("gguf") or (Path(model_name_or_path).is_file() and Path(model_name_or_path).suffix == ".gguf") or (Path(model_name_or_path).is_dir() and any(Path(model_name_or_path).glob("*.gguf"))):
+            import llama_cpp
+            p = Path(model_name_or_path)
+            gguf_file = p if (p.is_file() and p.suffix == ".gguf") else next(p.glob("*.gguf"))
+            logger.info(f"Loading GGUF quantized model from {gguf_file}...")
+            model = llama_cpp.Llama(
+                model_path=str(gguf_file),
+                n_ctx=2048,
+                n_threads=8,
+                logits_all=True,
+                verbose=False,
+            )
+            return model, tokenizer
+
+        if quantization == "onnx_int8" or (Path(model_name_or_path).is_dir() and (Path(model_name_or_path) / "model_quantized.onnx").exists()):
+            from optimum.onnxruntime import ORTModelForCausalLM
+            logger.info(f"Loading ONNX quantized model from {model_name_or_path}...")
+            model = ORTModelForCausalLM.from_pretrained(
+                model_name_or_path,
+                file_name="model_quantized.onnx",
+            )
+            return model, tokenizer
 
         model = AutoModelForCausalLM.from_pretrained(
             model_name_or_path,

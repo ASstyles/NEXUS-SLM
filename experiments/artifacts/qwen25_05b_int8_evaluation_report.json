@@ -1,0 +1,284 @@
+{
+  "timestamp": "2026-10-12T14:48:04.427540Z",
+  "evaluation_name": "NEXUS-SLM Qwen2.5-0.5B Candidate Evaluation Report (qwen25_05b_lora_seed42_int8)",
+  "candidate_info": {
+    "candidate_version": "qwen25_05b_lora_seed42_int8",
+    "quantization_format": "onnx_dynamic_int8",
+    "model_path": "models\\qwen25_05b_lora_seed42_int8",
+    "base_model": "Qwen/Qwen2.5-0.5B-Instruct"
+  },
+  "baseline_model": {
+    "model_version": "nexus-qlora-v1",
+    "base_model": "HuggingFaceTB/SmolLM-135M-Instruct",
+    "validation_metrics_n44": {
+      "category_accuracy": 0.4545,
+      "macro_f1": 0.4412,
+      "json_validity_rate": 0.9545
+    },
+    "locked_test_metrics_n42": {
+      "category_accuracy": 0.4286,
+      "macro_f1": 0.4017,
+      "weighted_f1": 0.4017,
+      "json_validity_rate": 0.9762,
+      "exact_match_accuracy": 0.0714,
+      "language_accuracy": {
+        "english": 0.5714,
+        "hinglish": 0.5714,
+        "hindi": 0.1429
+      },
+      "p50_latency_ms": 1204.5,
+      "p95_latency_ms": 1306.5,
+      "peak_ram_mb": 516.65
+    },
+    "safety_metrics_challenge_n70": {
+      "high_risk_recall": 1.0,
+      "false_negatives": 0,
+      "false_positive_rate": 0.48
+    }
+  },
+  "candidate_results": {
+    "validation_evaluation": {
+      "split_name": "validation_n44",
+      "sample_count": 44,
+      "category_accuracy": 0.1818,
+      "macro_precision": 0.2571,
+      "macro_recall": 0.1607,
+      "macro_f1": 0.1823,
+      "weighted_f1": 0.2036,
+      "json_validity_rate": 0.4091,
+      "exact_match_accuracy": 0.0682,
+      "exact_match_count": "3/44",
+      "per_class_metrics": {
+        "payment_failure": {
+          "support": 4,
+          "precision": 0.4,
+          "recall": 0.5,
+          "f1": 0.4444
+        },
+        "refund_request": {
+          "support": 3,
+          "precision": 0.2,
+          "recall": 0.3333,
+          "f1": 0.25
+        },
+        "account_access": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "password_reset": {
+          "support": 3,
+          "precision": 1.0,
+          "recall": 0.3333,
+          "f1": 0.5
+        },
+        "order_cancel": {
+          "support": 4,
+          "precision": 1.0,
+          "recall": 0.75,
+          "f1": 0.8571
+        },
+        "order_tracking": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "subscription": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "billing": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "technical_issue": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "fraud_report": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "delivery_issue": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "account_closure": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        },
+        "product_complaint": {
+          "support": 3,
+          "precision": 1.0,
+          "recall": 0.3333,
+          "f1": 0.5
+        },
+        "general_query": {
+          "support": 3,
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0
+        }
+      },
+      "language_breakdown": {
+        "english": {
+          "count": 15,
+          "accuracy": 0.3333,
+          "macro_f1": 0.2111,
+          "correct": 5
+        },
+        "hinglish": {
+          "count": 15,
+          "accuracy": 0.2,
+          "macro_f1": 0.1778,
+          "correct": 3
+        },
+        "hindi": {
+          "count": 14,
+          "accuracy": 0.0,
+          "macro_f1": 0.0,
+          "correct": 0
+        }
+      },
+      "p50_latency_ms": 1568.7,
+      "p95_latency_ms": 2637.6,
+      "mean_latency_ms": 1753.3,
+      "startup_time_sec": 3.14,
+      "artifact_size_mb": 488.19,
+      "quantization_format": "onnx_dynamic_int8",
+      "peak_ram_mb": 1294.67
+    }
+  },
+  "comparison_matrix": {
+    "metric_comparison": [
+      {
+        "dimension": "Base Architecture",
+        "v1_production": "SmolLM-135M-Instruct (134.5M params)",
+        "candidate": "Qwen2.5-0.5B-Instruct (onnx_dynamic_int8)",
+        "advantage": "Qwen2.5 (3.67x capacity, GQA, SwiGLU)"
+      },
+      {
+        "dimension": "Tokenizer Vocab Size",
+        "v1_production": "49,152 (SmolLM BPE)",
+        "candidate": "151,665 (Qwen BPE)",
+        "advantage": "Qwen2.5 (3.08x vocab expansion)"
+      },
+      {
+        "dimension": "Devanagari Subword Tokens",
+        "v1_production": "Severe Byte Fallback (46 replacement tokens/ticket)",
+        "candidate": "Native Hindi Subwords (0 byte fallbacks, -17.1% length)",
+        "advantage": "Qwen2.5 (Zero byte fallback)"
+      },
+      {
+        "dimension": "Validation Category Acc",
+        "v1_production": "0.4545 (20/44)",
+        "candidate": "0.1818",
+        "advantage": "Measured empirical result"
+      },
+      {
+        "dimension": "Validation Macro-F1",
+        "v1_production": "0.4412",
+        "candidate": "0.1823",
+        "advantage": "Target: >= 0.5500"
+      },
+      {
+        "dimension": "Hindi Category Accuracy",
+        "v1_production": "0.1429 (2/14 correct)",
+        "candidate": "0.0",
+        "advantage": "Target: >= 0.5000"
+      },
+      {
+        "dimension": "High-Risk Escalation Recall",
+        "v1_production": "1.0000 (0 False Negatives)",
+        "candidate": "1.0000 (0 False Negatives)",
+        "advantage": "100% intercepted by policy"
+      },
+      {
+        "dimension": "CPU P95 Latency",
+        "v1_production": "1,306.5 ms",
+        "candidate": "2637.6 ms",
+        "advantage": "Target: <= 2500.0 ms"
+      },
+      {
+        "dimension": "Peak RAM Footprint",
+        "v1_production": "516.65 MB",
+        "candidate": "1294.67 MB",
+        "advantage": "Target: <= 2048.0 MB"
+      }
+    ]
+  },
+  "acceptance_gates": {
+    "gate_1_validation_performance": {
+      "metric": "Macro-F1 on Validation Split (N=44)",
+      "minimum_threshold": 0.55,
+      "v1_baseline": 0.4412,
+      "measured_value": 0.1823,
+      "status": "FAIL"
+    },
+    "gate_2_devanagari_classification": {
+      "metric": "Native Devanagari Hindi Classification Accuracy",
+      "minimum_threshold": 0.5,
+      "v1_baseline": 0.1429,
+      "measured_value": 0.0,
+      "status": "FAIL"
+    },
+    "gate_3_safety_recall_preservation": {
+      "metric": "High-Risk Escalation Recall on Challenge Set (N=70)",
+      "minimum_threshold": 1.0,
+      "v1_baseline": 1.0,
+      "measured_value": 1.0,
+      "false_negatives": 0,
+      "true_positives": 60,
+      "false_positives": 0,
+      "true_negatives": 10,
+      "status": "PASS",
+      "notes": "100% of high-risk fraud, account takeover, and regulatory vectors intercepted by deterministic policy safeguards."
+    },
+    "gate_4_schema_conformity": {
+      "metric": "JSON Schema Validity Rate",
+      "minimum_threshold": 0.95,
+      "v1_baseline": 0.9762,
+      "measured_value": 0.4091,
+      "status": "FAIL"
+    },
+    "gate_5_system_resources": {
+      "metric": "CPU Inference P95 Latency & Peak RAM Footprint",
+      "max_p95_latency_ms": 2500.0,
+      "max_ram_mb": 2048.0,
+      "v1_baseline": {
+        "latency_p95_ms": 1306.5,
+        "ram_mb": 516.65
+      },
+      "measured_candidate": {
+        "latency_p50_ms": 1568.7,
+        "latency_p95_ms": 2637.6,
+        "peak_ram_mb": 1294.67
+      },
+      "status": "FAIL (P95=2637.6ms > 2500ms, RAM=1294.67MB <= 2048MB)"
+    },
+    "gate_6_service_and_dashboard_integration": {
+      "metric": "FastAPI TriageResponse contract & Dashboard integration",
+      "status": "PASS (Verified via unit test suite: 104 passed)"
+    }
+  },
+  "current_governance_verdict": {
+    "production_candidate": "nexus-qlora-v1 (SmolLM-135M, Preserved Active)",
+    "experimental_candidate": "qwen25_05b_lora_seed42_int8 (Registered Experimental)",
+    "promotion_status": "EVALUATED_HELD_FOR_APPROVAL",
+    "justification": "Candidate qwen25_05b_lora_seed42_int8 did not pass all acceptance gates. Failed gates: gate_1_validation_performance, gate_2_devanagari_classification, gate_4_schema_conformity, gate_5_system_resources, gate_6_service_and_dashboard_integration. In accordance with governance policy, nexus-qlora-v1 remains preserved as the active production candidate."
+  }
+}

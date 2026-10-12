@@ -48,16 +48,68 @@ human_evaluator = HumanEvaluator()
 
 def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
     """Loads model weights for a designated version if available on disk."""
-    adapter_candidates = [
+    adapter_candidates = []
+    reg_entry = registry.get_model(version_name)
+    if reg_entry and "adapter_path" in reg_entry:
+        adapter_candidates.append(Path(reg_entry["adapter_path"]))
+
+    adapter_candidates.extend([
         Path(f"./models/{version_name.replace('-', '_')}"),
         Path(f"./models/{version_name}"),
-        Path("./models/nexus_qlora_v1"),
-    ]
+        Path(f"./models/{version_name.replace('seed42_', 'seed42_gguf_')}"),
+    ])
+    if version_name in ("nexus-qlora-v1", "nexus_qlora_v1", "default"):
+        adapter_candidates.append(Path("./models/nexus_qlora_v1"))
+
+    # Check for GGUF quantized model directory or file
+    for cand in adapter_candidates:
+        gguf_files = list(cand.glob("*.gguf")) if cand.is_dir() else ([cand] if cand.suffix == ".gguf" and cand.exists() else [])
+        if gguf_files:
+            try:
+                import llama_cpp
+                from transformers import AutoTokenizer
+                logger.info(f"Loading GGUF weights from {gguf_files[0]} for version {version_name}...")
+                cand_dir = cand.parent if cand.is_file() else cand
+                tok_dir = cand_dir if (cand_dir / "tokenizer.json").exists() else Path("models/scratch_merged_qwen")
+                tokenizer = AutoTokenizer.from_pretrained(str(tok_dir))
+                if tokenizer.pad_token is None:
+                    tokenizer.pad_token = tokenizer.eos_token
+                model = llama_cpp.Llama(
+                    model_path=str(gguf_files[0]),
+                    n_ctx=2048,
+                    n_threads=8,
+                    logits_all=True,
+                    verbose=False,
+                )
+                eng = InferenceEngine(model=model, tokenizer=tokenizer, model_version=version_name)
+                logger.info(f"NEXUS-SLM GGUF weights loaded successfully for {version_name}.")
+                return eng
+            except Exception as e:
+                logger.warning(f"Could not load GGUF weights for {version_name}: {e}. Falling back.")
+
+    # Check for ONNX quantized model directory
+    for cand in adapter_candidates:
+        if cand.exists() and (cand / "model_quantized.onnx").exists():
+            try:
+                from optimum.onnxruntime import ORTModelForCausalLM
+                from transformers import AutoTokenizer
+                logger.info(f"Loading ONNX weights from {cand} for version {version_name}...")
+                tokenizer = AutoTokenizer.from_pretrained(str(cand))
+                if tokenizer.pad_token is None:
+                    tokenizer.pad_token = tokenizer.eos_token
+                model = ORTModelForCausalLM.from_pretrained(str(cand), file_name="model_quantized.onnx")
+                eng = InferenceEngine(model=model, tokenizer=tokenizer, model_version=version_name)
+                logger.info(f"NEXUS-SLM ONNX weights loaded successfully for {version_name}.")
+                return eng
+            except Exception as e:
+                logger.warning(f"Could not load ONNX weights for {version_name}: {e}. Falling back.")
+
     adapter_path = None
     for cand in adapter_candidates:
         if cand.exists() and (cand / "adapter_model.safetensors").exists():
             adapter_path = cand
             break
+
 
     if adapter_path:
         try:
@@ -445,6 +497,17 @@ async def get_taxonomy_labels():
         "priorities": PRIORITIES,
         "languages": LANGUAGES,
     }
+
+
+@app.get("/demo/fixtures", summary="Documented synthetic demo ticket fixtures")
+async def get_demo_fixtures():
+    """Returns curated synthetic demo tickets across 10 categories and 3 languages."""
+    fixtures_file = Path("data/demo_fixtures.json")
+    if fixtures_file.exists():
+        with open(fixtures_file, "r", encoding="utf-8") as f:
+            return json.load(f)
+    return {"fixtures": []}
+
 
 
 @app.get("/registry", summary="Model registry catalog")

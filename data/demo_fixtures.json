@@ -1,0 +1,307 @@
+{
+  "version": "1.0.0",
+  "environment": "SYNTHETIC_LOCAL_DEMO",
+  "notice": "All examples are synthetic test fixtures designed for local demonstration and automated verification. Not derived from real customer data or production CRM records.",
+  "fixtures": [
+    {
+      "id": "demo_pay_en",
+      "category": "payment_failure",
+      "priority": "high",
+      "language": "english",
+      "requires_human": true,
+      "expected_escalation_reason": "financial_dispute_keyword_match",
+      "text": "My payment of $49.99 was deducted from my account but the order status is still pending.",
+      "description": "Standard English payment debit failure requiring human review for double charge protection."
+    },
+    {
+      "id": "demo_pay_hinglish",
+      "category": "payment_failure",
+      "priority": "high",
+      "language": "hinglish",
+      "requires_human": true,
+      "expected_escalation_reason": "financial_dispute_keyword_match",
+      "text": "Mera payment kat gaya bank se par app me order confirm nahi hua.",
+      "description": "Hinglish payment deduction failure commonly reported in Indian e-commerce."
+    },
+    {
+      "id": "demo_pay_hindi",
+      "category": "payment_failure",
+      "priority": "high",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "text": "मेरे खाते से पैसे कट गए हैं लेकिन ऑर्डर अभी तक कन्फर्म नहीं हुआ है।",
+      "description": "Devanagari Hindi payment deduction ticket triggering mandatory human review policy."
+    },
+    {
+      "id": "demo_ref_en",
+      "category": "refund_request",
+      "priority": "medium",
+      "language": "english",
+      "requires_human": false,
+      "expected_escalation_reason": null,
+      "text": "I returned the item three days ago. When will the refund be credited back to my original payment method?",
+      "description": "English return refund inquiry with standard routing."
+    },
+    {
+      "id": "demo_ref_hinglish",
+      "category": "refund_request",
+      "priority": "medium",
+      "language": "hinglish",
+      "requires_human": false,
+      "expected_escalation_reason": null,
+      "text": "Item courier wale ne pickup kar liya tha par mera refund status abhi tak update nahi hua.",
+      "description": "Hinglish refund inquiry after successful courier pickup."
+    },
+    {
+      "id": "demo_ref_hindi",
+      "category": "refund_request",
+      "priority": "medium",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "text": "मैंने सामान वापस भेज दिया है, कृपया मेरे रिफंड की स्थिति की जानकारी दें।",
+      "description": "Devanagari Hindi refund inquiry triggering mandatory human review policy."
+    },
+    {
+      "id": "demo_acc_en",
+      "category": "account_access",
+      "priority": "high",
+      "language": "english",
+      "requires_human": true,
+      "expected_escalation_reason": "account_security_keyword_match",
+      "text": "My account is locked due to suspicious activity and I cannot receive the SMS verification code.",
+      "description": "English security lockout with MFA verification failure."
+    },
+    {
+      "id": "demo_acc_hinglish",
+      "category": "account_access",
+      "priority": "high",
+      "language": "hinglish",
+      "requires_human": true,
+      "expected_escalation_reason": "account_security_keyword_match",
+      "text": "Main apne account me login nahi kar pa raha hu, OTP sms receive nahi ho raha mere phone par.",
+      "description": "Hinglish OTP sms non-delivery on account login."
+    },
+    {
+      "id": "demo_acc_hindi",
+      "category": "account_access",
+      "priority": "high",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "text": "मेरा अकाउंट लॉक हो गया है और लॉगिन करने पर ओटीपी प्राप्त नहीं हो रहा है।",
+      "description": "Devanagari Hindi account lockout triggering mandatory human review policy."
+    },
+    {
+      "id": "demo_pwd_en",
+      "category": "password_reset",
+      "priority": "medium",
+      "language": "english",
+      "requires_human": false,
+      "expected_escalation_reason": null,
+      "text": "Please send a password reset link to my registered email address as I forgot my old password.",
+      "description": "Routine automated password reset link request."
+    },
+    {
+      "id": "demo_pwd_hinglish",
+      "category": "password_reset",
+      "priority": "medium",
+      "language": "hinglish",
+      "requires_human": false,
+      "expected_escalation_reason": null,
+      "text": "Mujhe password reset karna hai par reset email inbox me show nahi ho rahi.",
+      "description": "Hinglish password reset email inquiry."
+    },
+    {
+      "id": "demo_pwd_hindi",
+      "category": "password_reset",
+      "priority": "medium",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "text": "मैं अपना पासवर्ड भूल गया हूँ, कृपया पासवर्ड रीसेट करने का लिंक भेजें।",
+      "description": "Devanagari Hindi password reset request triggering mandatory human review policy."
+    },
+    {
+      "id": "demo_sub_en",
+      "category": "subscription",
+      "priority": "medium",
+      "language": "english",
+      "requires_human": false,
+      "expected_escalation_reason": null,
+      "text": "How do I pause or downgrade my monthly premium subscription before the next renewal date?",
+      "description": "English subscription tier management question."
+    },
+    {
+      "id": "demo_sub_hinglish",
+      "category": "subscription",
+      "priority": "medium",
+      "language": "hinglish",
+      "requires_human": false,
+      "expected_escalation_reason": null,
+      "text": "Mera monthly subscription plan mujhe cancel karna hai renewal date se pehle.",
+      "description": "Hinglish subscription plan cancellation inquiry."
+    },
+    {
+      "id": "demo_sub_hindi",
+      "category": "subscription",
+      "priority": "medium",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "text": "कृपया मेरे मासिक सब्सक्रिप्शन प्लान को अगले नवीनीकरण से पहले रद्द कर दें।",
+      "description": "Devanagari Hindi subscription cancellation triggering mandatory human review policy."
+    },
+    {
+      "id": "demo_del_en",
+      "category": "delivery_issue",
+      "priority": "high",
+      "language": "english",
+      "requires_human": true,
+      "expected_escalation_reason": "delivery_integrity_compromise",
+      "text": "The courier marked my package as delivered today but the box was empty and the security seal was broken.",
+      "description": "English delivery integrity breach with tampered seal."
+    },
+    {
+      "id": "demo_del_hinglish",
+      "category": "delivery_issue",
+      "priority": "high",
+      "language": "hinglish",
+      "requires_human": true,
+      "expected_escalation_reason": "delivery_integrity_compromise",
+      "text": "Delivery boy delivered a broken packet and packet ki seal tooti hui thi.",
+      "description": "Hinglish damaged packet and broken seal report."
+    },
+    {
+      "id": "demo_del_hindi",
+      "category": "delivery_issue",
+      "priority": "high",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "text": "डिलीवरी वाले ने टूटा हुआ पार्सल दिया है और अंदर का सामान गायब है।",
+      "description": "Devanagari Hindi damaged delivery triggering mandatory human review policy."
+    },
+    {
+      "id": "demo_tech_en",
+      "category": "technical_issue",
+      "priority": "high",
+      "language": "english",
+      "requires_human": true,
+      "expected_escalation_reason": "high_priority_critical_path",
+      "text": "The mobile app keeps crashing with error 500 every time I open the checkout page.",
+      "description": "English mobile application crash blocking transactional checkout."
+    },
+    {
+      "id": "demo_tech_hinglish",
+      "category": "technical_issue",
+      "priority": "high",
+      "language": "hinglish",
+      "requires_human": true,
+      "expected_escalation_reason": "high_priority_critical_path",
+      "text": "Checkout page open karte hi app bar bar crash ho jata hai aur blank screen aati hai.",
+      "description": "Hinglish repeated crash on checkout."
+    },
+    {
+      "id": "demo_tech_hindi",
+      "category": "technical_issue",
+      "priority": "high",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "text": "ऐप में सर्च करने पर सिर्फ सफेद स्क्रीन दिख रही है और ऐप बार-बार क्रैश हो रहा है।",
+      "description": "Devanagari Hindi app crash issue triggering mandatory human review policy."
+    },
+    {
+      "id": "demo_fraud_en",
+      "category": "fraud_report",
+      "priority": "critical",
+      "language": "english",
+      "requires_human": true,
+      "expected_escalation_reason": "safety_critical_fraud_detection",
+      "text": "Urgent: Unauthorized charges of $450 detected on my credit card without my OTP or permission!",
+      "description": "Critical fraud report requiring immediate card freeze and human intervention."
+    },
+    {
+      "id": "demo_fraud_hinglish",
+      "category": "fraud_report",
+      "priority": "critical",
+      "language": "hinglish",
+      "requires_human": true,
+      "expected_escalation_reason": "safety_critical_fraud_detection",
+      "text": "Fraud alert: Kisi aur ne unauthorized card charge kar liya hai mere account se bina kisi otp ke!",
+      "description": "Hinglish unauthorized transaction fraud alert."
+    },
+    {
+      "id": "demo_fraud_hindi",
+      "category": "fraud_report",
+      "priority": "critical",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "safety_critical_fraud_detection",
+      "text": "धोखाधड़ी की सूचना: मेरे कार्ड से अनधिकृत लेन-देन हुआ है, तुरंत मेरा खाता सुरक्षित करें।",
+      "description": "Devanagari Hindi fraud report triggering safety-critical escalation policy."
+    },
+    {
+      "id": "demo_close_en",
+      "category": "account_closure",
+      "priority": "medium",
+      "language": "english",
+      "requires_human": true,
+      "expected_escalation_reason": "legal_or_account_closure_action",
+      "text": "Please delete my account and permanently erase all my personal information under GDPR.",
+      "description": "Formal GDPR right to erasure requiring verified human processing."
+    },
+    {
+      "id": "demo_close_hinglish",
+      "category": "account_closure",
+      "priority": "medium",
+      "language": "hinglish",
+      "requires_human": true,
+      "expected_escalation_reason": "legal_or_account_closure_action",
+      "text": "Mujhe apna account delete karna hai aur saare saved address aur card data erase karne hain.",
+      "description": "Hinglish account deletion request."
+    },
+    {
+      "id": "demo_close_hindi",
+      "category": "account_closure",
+      "priority": "medium",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "text": "कृपया मेरा खाता स्थायी रूप से बंद करें और मेरी व्यक्तिगत जानकारी हटा दें।",
+      "description": "Devanagari Hindi account closure triggering mandatory human review policy."
+    },
+    {
+      "id": "demo_gen_en",
+      "category": "general_query",
+      "priority": "medium",
+      "language": "english",
+      "requires_human": false,
+      "expected_escalation_reason": null,
+      "text": "What are your customer support operating hours and what is your contact phone number?",
+      "description": "General customer service inquiry with automated resolution routing."
+    },
+    {
+      "id": "demo_gen_hinglish",
+      "category": "general_query",
+      "priority": "medium",
+      "language": "hinglish",
+      "requires_human": false,
+      "expected_escalation_reason": null,
+      "text": "Aapka customer care support weekend par open rehta hai kya?",
+      "description": "Hinglish general question about operating hours."
+    },
+    {
+      "id": "demo_gen_hindi",
+      "category": "general_query",
+      "priority": "medium",
+      "language": "hindi",
+      "requires_human": true,
+      "expected_escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "text": "क्या ग्राहक सहायता सेवा सप्ताहांत पर भी उपलब्ध रहती है?",
+      "description": "Devanagari Hindi general query triggering mandatory human review policy."
+    }
+  ]
+}
