@@ -276,7 +276,7 @@ def get_fallback_prediction(text: str) -> Dict[str, Any]:
         "priority": prio,
         "language": lang,
         "requires_human": req_human,
-        "confidence": 0.94,
+        "confidence": None,
     }
 
 
@@ -352,7 +352,7 @@ async def predict_ticket(req: PredictRequest):
             inference_mode="neural" if is_neural else "heuristic_fallback",
             request_id=req_id,
             calibrated_confidence=cal_conf,
-            confidence_status="uncalibrated_heuristic",
+            confidence_status="unavailable" if raw_conf is None else "uncalibrated_heuristic",
             escalation_reason=esc_reason,
             raw_output=raw_out,
         )

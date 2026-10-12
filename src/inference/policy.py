@@ -77,7 +77,7 @@ class HumanEscalationPolicy:
         category: str,
         priority: str,
         language: str,
-        raw_confidence: float,
+        raw_confidence: Optional[float] = None,
         is_parse_error: bool = False,
         inference_mode: str = "neural",
         model_requires_human: Optional[bool] = None,
@@ -161,12 +161,16 @@ class HumanEscalationPolicy:
             if priority in ["high", "critical"] or category in ["payment_failure", "delivery_issue"]:
                 return True, "heuristic_mode_high_impact_rule", None, final_category, final_priority
 
-        # 12. Low / Uncertain Confidence Check
+        # 12. Low / Uncertain / Unavailable Confidence Check
         # Notice: Raw model probabilities are an uncalibrated heuristic.
         # Constant multiplier scaling (e.g. 0.75x) does NOT constitute valid calibration.
         # Given validation sample size (N=44 across 14 classes), calibration parameters
-        # cannot be reliably estimated. Therefore, confidence is designated as uncalibrated_heuristic,
-        # and predictions below the conservative threshold are routed to human review.
+        # cannot be reliably estimated. Therefore, confidence is designated as uncalibrated_heuristic.
+        # When confidence is unavailable (e.g. logits_all=False or fallback), the system
+        # routes conservatively to human review; unavailable confidence cannot silently
+        # be interpreted as high confidence.
+        if raw_confidence is None:
+            return True, "confidence_unavailable_conservative_escalation", None, final_category, final_priority
         if raw_confidence < cls.CONFIDENCE_THRESHOLD:
             return True, "unreliable_confidence_below_threshold", None, final_category, final_priority
 

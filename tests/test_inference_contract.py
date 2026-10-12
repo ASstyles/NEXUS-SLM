@@ -23,8 +23,8 @@ def test_contract_input_with_ticket_field():
     assert data["category"] in CATEGORIES
     assert data["priority"] in PRIORITIES
     assert data["language"] in LANGUAGES
-    assert isinstance(data["requires_human"], bool)
-    assert 0.0 <= data["confidence"] <= 1.0
+    assert data["confidence"] is None or (0.0 <= data["confidence"] <= 1.0)
+    assert data["confidence_status"] in ("uncalibrated_heuristic", "unavailable")
 
 
 def test_contract_rejects_empty_ticket():

@@ -29,12 +29,13 @@ class InferenceEngine:
         self.temperature = temperature
         self.parser = OutputParser()
 
-    def _compute_confidence(self, scores: Tuple[torch.Tensor, ...]) -> float:
+    def _compute_confidence(self, scores: Tuple[torch.Tensor, ...]) -> Optional[float]:
         """
         Computes mean token confidence across generated tokens using softmax probabilities.
+        Returns None when scores are missing or cannot be computed.
         """
         if not scores:
-            return 0.90
+            return None
         try:
             probs = []
             for step_logits in scores:
@@ -45,7 +46,7 @@ class InferenceEngine:
                 return round(sum(probs) / len(probs), 4)
         except Exception as e:
             logger.warning(f"Confidence computation fallback: {e}")
-        return 0.88
+        return None
 
     def predict(self, text: str) -> TriagePrediction:
         """
@@ -65,7 +66,7 @@ class InferenceEngine:
 
         if hasattr(self.model, "create_completion"):
             import math
-            can_logprobs = getattr(self.model, "logits_all", False)
+            can_logprobs = getattr(self.model, "logits_all", getattr(self.model, "_logits_all", False))
             res = self.model(
                 prompt,
                 max_tokens=self.max_new_tokens,
@@ -79,9 +80,9 @@ class InferenceEngine:
             if can_logprobs and choice.get("logprobs"):
                 token_logprobs = choice.get("logprobs", {}).get("token_logprobs", [])
                 probs = [math.exp(lp) for lp in token_logprobs if lp is not None]
-                confidence = round(sum(probs) / len(probs), 4) if probs else 0.95
+                confidence = round(sum(probs) / len(probs), 4) if probs else None
             else:
-                confidence = 0.95
+                confidence = None
         else:
             # 2. Tokenize
             inputs = self.tokenizer(prompt, return_tensors="pt")

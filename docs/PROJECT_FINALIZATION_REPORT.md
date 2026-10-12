@@ -308,9 +308,9 @@ tests\test_safeguards_audit.py ...........................               [ 89%]
 tests\test_schemas.py ....                                               [ 92%]
 tests\test_shadow_pilot.py ..........                                    [100%]
 
-====================== 129 passed, 9 warnings in 38.03s =======================
+====================== 134 passed, 9 warnings in 59.49s =======================
 ```
-**Outcome**: **129 passed / 129 collected (100% pass rate, 0 failures, 0 skipped)** across all unit, integration, safeguard, and governance suites.
+**Outcome**: **134 passed / 134 collected (100% pass rate, 0 failures, 0 skipped)** across all unit, integration, safeguard, confidence integrity, escalation invariant, and governance suites.
 
 ---
 
@@ -332,88 +332,114 @@ During initial smoke testing, API requests reported latencies between 5,186 ms a
 - Updated [src/inference/engine.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/engine.py) to avoid requesting logprobs on models with `logits_all=False`.
 - Locked `max_new_tokens=60` and `temperature=0.0` for deterministic, bounded triage output.
 
-#### 3. Post-Remediation Representative API Benchmark ($N=20$)
-After warm-up, a 20-request synthetic benchmark was executed against the running FastAPI service across English, Hinglish, Devanagari Hindi, and high-risk security tickets:
-- **Client End-to-End P50**: **956.62 ms**
-- **Client End-to-End P95**: **1,205.84 ms**
-- **Client End-to-End Mean**: **960.75 ms**
-- **Model Inference P50**: **954.04 ms**
-- **Model Inference P95**: **1,202.88 ms**
-- **SLA Threshold**: $\le 2,500.0\text{ ms}$
-- **SLA Determination**: **PASS** (1,205.84 ms is **51.8% below the 2,500 ms SLA limit**).
+#### 3. Corrected Percentile Estimation Methodology & Representative Benchmark ($N=30$)
+The original naive indexing method `s[int(n * 0.50)]` and `s[int(n * 0.95)]` was identified as mathematically flawed: for an even-sized sample it does not compute the conventional median (average of middle elements), and for $N=20$ it selects index 19 (the exact maximum).
+
+To eliminate this statistical defect, the benchmark script was overhauled ([scripts/benchmarking/benchmark_local_demo.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/scripts/benchmarking/benchmark_local_demo.py)) to employ a standard documented percentile estimator:
+- **Percentile Estimator**: `numpy.percentile` with `method='linear'` (Hyndman and Fan Method 7).
+- **Measurement Protocol**: 3 warmup iterations (discarded from metrics to clear OS paging/cache latency) followed by sequential execution ($C=1$) of all 30 synthetic fixtures from [data/demo_fixtures.json](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/data/demo_fixtures.json) across 10 support categories and 3 languages.
+- **Execution Success**: **30/30 requests succeeded (0 failures, 100% success rate)**.
+
+**Measured Latency Statistics ($N=30$, 8 CPU threads, Windows 12-thread host)**:
+- **Client End-to-End Latency**:
+  - Minimum: **921.79 ms**
+  - Median (P50): **1,144.97 ms**
+  - P90: **1,326.04 ms**
+  - P95: **1,386.08 ms**
+  - P99: **1,413.08 ms**
+  - Maximum: **1,421.41 ms**
+  - Arithmetic Mean: **1,153.44 ms**
+- **Model Inference Latency**:
+  - Minimum: **915.19 ms**
+  - Median (P50): **1,138.56 ms**
+  - P90: **1,320.50 ms**
+  - P95: **1,380.60 ms**
+  - P99: **1,407.06 ms**
+  - Maximum: **1,415.30 ms**
+  - Arithmetic Mean: **1,147.52 ms**
+- **SLA Evaluation ($\le 2,500.0\text{ ms}$ P95)**: **PASS** (Measured client P95 of **1,386.08 ms** is **44.6% below the 2,500 ms SLA ceiling**). Notice that P95 is distinct from the maximum (1,421.41 ms), confirming valid linear CDF interpolation.
 
 ---
 
-### 6.3 Escalation Consistency Audit & Root-Cause Trace
-An initial smoke test revealed that for the Hinglish ticket:
+### 6.3 Confidence Integrity Audit & Unavailable State Handling
+A critical audit was conducted on the confidence reporting mechanism across `src/inference/engine.py`, `src/inference/policy.py`, and `api/main.py`.
+
+#### 1. Code-Path Trace & Routing Vulnerability
+- **Root Cause**: When `logits_all=False` was applied to resolve CPU generation latency, log-probabilities became unavailable in `llama_cpp.Llama`. In [src/inference/engine.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/engine.py), the completion handler defaulted to `confidence = 0.95`.
+- **Routing Impact**: In [src/inference/policy.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/policy.py), Rule 12 evaluates:
+  `if raw_confidence < cls.CONFIDENCE_THRESHOLD:` ($\tau = 0.85$).
+  Because `0.95 >= 0.85`, Rule 12 evaluated to `False`. For any ticket not matching deterministic keyword safeguards where `model_requires_human=False`, the policy fell through to `return False, "automated_routing_permitted"`.
+- **Finding**: The fabricated constant `0.95` was directly masquerading as measured high model confidence, silently allowing tickets without measured confidence to bypass human review.
+
+#### 2. Architecture & Design Determination
+1. **No Constant Pretending Calibration**: A constant `0.95` is never treated as a calibrated or measured probability.
+2. **Preserve Latency Gains**: Re-enabling full logit processing (`logits_all=True`) would re-introduce the 3,900 ms CPU bottleneck (a 9.3x penalty), violating the 2,500 ms P95 SLA.
+3. **Explicit Unavailable State**: In accordance with enterprise ML safety standards, when log-probabilities cannot be measured, the system transitions to an **explicit unavailable-confidence state**:
+   - `confidence` in [src/data/schemas.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/data/schemas.py) and [api/schemas.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/api/schemas.py) is typed as `Optional[float] = None` (serialized as JSON `null`).
+   - `confidence_status` in API responses is set to `"unavailable"` (vs `"uncalibrated_heuristic"` when token probabilities are computed).
+4. **Conservative Routing Enforcement**: In `HumanEscalationPolicy` (Rule 12):
+   ```python
+   if raw_confidence is None:
+       return True, "confidence_unavailable_conservative_escalation", None, final_category, final_priority
+   ```
+   When confidence is unavailable, the system conservatively escalates to human review. Unavailable confidence can **never silently be interpreted as high confidence**.
+
+---
+
+### 6.4 Escalation Audit Invariant & Anti-Weakening Safeguards
+A rigorous review of the benchmark assertion comparing the raw model's `requires_human` with the final API response was performed:
+
+#### 1. Invariant Distinction: Safe Override vs Inconsistency
+A benchmark assertion requiring strict equality (`raw_model_requires_human == api_requires_human`) in every case is conceptually invalid:
+- When a neural model predicts `requires_human = False` on a high-risk fraud ticket, the deterministic safety policy correctly intercepts and sets `requires_human = True`.
+- This divergence is **NOT an inconsistency defect**; it is the fundamental purpose of a deterministic defense-in-depth policy.
+- The true system invariant is:
+  $$\text{api\_requires\_human} \ge \text{model\_requires\_human}$$
+  Specifically:
+  1. **Model True Preservation**: If the neural model recommends escalation (`model_requires_human = True`), this caution must **never be lost or downgraded** in the final response.
+  2. **Deterministic Anti-Weakening Guarantee**: If any deterministic policy rule fires (fraud, Devanagari script, prompt injection, financial disputes, legal threats, account lockout, delivery tampering, parse errors, or unavailable confidence), a model prediction of `requires_human = False` **CANNOT weaken the escalation decision**.
+
+#### 2. Hinglish Financial Dispute Resolution
+For the Hinglish financial dispute:
 > *"Mera payment account se cut ho gaya hai but order confirm nahi hua, please jaldi refund karo ya update do."*
-
-The raw model output predicted `requires_human: true`, but the API response returned `requires_human: false` with `escalation_reason: "automated_routing_permitted"`.
-
-#### 1. Code-Path Trace
-1. **Raw Output**: `InferenceEngine.predict()` generated:
-   `{"category": "payment_failure", "priority": "high", "language": "hinglish", "requires_human": true}`.
-2. **Parser**: `OutputParser.parse_and_validate()` extracted `parsed_data["requires_human"] = True`.
-3. **Engine Prediction**: `TriagePrediction.requires_human` was populated as `True`.
-4. **API Integration Gap**: In [api/main.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/api/main.py), `pred.requires_human` was previously discarded and not forwarded to `HumanEscalationPolicy.evaluate_escalation()`.
-5. **Keyword Gap**: In [src/inference/policy.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/policy.py), `FINANCIAL_DISPUTE_KEYWORDS` contained phonetic spellings `"kat gaya"` and `"kat gaye"`, but lacked the common phonetic Hinglish variant `"cut ho gaya"`.
-6. **Policy Decision**: Because no keyword matched and confidence was high (0.97 > 0.85), `evaluate_escalation()` fell through to `return False, "automated_routing_permitted"`.
-7. **Response Serialization**: [api/main.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/api/main.py) assigned `requires_human = req_human` (False), overriding the model's explicit escalation recommendation.
-
-#### 2. Remediation Applied & Anti-Weakening Policy Guarantee
-- **Expanded Financial Keywords**: Added `"cut ho gaya"`, `"cut gaya"`, `"cut ho gya"`, `"paise cut"`, `"account se cut"`, `"amount cut"` to `FINANCIAL_DISPUTE_KEYWORDS` in [src/inference/policy.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/policy.py).
-- **Integrated Model Escalation with Precedence**: Added `model_requires_human: Optional[bool] = None` to `HumanEscalationPolicy.evaluate_escalation()`.
-- **Anti-Weakening Guarantee**: All 12 deterministic safety safeguards (prompt injection, fraud, Devanagari script, legal threats, parse error, critical priority, context sparsity, ambiguity, financial disputes, account lockout, delivery tampering, heuristic fallback, low confidence) execute **FIRST**. If any deterministic safeguard triggers, escalation is immediate. A model prediction of `requires_human: false` can **NEVER weaken a deterministic policy decision**.
-- **Model-Requested Escalation (Rule 13)**: If deterministic safeguards permit automated routing, but the neural model specifically predicted `requires_human=True`, the policy honors the model's caution with `reason="model_predicted_human_escalation"`.
-- **Targeted Regression Tests Added**: Added 4 tests in [tests/test_safeguards_audit.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/tests/test_safeguards_audit.py) verifying Hinglish `"cut ho gaya"` detection, model-requested escalation honoring, model anti-weakening protection across fraud, Devanagari, and prompt injection, and live API consistency.
-
-#### 3. Post-Remediation Verification
-Re-exercising the Hinglish payment ticket:
-- **Raw Output `requires_human`**: `True`
-- **API Response `requires_human`**: `True`
-- **Escalation Reason**: `"high_impact_financial_dispute"`
-- **Consistency**: **100% MATCH and CONSISTENT.**
+- **Raw Model Output**: `requires_human = True`
+- **Deterministic Policy Safeguard**: Matches `"cut ho gaya"` in `FINANCIAL_DISPUTE_KEYWORDS`.
+- **API Response**: `requires_human = True` with `escalation_reason = "high_impact_financial_dispute"`.
+- **Schema Validity**: Validated against `PredictResponse` Pydantic model with 100% compliance.
 
 ---
 
-### 6.4 Live Local Demonstration Route Exercise Results
-Recorded in [experiments/artifacts/local_demo_verification_results.json](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/experiments/artifacts/local_demo_verification_results.json):
+### 6.5 Live Local Demonstration Route Exercise Results
+Recorded in [experiments/artifacts/local_demo_verification_results.json](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/experiments/artifacts/local_demo_verification_results.json) ($N=30$, 0 failures):
 
 1. **System Health Check (`GET /health`)**:
    - HTTP Status: `200 OK`
    - Payload: `{"status": "healthy", "model_loaded": true, "model_version": "qwen25_05b_lora_seed42_q8_0", "inference_mode": "neural"}`
 2. **Synthetic English Ticket**:
-   - Input: `"I would like to cancel my order #84920 and request a full refund to my original payment method because it has not shipped yet."`
+   - Input: `"My payment of $49.99 was deducted from my account but the order status is still pending."`
    - HTTP Status: `200 OK`
-   - Category: `refund_request`
-   - Priority: `medium`
-   - Language: `english`
-   - Requires Human: `true` (Reason: `ambiguous_ticket_requires_human_clarification`)
-   - Latency: `1,203.8 ms`
+   - Category: `payment_failure`, Priority: `high`, Language: `english`
+   - Requires Human: `true` (Reason: `high_impact_financial_dispute`)
+   - Client Elapsed: `1,160.3 ms` | Model Latency: `1,154.3 ms`
 3. **Synthetic Hinglish Ticket**:
    - Input: `"Mera payment account se cut ho gaya hai but order confirm nahi hua, please jaldi refund karo ya update do."`
    - HTTP Status: `200 OK`
-   - Category: `payment_failure`
-   - Priority: `high`
-   - Language: `hinglish`
+   - Category: `payment_failure`, Priority: `high`, Language: `hinglish`
    - Requires Human: `true` (Reason: `high_impact_financial_dispute`)
-   - Latency: `959.3 ms`
-   - Consistency: **100% Match between Model Output and API Response.**
+   - Client Elapsed: `1,136.9 ms` | Model Latency: `1,130.6 ms`
+   - Escalation Invariant: **PASS (100% compliant with model-preservation & policy precedence)**
 4. **Synthetic Devanagari Hindi Ticket**:
-   - Input: `"मेरा खाता ब्लॉक हो गया है और मैं लॉगिन नहीं कर पा रहा हूँ। कृपया मेरा पासवर्ड रीसेट करने में मदद करें।"`
+   - Input: `"मेरे खाते से पैसे कट गए हैं लेकिन ऑर्डर अभी तक कन्फर्म नहीं हुआ है।"`
    - HTTP Status: `200 OK`
-   - Category: `account_access`
-   - Priority: `medium`
-   - Language: `hindi`
+   - Category: `payment_failure`, Priority: `high`, Language: `hindi`
    - Requires Human: `true` (Reason: `native_hindi_devanagari_unreliable_tokenization`)
-   - Latency: `1,205.8 ms`
+   - Client Elapsed: `1,151.7 ms` | Model Latency: `1,145.8 ms`
 5. **High-Risk Security / Fraud Ticket (Deterministic Escalation Verification)**:
    - Input: `"CRITICAL EMERGENCY: Someone hacked my account, changed the 2FA phone number, and made an unauthorized transaction of $4,500. Lock my account immediately!"`
    - HTTP Status: `200 OK`
-   - Category: `fraud_report`
-   - Priority: `critical`
+   - Category: `fraud_report`, Priority: `critical`, Language: `english`
    - Requires Human: `true` (Reason: `safety_critical_fraud_detection`)
-   - Latency: `968.6 ms`
+   - Client Elapsed: `1,148.2 ms` | Model Latency: `1,141.9 ms`
 6. **Safe Missing-Model Rollback Handling**:
    - Endpoint: `POST /model/rollback?target_version=non_existent_candidate_v99`
    - HTTP Status: `404 Not Found`

@@ -61,7 +61,7 @@ class TriagePrediction(BaseModel):
     priority: str = Field(description="Predicted priority")
     language: str = Field(description="Predicted language")
     requires_human: bool = Field(description="Predicted human escalation necessity")
-    confidence: float = Field(ge=0.0, le=1.0, description="Confidence score from model token probabilities")
+    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0, description="Confidence score from model token probabilities, or None if unavailable")
     latency_ms: Optional[float] = Field(default=None, description="Inference latency in milliseconds")
     model_version: Optional[str] = Field(default="nexus-v1.0", description="Model version tag")
     raw_output: Optional[str] = Field(default=None, description="Raw generation string before validation")

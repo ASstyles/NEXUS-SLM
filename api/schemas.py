@@ -79,7 +79,7 @@ class PredictResponse(BaseModel):
     priority: SupportPriority = Field(description="Predicted urgency priority level")
     language: SupportLanguage = Field(description="Detected language modality")
     requires_human: bool = Field(description="Whether escalation to a human agent is recommended")
-    confidence: float = Field(ge=0.0, le=1.0, description="Heuristic model confidence score in [0.0, 1.0]")
+    confidence: Optional[float] = Field(default=None, ge=0.0, le=1.0, description="Heuristic model confidence score in [0.0, 1.0], or None when log-probabilities are unavailable")
     
     # Operational & observability metadata fields
     latency_ms: Optional[float] = Field(default=None, description="Inference execution latency in milliseconds")

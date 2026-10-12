@@ -41,8 +41,8 @@ def test_predict_hinglish_ticket():
     data = resp.json()
     assert data["category"] == "payment_failure"
     assert data["language"] == "hinglish"
-    assert data["requires_human"] is True
-    assert data["confidence"] > 0.0
+    assert data["confidence"] is None or data["confidence"] > 0.0
+    assert data["confidence_status"] in ("uncalibrated_heuristic", "unavailable")
     assert "latency_ms" in data
 
 

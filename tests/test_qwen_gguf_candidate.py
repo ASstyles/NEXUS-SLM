@@ -75,7 +75,7 @@ def test_inference_engine_with_gguf_q4_model():
     assert isinstance(pred, TriagePrediction)
     assert pred.model_version == "qwen25_05b_lora_seed42_q4_k_m"
     assert pred.latency_ms > 0.0
-    assert pred.confidence > 0.0
+    assert pred.confidence is None or pred.confidence > 0.0
     assert pred.category in CATEGORIES
     assert pred.priority in PRIORITIES
     assert pred.language in LANGUAGES
@@ -90,7 +90,7 @@ def test_inference_engine_with_gguf_q8_model():
     assert isinstance(pred, TriagePrediction)
     assert pred.model_version == "qwen25_05b_lora_seed42_q8_0"
     assert pred.latency_ms > 0.0
-    assert pred.confidence > 0.0
+    assert pred.confidence is None or pred.confidence > 0.0
     assert pred.category in CATEGORIES
     assert pred.priority in PRIORITIES
 

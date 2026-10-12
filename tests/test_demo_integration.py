@@ -59,7 +59,7 @@ def test_native_devanagari_hindi_mandatory_escalation():
             "native_hindi_devanagari_unreliable_tokenization",
             "safety_critical_fraud_detection",
         )
-        assert data["confidence_status"] == "uncalibrated_heuristic"
+        assert data["confidence_status"] in ("uncalibrated_heuristic", "unavailable")
 
 
 def test_fraud_report_critical_escalation():
@@ -96,7 +96,7 @@ def test_all_ten_demo_categories_execute_safely():
         assert data["priority"] in PRIORITIES
         assert data["language"] in LANGUAGES
         assert isinstance(data["requires_human"], bool)
-        assert data["confidence_status"] == "uncalibrated_heuristic"
+        assert data["confidence_status"] in ("uncalibrated_heuristic", "unavailable")
         assert data["latency_ms"] is not None
         assert data["model_version"] is not None
 
