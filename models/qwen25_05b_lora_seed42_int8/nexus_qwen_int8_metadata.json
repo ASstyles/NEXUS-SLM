@@ -1,0 +1,23 @@
+{
+  "timestamp": "2026-10-11T18:56:24.872993Z",
+  "candidate_version": "qwen25_05b_lora_seed42_int8",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "source_adapter_dir": "models\\qwen25_05b_lora_seed42",
+  "quantization_format": "onnx_dynamic_int8",
+  "runtime_engine": "ONNXRuntime",
+  "target_hardware": "x86_64 CPU (AVX2 / AVX-512 VNNI)",
+  "quantized_size_mb": 488.19,
+  "conversion_duration_sec": 189.87,
+  "artifact_hashes": {
+    "added_tokens.json": "f0acedf99e19ec0a5b797ffbd0b94328172ccd90f7f385bbc521cda2701b03ab",
+    "chat_template.jinja": "8aa40ce145adb73cb3a75194dc0224702a95850ec5275cabb728496bbd749fc6",
+    "config.json": "a934593024a6f0a8df4c204db53b1fd4d9959733fb033ff4a0290a566d59b5e5",
+    "merges.txt": "8831e4f1a044471340f7c0a83d7bd71306a5b867e95fd870f74d0c5308a904d5",
+    "model_quantized.onnx": "d38a4d687101c2529da7ad38a00d9fdfc69d113902ec6609e92877cfef61080f",
+    "ort_config.json": "40cee631c1c35ee56b38150edd0c2e9b94cdb512a14f6ad386890f38af6c6c52",
+    "special_tokens_map.json": "57255613bbe23c9497211ca68561ff429a51e871dbaf5a59998fa4c8f7fe168a",
+    "tokenizer.json": "9c5ae00e602b8860cbd784ba82a8aa14e8feecec692e7076590d014d7b7fdafa",
+    "tokenizer_config.json": "5fd4cea2574beb6b70ba31582179880d331b723f5b5119ee67c29d45b983f7be",
+    "vocab.json": "ca10d7e9fb3ed18575dd1e277a2579c16d108e32f27439684afa0e10b1440910"
+  }
+}

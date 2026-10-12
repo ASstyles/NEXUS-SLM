@@ -60,7 +60,6 @@ models/exported/
 tools/
 models/scratch_merged_qwen/
 models/scratch_onnx_qwen/
-models/qwen25_05b_lora_seed42_int8/
 models/qwen25_05b_lora_seed42_gguf/
 models/qwen25_05b_lora_seed42/nexus_training/
 
