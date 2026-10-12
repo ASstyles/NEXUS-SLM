@@ -15,11 +15,13 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     curl \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Python dependencies
-COPY requirements.txt pyproject.toml ./
+# Install Python dependencies using CPU-only PyTorch to minimize image footprint
+COPY requirements.txt requirements-ci.txt requirements-training.txt pyproject.toml ./
 RUN pip install --no-cache-dir --upgrade pip && \
-    pip install --no-cache-dir -r requirements.txt && \
-    pip install --no-cache-dir -e .
+    pip install --no-cache-dir "torch>=2.2.0" --index-url https://download.pytorch.org/whl/cpu && \
+    pip install --no-cache-dir llama-cpp-python>=0.2.80 --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu && \
+    pip install --no-cache-dir -r requirements-ci.txt && \
+    pip install --no-cache-dir --no-deps -e .
 
 # Copy application source code, models, configs, and assets
 COPY src/ ./src/

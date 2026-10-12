@@ -1,0 +1,38 @@
+# NEXUS-SLM CI Dependencies
+# Note: PyTorch (CPU-only) is installed prior to this file via:
+#   python -m pip install --no-cache-dir torch>=2.2.0 --index-url https://download.pytorch.org/whl/cpu
+
+# Core Runtime, Modeling & Inference
+transformers>=4.44.0
+peft>=0.12.0
+accelerate>=0.33.0
+
+# Quantization & Inference Engines
+optimum>=1.20.0
+onnxruntime>=1.18.0
+llama-cpp-python>=0.2.80
+
+# Scientific & Evaluation
+numpy>=1.26.0,<2.1.0
+scipy>=1.12.0
+pandas>=2.2.0
+scikit-learn>=1.4.0
+matplotlib>=3.8.0
+
+# API & Web
+fastapi>=0.112.0
+uvicorn[standard]>=0.30.0
+pydantic>=2.8.0
+python-dotenv>=1.0.1
+requests>=2.32.0
+httpx>=0.27.0
+
+# Utilities
+rich>=13.7.1
+pyyaml>=6.0.1
+tqdm>=4.66.4
+psutil>=5.9.0
+
+# Testing & Quality
+pytest>=8.3.0
+pytest-asyncio>=0.23.8

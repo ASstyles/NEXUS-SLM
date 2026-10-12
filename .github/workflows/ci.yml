@@ -15,6 +15,16 @@ jobs:
         python-version: ["3.10"]
 
     steps:
+      - name: Free Disk Space on Runner
+        run: |
+          echo "=== Disk space before runner cleanup ==="
+          df -h
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          echo "=== Disk space after runner cleanup ==="
+          df -h
+
       - name: Checkout Codebase
         uses: actions/checkout@v4
 
@@ -22,13 +32,36 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
-          cache: "pip"
 
-      - name: Install Python Dependencies
+      - name: Disk Diagnostics (Pre-Install)
         run: |
-          python -m pip install --upgrade pip
-          pip install -r requirements.txt
-          pip install -e .
+          echo "=== Disk space before dependency installation ==="
+          df -h
+
+      - name: Install CPU-only PyTorch
+        run: |
+          python -m pip install --no-cache-dir --upgrade pip
+          python -m pip install --no-cache-dir "torch>=2.2.0" --index-url https://download.pytorch.org/whl/cpu
+          python -c "import torch; print(f'Installed PyTorch: {torch.__version__}, CUDA: {torch.version.cuda}'); assert torch.version.cuda is None, 'Error: CUDA build detected!'"
+
+      - name: Install CI Dependencies
+        run: |
+          python -m pip install --no-cache-dir -r requirements-ci.txt --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
+          python -m pip install --no-cache-dir --no-deps -e .
+
+      - name: Disk Diagnostics & Environment Audit (Post-Install)
+        run: |
+          echo "=== Disk space after dependency installation ==="
+          df -h
+          echo "=== Pip cache size ==="
+          du -sh ~/.cache/pip 2>/dev/null || echo "No pip cache found (cache disabled as expected)"
+          echo "=== Top 15 largest installed packages in site-packages ==="
+          SITE_PKG=$(python -c "import site; print(site.getsitepackages()[0])")
+          du -sh $SITE_PKG/* 2>/dev/null | sort -hr | head -n 15 || true
+          echo "=== Verify Dependency Consistency (pip check) ==="
+          python -m pip check
+          echo "=== Verify CPU-only PyTorch Build ==="
+          python -c "import torch; print('PyTorch version:', torch.__version__); assert torch.version.cuda is None, 'CUDA detected'"
 
       - name: Python Syntax & Compilation Verification
         run: |
@@ -53,15 +86,15 @@ jobs:
     needs: lint-and-tests
 
     steps:
-      - name: Checkout Codebase
-        uses: actions/checkout@v4
-
       - name: Free Disk Space on Runner
         run: |
           sudo rm -rf /usr/share/dotnet
           sudo rm -rf /usr/local/lib/android
           sudo rm -rf /opt/ghc
           df -h
+
+      - name: Checkout Codebase
+        uses: actions/checkout@v4
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -124,6 +157,13 @@ jobs:
     needs: lint-and-tests
 
     steps:
+      - name: Free Disk Space on Runner
+        run: |
+          sudo rm -rf /usr/share/dotnet
+          sudo rm -rf /usr/local/lib/android
+          sudo rm -rf /opt/ghc
+          df -h
+
       - name: Checkout Codebase
         uses: actions/checkout@v4
 
