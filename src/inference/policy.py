@@ -16,7 +16,9 @@ FRAUD_KEYWORDS = [
 ]
 
 FINANCIAL_DISPUTE_KEYWORDS = [
-    "kat gaye", "kat gaya", "charged twice", "double bill", "double charge",
+    "kat gaye", "kat gaya", "cut ho gaya", "cut gaya", "cut ho gya", "cut ho gyi",
+    "paise cut", "amount cut", "account se cut", "kat gya", "kat gye",
+    "charged twice", "double bill", "double charge",
     "debited twice", "deducted from", "money deducted", "paise kat", "paisa kat",
     "wrongly debited", "gateway timeout", "amount debited", "money got deducted",
     "cvv", "atm debit", "पैसे कट", "कट गया", "पैसे कटने", "kat gaye par", "kat gaya par",
@@ -78,6 +80,7 @@ class HumanEscalationPolicy:
         raw_confidence: float,
         is_parse_error: bool = False,
         inference_mode: str = "neural",
+        model_requires_human: Optional[bool] = None,
     ) -> Tuple[bool, str, Optional[float], str, str]:
         """
         Determines whether the ticket requires human escalation and returns:
@@ -166,5 +169,12 @@ class HumanEscalationPolicy:
         # and predictions below the conservative threshold are routed to human review.
         if raw_confidence < cls.CONFIDENCE_THRESHOLD:
             return True, "unreliable_confidence_below_threshold", None, final_category, final_priority
+
+        # 13. Model-requested escalation
+        # If deterministic safeguards allow automation, but the neural model specifically predicted
+        # requires_human=True, honor the model's caution without allowing the model to ever weaken
+        # a deterministic safety escalation decision.
+        if model_requires_human is True:
+            return True, "model_predicted_human_escalation", None, final_category, final_priority
 
         return False, "automated_routing_permitted", None, final_category, final_priority

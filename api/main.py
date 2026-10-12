@@ -78,10 +78,16 @@ def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
                     model_path=str(gguf_files[0]),
                     n_ctx=2048,
                     n_threads=8,
-                    logits_all=True,
+                    logits_all=False,
                     verbose=False,
                 )
-                eng = InferenceEngine(model=model, tokenizer=tokenizer, model_version=version_name)
+                eng = InferenceEngine(
+                    model=model,
+                    tokenizer=tokenizer,
+                    model_version=version_name,
+                    max_new_tokens=60,
+                    temperature=0.0,
+                )
                 logger.info(f"NEXUS-SLM GGUF weights loaded successfully for {version_name}.")
                 return eng
             except Exception as e:
@@ -294,6 +300,7 @@ async def predict_ticket(req: PredictRequest):
 
     try:
         is_neural = (inference_engine is not None)
+        model_req_human = None
         if is_neural:
             pred = inference_engine.predict(ticket_text)
             cat_str = pred.category
@@ -303,6 +310,7 @@ async def predict_ticket(req: PredictRequest):
             raw_out = pred.raw_output
             model_latency = pred.latency_ms
             is_parse_err = (pred.confidence == 0.0 and pred.requires_human is True)
+            model_req_human = pred.requires_human
         else:
             fb = get_fallback_prediction(ticket_text)
             cat_str = fb["category"]
@@ -312,6 +320,7 @@ async def predict_ticket(req: PredictRequest):
             raw_out = json.dumps(fb)
             model_latency = round((time.perf_counter() - start_time) * 1000 + 35.0, 2)
             is_parse_err = False
+            model_req_human = fb.get("requires_human")
 
         # Apply deterministic human escalation policy
         req_human, esc_reason, cal_conf, cat_str, prio_str = HumanEscalationPolicy.evaluate_escalation(
@@ -322,6 +331,7 @@ async def predict_ticket(req: PredictRequest):
             raw_confidence=raw_conf,
             is_parse_error=is_parse_err,
             inference_mode="neural" if is_neural else "heuristic_fallback",
+            model_requires_human=model_req_human,
         )
 
         # Map to valid Enums

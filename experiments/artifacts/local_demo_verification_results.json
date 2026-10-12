@@ -1,166 +1,255 @@
 {
-  "health": {
-    "status_code": 200,
-    "elapsed_ms": 6.08,
-    "body": {
-      "status": "healthy",
-      "model_loaded": true,
-      "model_version": "qwen25_05b_lora_seed42_q8_0",
-      "inference_mode": "neural",
-      "hardware": {
-        "os": "Windows",
-        "os_release": "10",
-        "platform_machine": "AMD64",
-        "cpu_count": 12,
-        "ram_total_gb": 15.65,
-        "ram_available_gb": 3.38,
-        "cuda_available": false,
-        "cuda_version": null,
-        "gpu_count": 0,
-        "gpus": [],
-        "bitsandbytes_available": false,
-        "recommended_precision": "fp32"
-      }
-    }
+  "timestamp": "2026-10-12T16:01:31Z",
+  "model_version": "qwen25_05b_lora_seed42_q8_0",
+  "quantization": "gguf_weight_only_q8_0",
+  "sample_count": 20,
+  "client_end_to_end_latency": {
+    "min_ms": 792.87,
+    "p50_ms": 956.62,
+    "p90_ms": 1203.84,
+    "p95_ms": 1205.84,
+    "p99_ms": 1205.84,
+    "max_ms": 1205.84,
+    "mean_ms": 960.75
   },
-  "model_info": {
-    "status_code": 200,
-    "elapsed_ms": 2.44,
-    "body": {
-      "active_version": "qwen25_05b_lora_seed42_q8_0",
-      "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
-      "quantization": "gguf_weight_only_q8_0",
-      "model_hash": "sha256_b0c891dca80498f95e97d37ace60b574860fbfc3100574aeb76bae524e79f6d8",
-      "deployment_status": "experimental",
-      "dataset_version": "validation_n44",
-      "metrics": {
-        "model_name": "NEXUS-Qwen2.5-0.5B-LoRA-GGUF-Q8_0",
-        "validation_sample_count": 44,
-        "macro_f1": 0.8974,
-        "weighted_f1": 0.9021,
-        "category_accuracy": 0.9091,
-        "json_validity_rate": 1.0,
-        "exact_match_accuracy": 0.4091,
-        "hindi_accuracy": 0.9286,
-        "hinglish_accuracy": 0.8667,
-        "english_accuracy": 0.9333,
-        "high_risk_challenge_recall": 1.0,
-        "false_negatives": 0
-      }
-    }
+  "model_inference_latency": {
+    "min_ms": 783.86,
+    "p50_ms": 954.04,
+    "p90_ms": 1199.71,
+    "p95_ms": 1202.88,
+    "p99_ms": 1202.88,
+    "max_ms": 1202.88,
+    "mean_ms": 953.83
   },
-  "english_ticket": {
-    "payload": {
-      "ticket": "I would like to cancel my order #84920 and request a full refund to my original payment method because it has not shipped yet."
+  "sla_threshold_ms": 2500.0,
+  "sla_met": true,
+  "escalation_consistency_check": {
+    "ticket": "Mera payment account se cut ho gaya hai but order confirm nahi hua, please jaldi refund karo ya update do.",
+    "raw_output_requires_human": true,
+    "api_requires_human": true,
+    "escalation_reason": "high_impact_financial_dispute",
+    "consistent": true
+  },
+  "per_request_records": [
+    {
+      "index": 1,
+      "ticket_preview": "I would like to cancel my order #84920 and request a full re...",
+      "category": "refund_request",
+      "priority": "medium",
+      "language": "english",
+      "requires_human": true,
+      "escalation_reason": "ambiguous_ticket_requires_human_clarification",
+      "client_elapsed_ms": 1203.84,
+      "model_latency_ms": 1199.71
     },
-    "response": {
-      "status_code": 200,
-      "elapsed_ms": 5576.69,
-      "body": {
-        "category": "refund_request",
-        "priority": "medium",
-        "language": "english",
-        "requires_human": true,
-        "confidence": 0.9624,
-        "latency_ms": 5572.2,
-        "model_version": "qwen25_05b_lora_seed42_q8_0",
-        "inference_mode": "neural",
-        "request_id": "5df61c3d-70f7-43d5-ae17-a22188a5bb02",
-        "calibrated_confidence": null,
-        "confidence_status": "uncalibrated_heuristic",
-        "escalation_reason": "ambiguous_ticket_requires_human_clarification",
-        "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"english\", \"requires_human\": true}"
-      }
-    }
-  },
-  "hinglish_ticket": {
-    "payload": {
-      "ticket": "Mera payment account se cut ho gaya hai but order confirm nahi hua, please jaldi refund karo ya update do."
+    {
+      "index": 2,
+      "ticket_preview": "Can you please tell me how to track my delivery courier for ...",
+      "category": "order_tracking",
+      "priority": "medium",
+      "language": "english",
+      "requires_human": false,
+      "escalation_reason": "automated_routing_permitted",
+      "client_elapsed_ms": 863.76,
+      "model_latency_ms": 860.86
     },
-    "response": {
-      "status_code": 200,
-      "elapsed_ms": 5353.53,
-      "body": {
-        "category": "payment_failure",
-        "priority": "high",
-        "language": "hinglish",
-        "requires_human": false,
-        "confidence": 0.97,
-        "latency_ms": 5350.56,
-        "model_version": "qwen25_05b_lora_seed42_q8_0",
-        "inference_mode": "neural",
-        "request_id": "a52a2f3a-2a4f-466a-a4c5-8e12b67eaeb8",
-        "calibrated_confidence": null,
-        "confidence_status": "uncalibrated_heuristic",
-        "escalation_reason": "automated_routing_permitted",
-        "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
-      }
-    }
-  },
-  "hindi_ticket": {
-    "payload": {
-      "ticket": "मेरा खाता ब्लॉक हो गया है और मैं लॉगिन नहीं कर पा रहा हूँ। कृपया मेरा पासवर्ड रीसेट करने में मदद करें।"
+    {
+      "index": 3,
+      "ticket_preview": "I forgot my password and cannot log into my customer portal ...",
+      "category": "password_reset",
+      "priority": "medium",
+      "language": "english",
+      "requires_human": true,
+      "escalation_reason": "model_predicted_human_escalation",
+      "client_elapsed_ms": 806.84,
+      "model_latency_ms": 783.86
     },
-    "response": {
-      "status_code": 200,
-      "elapsed_ms": 5785.24,
-      "body": {
-        "category": "account_access",
-        "priority": "medium",
-        "language": "hindi",
-        "requires_human": true,
-        "confidence": 0.9587,
-        "latency_ms": 5759.29,
-        "model_version": "qwen25_05b_lora_seed42_q8_0",
-        "inference_mode": "neural",
-        "request_id": "645dd435-347f-458b-bfef-a2b9689174ce",
-        "calibrated_confidence": null,
-        "confidence_status": "uncalibrated_heuristic",
-        "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-        "raw_output": "{\"category\": \"account_access\", \"priority\": \"medium\", \"language\": \"hindi\", \"requires_human\": true}"
-      }
-    }
-  },
-  "high_risk_ticket": {
-    "payload": {
-      "ticket": "CRITICAL EMERGENCY: Someone hacked my account, changed the 2FA phone number, and made an unauthorized transaction of $4,500. Lock my account immediately!"
+    {
+      "index": 4,
+      "ticket_preview": "The mobile application crashes every time I navigate to the ...",
+      "category": "technical_issue",
+      "priority": "high",
+      "language": "english",
+      "requires_human": true,
+      "escalation_reason": "model_predicted_human_escalation",
+      "client_elapsed_ms": 804.74,
+      "model_latency_ms": 801.7
     },
-    "response": {
-      "status_code": 200,
-      "elapsed_ms": 5202.01,
-      "body": {
-        "category": "fraud_report",
-        "priority": "critical",
-        "language": "english",
-        "requires_human": true,
-        "confidence": 0.9884,
-        "latency_ms": 5186.7,
-        "model_version": "qwen25_05b_lora_seed42_q8_0",
-        "inference_mode": "neural",
-        "request_id": "f695470a-5753-47af-84c2-fef1849fbd4c",
-        "calibrated_confidence": null,
-        "confidence_status": "uncalibrated_heuristic",
-        "escalation_reason": "safety_critical_fraud_detection",
-        "raw_output": "{\"category\": \"fraud_report\", \"priority\": \"critical\", \"language\": \"english\", \"requires_human\": true}"
-      }
+    {
+      "index": 5,
+      "ticket_preview": "Where can I download the VAT tax invoice for my purchase las...",
+      "category": "billing",
+      "priority": "high",
+      "language": "english",
+      "requires_human": true,
+      "escalation_reason": "model_predicted_human_escalation",
+      "client_elapsed_ms": 792.87,
+      "model_latency_ms": 789.83
+    },
+    {
+      "index": 6,
+      "ticket_preview": "Mera payment account se cut ho gaya hai but order confirm na...",
+      "category": "payment_failure",
+      "priority": "high",
+      "language": "hinglish",
+      "requires_human": true,
+      "escalation_reason": "high_impact_financial_dispute",
+      "client_elapsed_ms": 959.28,
+      "model_latency_ms": 956.47
+    },
+    {
+      "index": 7,
+      "ticket_preview": "Mera order abhi tak deliver nahi hua, courier kahan hai trac...",
+      "category": "order_tracking",
+      "priority": "medium",
+      "language": "hinglish",
+      "requires_human": true,
+      "escalation_reason": "model_predicted_human_escalation",
+      "client_elapsed_ms": 896.17,
+      "model_latency_ms": 893.15
+    },
+    {
+      "index": 8,
+      "ticket_preview": "Login nahi ho raha hai OTP phone par receive nahi ho raha pl...",
+      "category": "account_access",
+      "priority": "medium",
+      "language": "hinglish",
+      "requires_human": true,
+      "escalation_reason": "model_predicted_human_escalation",
+      "client_elapsed_ms": 1141.87,
+      "model_latency_ms": 1139.16
+    },
+    {
+      "index": 9,
+      "ticket_preview": "App open karte hi crash ho jata hai baar baar error aa raha ...",
+      "category": "technical_issue",
+      "priority": "high",
+      "language": "hinglish",
+      "requires_human": true,
+      "escalation_reason": "model_predicted_human_escalation",
+      "client_elapsed_ms": 1051.67,
+      "model_latency_ms": 1048.55
+    },
+    {
+      "index": 10,
+      "ticket_preview": "Mujhe apna subscription auto-renew band karna hai please can...",
+      "category": "subscription",
+      "priority": "medium",
+      "language": "hinglish",
+      "requires_human": true,
+      "escalation_reason": "high_impact_financial_dispute",
+      "client_elapsed_ms": 890.98,
+      "model_latency_ms": 865.14
+    },
+    {
+      "index": 11,
+      "ticket_preview": "मेरा खाता ब्लॉक हो गया है और मैं लॉगिन नहीं कर पा रहा हूँ। क...",
+      "category": "account_access",
+      "priority": "medium",
+      "language": "hindi",
+      "requires_human": true,
+      "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "client_elapsed_ms": 1205.84,
+      "model_latency_ms": 1202.88
+    },
+    {
+      "index": 12,
+      "ticket_preview": "कृपया मेरे ऑर्डर की डिलीवरी स्थिति बताएं, पार्सल अभी तक नहीं...",
+      "category": "order_tracking",
+      "priority": "medium",
+      "language": "hindi",
+      "requires_human": true,
+      "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "client_elapsed_ms": 1109.27,
+      "model_latency_ms": 1106.7
+    },
+    {
+      "index": 13,
+      "ticket_preview": "पेमेंट कट गया है लेकिन खाता में पैसे वापस नहीं आए हैं, कृपया...",
+      "category": "payment_failure",
+      "priority": "high",
+      "language": "hindi",
+      "requires_human": true,
+      "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "client_elapsed_ms": 1099.51,
+      "model_latency_ms": 1096.63
+    },
+    {
+      "index": 14,
+      "ticket_preview": "क्या आप मुझे मेरे खाते का बिल और रसीद ईमेल कर सकते हैं?...",
+      "category": "billing",
+      "priority": "medium",
+      "language": "hindi",
+      "requires_human": true,
+      "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "client_elapsed_ms": 956.62,
+      "model_latency_ms": 954.04
+    },
+    {
+      "index": 15,
+      "ticket_preview": "मैं अपना खाता हमेशा के लिए बंद और डिलीट करना चाहता हूँ।...",
+      "category": "account_closure",
+      "priority": "medium",
+      "language": "hindi",
+      "requires_human": true,
+      "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
+      "client_elapsed_ms": 997.04,
+      "model_latency_ms": 970.89
+    },
+    {
+      "index": 16,
+      "ticket_preview": "CRITICAL EMERGENCY: Someone hacked my account, changed the 2...",
+      "category": "fraud_report",
+      "priority": "critical",
+      "language": "english",
+      "requires_human": true,
+      "escalation_reason": "safety_critical_fraud_detection",
+      "client_elapsed_ms": 968.62,
+      "model_latency_ms": 965.65
+    },
+    {
+      "index": 17,
+      "ticket_preview": "Someone unauthorized logged in from a foreign IP and charged...",
+      "category": "fraud_report",
+      "priority": "critical",
+      "language": "english",
+      "requires_human": true,
+      "escalation_reason": "safety_critical_fraud_detection",
+      "client_elapsed_ms": 859.53,
+      "model_latency_ms": 856.83
+    },
+    {
+      "index": 18,
+      "ticket_preview": "Package arrived with seal tooti hui and inside phone box was...",
+      "category": "fraud_report",
+      "priority": "critical",
+      "language": "hinglish",
+      "requires_human": true,
+      "escalation_reason": "safety_critical_fraud_detection",
+      "client_elapsed_ms": 930.25,
+      "model_latency_ms": 926.97
+    },
+    {
+      "index": 19,
+      "ticket_preview": "I will take legal action and file a complaint in consumer co...",
+      "category": "fraud_report",
+      "priority": "critical",
+      "language": "english",
+      "requires_human": true,
+      "escalation_reason": "safety_critical_fraud_detection",
+      "client_elapsed_ms": 856.12,
+      "model_latency_ms": 840.11
+    },
+    {
+      "index": 20,
+      "ticket_preview": "What are your standard customer support working hours during...",
+      "category": "general_query",
+      "priority": "low",
+      "language": "english",
+      "requires_human": false,
+      "escalation_reason": "automated_routing_permitted",
+      "client_elapsed_ms": 820.24,
+      "model_latency_ms": 817.47
     }
-  },
-  "missing_model_test": {
-    "status_code": 404,
-    "elapsed_ms": 21.88,
-    "body": {
-      "detail": "Target model version 'non_existent_candidate_v99' not registered."
-    }
-  },
-  "validation_error_test": {
-    "status_code": 422,
-    "elapsed_ms": 17.3,
-    "body": {
-      "error": "Request validation failed",
-      "error_code": "INVALID_INPUT_SCHEMA",
-      "detail": "1 validation error:\n  {'type': 'value_error', 'loc': ('body',), 'msg': \"Value error, Missing required input field: 'ticket'\", 'input': {'invalid_key': 12345}, 'ctx': {'error': ValueError(\"Missing required input field: 'ticket'\")}}\n\n  File \"C:\\Users\\avira\\OneDrive\\Desktop\\NEXUS-SLM\\api\\main.py\", line 277, in predict_ticket\n    POST /predict",
-      "request_id": "f54190a2-48e9-4f46-8f73-0904b206ed0e",
-      "timestamp": "2026-10-12T15:43:38.064881"
-    }
-  }
+  ]
 }

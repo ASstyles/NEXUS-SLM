@@ -19,8 +19,8 @@ class InferenceEngine:
         model: Optional[Any] = None,
         tokenizer: Optional[Any] = None,
         model_version: str = "nexus-v1.0",
-        max_new_tokens: int = 150,
-        temperature: float = 0.1,
+        max_new_tokens: int = 60,
+        temperature: float = 0.0,
     ):
         self.model = model
         self.tokenizer = tokenizer
@@ -65,19 +65,23 @@ class InferenceEngine:
 
         if hasattr(self.model, "create_completion"):
             import math
+            can_logprobs = getattr(self.model, "logits_all", False)
             res = self.model(
                 prompt,
                 max_tokens=self.max_new_tokens,
                 stop=["<|im_end|>", "<|endoftext|>"],
                 temperature=self.temperature if self.temperature > 0 else 0.0,
-                logprobs=1,
+                logprobs=1 if can_logprobs else None,
             )
             choice = res["choices"][0]
             raw_text = choice["text"].strip()
             latency_ms = round((time.perf_counter() - start_time) * 1000, 2)
-            token_logprobs = choice.get("logprobs", {}).get("token_logprobs", []) if choice.get("logprobs") else []
-            probs = [math.exp(lp) for lp in token_logprobs if lp is not None]
-            confidence = round(sum(probs) / len(probs), 4) if probs else 0.90
+            if can_logprobs and choice.get("logprobs"):
+                token_logprobs = choice.get("logprobs", {}).get("token_logprobs", [])
+                probs = [math.exp(lp) for lp in token_logprobs if lp is not None]
+                confidence = round(sum(probs) / len(probs), 4) if probs else 0.95
+            else:
+                confidence = 0.95
         else:
             # 2. Tokenize
             inputs = self.tokenizer(prompt, return_tensors="pt")

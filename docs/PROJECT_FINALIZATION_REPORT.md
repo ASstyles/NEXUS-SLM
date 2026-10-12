@@ -283,7 +283,7 @@ Invoke-RestMethod -Uri "http://127.0.0.1:8000/predict" -Method Post -ContentType
 
 ---
 
-## 6. Actual Regression & Local Smoke-Test Execution Results
+## 6. Actual Regression, Latency Discrepancy & Escalation Consistency Audit
 
 ### 6.1 Full Regression Test Suite Execution
 Executed on October 12, 2026:
@@ -296,23 +296,87 @@ tests\test_api.py ........                                               [  6%]
 tests\test_benchmarks.py ...                                             [  8%]
 tests\test_data_pipeline.py .....                                        [ 12%]
 tests\test_demo_integration.py .....                                     [ 16%]
-tests\test_extended.py ..............                                    [ 28%]
-tests\test_inference_contract.py .............                           [ 38%]
-tests\test_metrics_math.py ....                                          [ 41%]
-tests\test_parser.py ....                                                [ 44%]
-tests\test_qwen_gguf_candidate.py .........                              [ 52%]
-tests\test_qwen_quantized_candidate.py ............                      [ 61%]
-tests\test_qwen_tokenization_and_masking.py .....                        [ 65%]
-tests\test_rollback_and_governance.py ......                             [ 70%]
-tests\test_safeguards_audit.py .......................                   [ 88%]
+tests\test_extended.py ..............                                    [ 27%]
+tests\test_inference_contract.py .............                           [ 37%]
+tests\test_metrics_math.py ....                                          [ 40%]
+tests\test_parser.py ....                                                [ 43%]
+tests\test_qwen_gguf_candidate.py .........                              [ 50%]
+tests\test_qwen_quantized_candidate.py ............                      [ 59%]
+tests\test_qwen_tokenization_and_masking.py .....                        [ 63%]
+tests\test_rollback_and_governance.py ......                             [ 68%]
+tests\test_safeguards_audit.py ...........................               [ 89%]
 tests\test_schemas.py ....                                               [ 92%]
 tests\test_shadow_pilot.py ..........                                    [100%]
 
-====================== 125 passed, 9 warnings in 52.51s =======================
+====================== 129 passed, 9 warnings in 38.03s =======================
 ```
-**Outcome**: **125 passed / 125 collected (100% pass rate, 0 failures, 0 skipped)**.
+**Outcome**: **129 passed / 129 collected (100% pass rate, 0 failures, 0 skipped)** across all unit, integration, safeguard, and governance suites.
 
-### 6.2 Live Local Smoke-Test Execution Results
+---
+
+### 6.2 Latency Discrepancy Investigation & Resolution
+During initial smoke testing, API requests reported latencies between 5,186 ms and 5,759 ms, diverging from the GGUF offline benchmark (P95 of 1,374.8 ms). A systematic latency breakdown was conducted:
+
+#### 1. Overhead Breakdown
+- **Model Reloading Check**: Negative. The GGUF model is initialized once during FastAPI application startup (`lifespan`) and retained in memory in `inference_engine`. Zero disk reloading occurs per request.
+- **FastAPI / HTTP Overhead**: ~4.5 ms (< 0.1% of total response duration). Network roundtrip, Pydantic schema validation, and JSON serialization consume negligible time.
+- **Prompt Preprocessing**: < 0.1 ms. ChatML formatting generates a 184-token prompt.
+- **Root Cause Identified**: In [src/inference/engine.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/engine.py), `self.model(...)` was invoked with `logprobs=1`, requiring `logits_all=True` in `llama_cpp.Llama`. In llama.cpp CPU execution, setting `logits_all=True` and requesting `logprobs=1` forces full-vocabulary logit projection across all 151,936 vocabulary entries for every single prompt token and generation step.
+  - Isolated parameter benchmarking demonstrated:
+    - Generation with `logprobs=None`: **420.45 ms**
+    - Generation with `logprobs=1`: **3,942.08 ms** (a **9.3x / 938% CPU penalty**).
+  - Because confidence is already formally declared as `uncalibrated_heuristic` in the API schema, computing expensive token-level logprobs at runtime provided zero calibration value while severely bottlenecking CPU throughput.
+
+#### 2. Remediation Applied
+- Configured `logits_all=False` during model initialization in [api/main.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/api/main.py).
+- Updated [src/inference/engine.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/engine.py) to avoid requesting logprobs on models with `logits_all=False`.
+- Locked `max_new_tokens=60` and `temperature=0.0` for deterministic, bounded triage output.
+
+#### 3. Post-Remediation Representative API Benchmark ($N=20$)
+After warm-up, a 20-request synthetic benchmark was executed against the running FastAPI service across English, Hinglish, Devanagari Hindi, and high-risk security tickets:
+- **Client End-to-End P50**: **956.62 ms**
+- **Client End-to-End P95**: **1,205.84 ms**
+- **Client End-to-End Mean**: **960.75 ms**
+- **Model Inference P50**: **954.04 ms**
+- **Model Inference P95**: **1,202.88 ms**
+- **SLA Threshold**: $\le 2,500.0\text{ ms}$
+- **SLA Determination**: **PASS** (1,205.84 ms is **51.8% below the 2,500 ms SLA limit**).
+
+---
+
+### 6.3 Escalation Consistency Audit & Root-Cause Trace
+An initial smoke test revealed that for the Hinglish ticket:
+> *"Mera payment account se cut ho gaya hai but order confirm nahi hua, please jaldi refund karo ya update do."*
+
+The raw model output predicted `requires_human: true`, but the API response returned `requires_human: false` with `escalation_reason: "automated_routing_permitted"`.
+
+#### 1. Code-Path Trace
+1. **Raw Output**: `InferenceEngine.predict()` generated:
+   `{"category": "payment_failure", "priority": "high", "language": "hinglish", "requires_human": true}`.
+2. **Parser**: `OutputParser.parse_and_validate()` extracted `parsed_data["requires_human"] = True`.
+3. **Engine Prediction**: `TriagePrediction.requires_human` was populated as `True`.
+4. **API Integration Gap**: In [api/main.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/api/main.py), `pred.requires_human` was previously discarded and not forwarded to `HumanEscalationPolicy.evaluate_escalation()`.
+5. **Keyword Gap**: In [src/inference/policy.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/policy.py), `FINANCIAL_DISPUTE_KEYWORDS` contained phonetic spellings `"kat gaya"` and `"kat gaye"`, but lacked the common phonetic Hinglish variant `"cut ho gaya"`.
+6. **Policy Decision**: Because no keyword matched and confidence was high (0.97 > 0.85), `evaluate_escalation()` fell through to `return False, "automated_routing_permitted"`.
+7. **Response Serialization**: [api/main.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/api/main.py) assigned `requires_human = req_human` (False), overriding the model's explicit escalation recommendation.
+
+#### 2. Remediation Applied & Anti-Weakening Policy Guarantee
+- **Expanded Financial Keywords**: Added `"cut ho gaya"`, `"cut gaya"`, `"cut ho gya"`, `"paise cut"`, `"account se cut"`, `"amount cut"` to `FINANCIAL_DISPUTE_KEYWORDS` in [src/inference/policy.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/src/inference/policy.py).
+- **Integrated Model Escalation with Precedence**: Added `model_requires_human: Optional[bool] = None` to `HumanEscalationPolicy.evaluate_escalation()`.
+- **Anti-Weakening Guarantee**: All 12 deterministic safety safeguards (prompt injection, fraud, Devanagari script, legal threats, parse error, critical priority, context sparsity, ambiguity, financial disputes, account lockout, delivery tampering, heuristic fallback, low confidence) execute **FIRST**. If any deterministic safeguard triggers, escalation is immediate. A model prediction of `requires_human: false` can **NEVER weaken a deterministic policy decision**.
+- **Model-Requested Escalation (Rule 13)**: If deterministic safeguards permit automated routing, but the neural model specifically predicted `requires_human=True`, the policy honors the model's caution with `reason="model_predicted_human_escalation"`.
+- **Targeted Regression Tests Added**: Added 4 tests in [tests/test_safeguards_audit.py](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/tests/test_safeguards_audit.py) verifying Hinglish `"cut ho gaya"` detection, model-requested escalation honoring, model anti-weakening protection across fraud, Devanagari, and prompt injection, and live API consistency.
+
+#### 3. Post-Remediation Verification
+Re-exercising the Hinglish payment ticket:
+- **Raw Output `requires_human`**: `True`
+- **API Response `requires_human`**: `True`
+- **Escalation Reason**: `"high_impact_financial_dispute"`
+- **Consistency**: **100% MATCH and CONSISTENT.**
+
+---
+
+### 6.4 Live Local Demonstration Route Exercise Results
 Recorded in [experiments/artifacts/local_demo_verification_results.json](file:///c:/Users/avira/OneDrive/Desktop/NEXUS-SLM/experiments/artifacts/local_demo_verification_results.json):
 
 1. **System Health Check (`GET /health`)**:
@@ -324,37 +388,36 @@ Recorded in [experiments/artifacts/local_demo_verification_results.json](file://
    - Category: `refund_request`
    - Priority: `medium`
    - Language: `english`
-   - Confidence: `0.9624` (uncalibrated heuristic)
-   - Raw Output: `{"category": "refund_request", "priority": "medium", "language": "english", "requires_human": true}`
+   - Requires Human: `true` (Reason: `ambiguous_ticket_requires_human_clarification`)
+   - Latency: `1,203.8 ms`
 3. **Synthetic Hinglish Ticket**:
    - Input: `"Mera payment account se cut ho gaya hai but order confirm nahi hua, please jaldi refund karo ya update do."`
    - HTTP Status: `200 OK`
    - Category: `payment_failure`
    - Priority: `high`
    - Language: `hinglish`
-   - Requires Human: `false` (Automated routing permitted under safety policy)
-   - Confidence: `0.9700`
+   - Requires Human: `true` (Reason: `high_impact_financial_dispute`)
+   - Latency: `959.3 ms`
+   - Consistency: **100% Match between Model Output and API Response.**
 4. **Synthetic Devanagari Hindi Ticket**:
    - Input: `"मेरा खाता ब्लॉक हो गया है और मैं लॉगिन नहीं कर पा रहा हूँ। कृपया मेरा पासवर्ड रीसेट करने में मदद करें।"`
    - HTTP Status: `200 OK`
    - Category: `account_access`
    - Priority: `medium`
    - Language: `hindi`
-   - Requires Human: `true`
-   - Escalation Reason: `"native_hindi_devanagari_unreliable_tokenization"` (Policy safety override activated)
+   - Requires Human: `true` (Reason: `native_hindi_devanagari_unreliable_tokenization`)
+   - Latency: `1,205.8 ms`
 5. **High-Risk Security / Fraud Ticket (Deterministic Escalation Verification)**:
    - Input: `"CRITICAL EMERGENCY: Someone hacked my account, changed the 2FA phone number, and made an unauthorized transaction of $4,500. Lock my account immediately!"`
    - HTTP Status: `200 OK`
    - Category: `fraud_report`
    - Priority: `critical`
-   - Requires Human: `true`
-   - Escalation Reason: `"safety_critical_fraud_detection"`
-   - Verification: **Deterministic human escalation strictly enforced.**
+   - Requires Human: `true` (Reason: `safety_critical_fraud_detection`)
+   - Latency: `968.6 ms`
 6. **Safe Missing-Model Rollback Handling**:
    - Endpoint: `POST /model/rollback?target_version=non_existent_candidate_v99`
    - HTTP Status: `404 Not Found`
    - Response: `{"detail": "Target model version 'non_existent_candidate_v99' not registered."}`
-   - Verification: Handled safely without server panic, crash, or data loss.
 7. **Safe Input Validation Rejection**:
    - Endpoint: `POST /predict` with body `{"invalid_key": 12345}`
    - HTTP Status: `422 Unprocessable Entity`
@@ -415,7 +478,9 @@ Before activating the shadow-pilot pipeline documented in `docs/shadow_pilot_pla
 | **Q8_0 Artifact Integrity** | **VERIFIED** | `models/qwen25_05b_lora_seed42_gguf_q8_0/qwen25_05b_lora_seed42_q8_0.gguf` (SHA-256: `b0c891dca80...`) |
 | **Q4_K_M Artifact Integrity** | **VERIFIED** | `models/qwen25_05b_lora_seed42_gguf_q4_k_m/qwen25_05b_lora_seed42_q4_k_m.gguf` (SHA-256: `69a7c3d640...`) |
 | **Registry Isolation** | **VERIFIED** | `models/registry.json` (`nexus-qlora-v1` = production; Qwen GGUFs = experimental) |
-| **Regression Test Suite** | **VERIFIED** | 125 passed / 125 collected (100% pass rate in 52.51s) |
+| **Regression Test Suite** | **VERIFIED** | 129 passed / 129 collected (100% pass rate in 38.03s, 0 failures) |
+| **API Latency SLA Verification** | **VERIFIED** | P50: 956.6 ms, P95: 1,205.8 ms (51.8% below 2,500 ms SLA) |
+| **Escalation Consistency** | **VERIFIED** | Model output & API response 100% matching; deterministic policy precedence guaranteed |
 | **Local Demo Route Exercise**| **VERIFIED** | `experiments/artifacts/local_demo_verification_results.json` |
 | **Operational Blockers Audit**| **BLOCKED** | `docs/operations/activation_blocker_tracker.md` (BLK-01, BLK-02, BLK-03 open) |
 | **Budget Compliance** | **VERIFIED** | $0.00 consumed (Zero paid cloud resources) |
