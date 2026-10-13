@@ -47,6 +47,16 @@ class TicketRecord(BaseModel):
         description="Timestamp of record creation"
     )
 
+    @field_validator("language", mode="before")
+    @classmethod
+    def normalize_language_field(cls, v: Any) -> Any:
+        if isinstance(v, str):
+            clean = v.strip().lower()
+            if clean in ("roman_hindi", "romanhindi"):
+                return "hinglish"
+            return clean
+        return v
+
     @field_validator("text")
     def text_must_not_be_blank(cls, v: str) -> str:
         s = v.strip()
@@ -65,6 +75,9 @@ class TriagePrediction(BaseModel):
     latency_ms: Optional[float] = Field(default=None, description="Inference latency in milliseconds")
     model_version: Optional[str] = Field(default="nexus-v1.0", description="Model version tag")
     raw_output: Optional[str] = Field(default=None, description="Raw generation string before validation")
+    is_valid: bool = Field(default=True, description="Whether raw output successfully validated against schema")
+    error_message: Optional[str] = Field(default=None, description="Schema or validation error message if invalid")
+    raw_parsed: Optional[Dict[str, Any]] = Field(default=None, description="Raw unnormalized parsed dictionary from generation")
 
 
 class ValidationResult(BaseModel):

@@ -69,18 +69,47 @@ class OutputParser:
         if missing_fields:
             return False, data, f"Missing required fields: {missing_fields}"
 
-        # Taxonomy validations
-        cat = str(data["category"]).strip().lower()
+        # Taxonomy validations with deterministic alias normalization
+        raw_cat = str(data["category"]).strip().lower()
+        CATEGORY_ALIASES = {
+            "refund": "refund_request",
+            "order_cancellation": "order_cancel",
+            "cancel_order": "order_cancel",
+            "cancellation": "order_cancel",
+            "order_track": "order_tracking",
+            "tracking": "order_tracking",
+            "delivery": "delivery_issue",
+            "delivery_failed": "delivery_issue",
+            "tech_issue": "technical_issue",
+            "technical_support": "technical_issue",
+            "app_issue": "technical_issue",
+            "fraud": "fraud_report",
+            "account_deletion": "account_closure",
+            "delete_account": "account_closure",
+            "password": "password_reset",
+            "login_issue": "account_access",
+            "login_problem": "account_access",
+        }
+        cat = CATEGORY_ALIASES.get(raw_cat, raw_cat)
         if cat not in self.categories:
-            return False, data, f"Invalid category '{cat}'. Must be one of: {sorted(list(self.categories))}"
+            return False, data, f"Invalid category '{raw_cat}'. Must be one of: {sorted(list(self.categories))}"
 
-        prio = str(data["priority"]).strip().lower()
+        raw_prio = str(data["priority"]).strip().lower()
+        prio = raw_prio
         if prio not in self.priorities:
-            return False, data, f"Invalid priority '{prio}'. Must be one of: {sorted(list(self.priorities))}"
+            return False, data, f"Invalid priority '{raw_prio}'. Must be one of: {sorted(list(self.priorities))}"
 
-        lang = str(data["language"]).strip().lower()
+        raw_lang = str(data["language"]).strip().lower()
+        LANGUAGE_ALIASES = {
+            "roman_hindi": "hinglish",
+            "romanhindi": "hinglish",
+            "hi": "hindi",
+            "en": "english",
+            "hindi_roman": "hinglish",
+        }
+        lang = LANGUAGE_ALIASES.get(raw_lang, raw_lang)
         if lang not in self.languages:
-            return False, data, f"Invalid language '{lang}'. Must be one of: {sorted(list(self.languages))}"
+            return False, data, f"Invalid language '{raw_lang}'. Must be one of: {sorted(list(self.languages))}"
 
         if not isinstance(data["requires_human"], bool):
             # Check string representation if boolean was stringified
@@ -89,7 +118,10 @@ class OutputParser:
             else:
                 return False, data, f"Field 'requires_human' must be boolean, got {type(data['requires_human']).__name__}"
 
-        # Standardize cleaned values in dict
+        # Standardize cleaned values in dict while preserving raw representations
+        data["_raw_category"] = raw_cat
+        data["_raw_priority"] = raw_prio
+        data["_raw_language"] = raw_lang
         data["category"] = cat
         data["priority"] = prio
         data["language"] = lang

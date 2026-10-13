@@ -597,4 +597,37 @@ def test_hinglish_financial_dispute_remains_schema_valid():
     assert validated.confidence_status in ("uncalibrated_heuristic", "unavailable")
 
 
+def test_safeguard_someone_accessed_account_escalates():
+    """Regression Test: 'Someone accessed my account' must trigger deterministic escalation."""
+    text = "Someone accessed my account?"
+    req_human, reason, _, cat, prio = HumanEscalationPolicy.evaluate_escalation(
+        text=text,
+        category="account_access",
+        priority="medium",
+        language="english",
+        raw_confidence=0.92,
+        inference_mode="neural",
+        model_requires_human=False,
+    )
+    assert req_human is True
+    assert reason == "account_security_lockout"
+
+
+def test_safeguard_hinglish_kisi_ne_login_kiya_escalates():
+    """Regression Test: Hinglish unauthorized login phrase triggers escalation."""
+    text = "Bhai lagta hai kisi ne login kiya hai mere account me unauthorized."
+    req_human, reason, _, cat, prio = HumanEscalationPolicy.evaluate_escalation(
+        text=text,
+        category="account_access",
+        priority="high",
+        language="hinglish",
+        raw_confidence=0.95,
+        inference_mode="neural",
+        model_requires_human=False,
+    )
+    assert req_human is True
+    assert reason in ("account_security_lockout", "safety_critical_fraud_detection")
+
+
+
 

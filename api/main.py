@@ -194,11 +194,35 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
     )
 
 
-# CORS Configuration
+@app.exception_handler(Exception)
+async def unhandled_exception_handler(request: Request, exc: Exception):
+    req_id = str(uuid.uuid4())
+    logger.error(f"Unhandled server error [ID={req_id}]: {exc}", exc_info=True)
+    return JSONResponse(
+        status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+        content={
+            "error": "Internal inference server error",
+            "error_code": "INTERNAL_SERVER_ERROR",
+            "detail": f"An unexpected error occurred during execution. Reference trace request ID: {req_id}",
+            "request_id": req_id,
+            "timestamp": datetime.utcnow().isoformat(),
+        },
+    )
+
+
+# CORS Configuration: Secure origin configuration
+ALLOWED_ORIGINS_ENV = os.getenv("ALLOWED_ORIGINS")
+if ALLOWED_ORIGINS_ENV:
+    allow_origins = [o.strip() for o in ALLOWED_ORIGINS_ENV.split(",") if o.strip()]
+    allow_credentials = True
+else:
+    allow_origins = ["*"]
+    allow_credentials = False
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=allow_origins,
+    allow_credentials=allow_credentials,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -300,7 +324,9 @@ async def predict_ticket(req: PredictRequest):
 
     try:
         is_neural = (inference_engine is not None)
-        model_req_human = None
+        raw_category = None
+        raw_priority = None
+        raw_language = None
         if is_neural:
             pred = inference_engine.predict(ticket_text)
             cat_str = pred.category
@@ -309,8 +335,13 @@ async def predict_ticket(req: PredictRequest):
             raw_conf = pred.confidence
             raw_out = pred.raw_output
             model_latency = pred.latency_ms
-            is_parse_err = (pred.confidence == 0.0 and pred.requires_human is True)
+            is_parse_err = (not getattr(pred, "is_valid", True)) or (pred.confidence == 0.0 and pred.requires_human is True)
             model_req_human = pred.requires_human
+            raw_p = getattr(pred, "raw_parsed", {}) or {}
+            if isinstance(raw_p, dict):
+                raw_category = raw_p.get("_raw_category", cat_str)
+                raw_priority = raw_p.get("_raw_priority", prio_str)
+                raw_language = raw_p.get("_raw_language", lang_str)
         else:
             fb = get_fallback_prediction(ticket_text)
             cat_str = fb["category"]
@@ -321,6 +352,9 @@ async def predict_ticket(req: PredictRequest):
             model_latency = round((time.perf_counter() - start_time) * 1000 + 35.0, 2)
             is_parse_err = False
             model_req_human = fb.get("requires_human")
+            raw_category = cat_str
+            raw_priority = prio_str
+            raw_language = lang_str
 
         # Apply deterministic human escalation policy
         req_human, esc_reason, cal_conf, cat_str, prio_str = HumanEscalationPolicy.evaluate_escalation(
@@ -355,6 +389,9 @@ async def predict_ticket(req: PredictRequest):
             confidence_status="unavailable" if raw_conf is None else "uncalibrated_heuristic",
             escalation_reason=esc_reason,
             raw_output=raw_out,
+            raw_category=raw_category,
+            raw_priority=raw_priority,
+            raw_language=raw_language,
         )
 
         # Log operational telemetry (privacy-safe: ticket content not logged)
@@ -407,6 +444,19 @@ async def health_check():
         inference_mode="neural" if inference_engine is not None else "heuristic_fallback",
         hardware=hw,
     )
+
+
+@app.get("/ready", summary="System readiness probe")
+async def readiness_check():
+    """Readiness probe certifying service is initialized and accepting inference traffic."""
+    return {
+        "status": "ready",
+        "timestamp": datetime.utcnow().isoformat(),
+        "active_model_version": ACTIVE_VERSION,
+        "model_loaded": (inference_engine is not None),
+        "inference_mode": "neural" if inference_engine is not None else "heuristic_fallback",
+        "ready": True,
+    }
 
 
 @app.get("/model", response_model=ModelInfoResponse, summary="Active model metadata")

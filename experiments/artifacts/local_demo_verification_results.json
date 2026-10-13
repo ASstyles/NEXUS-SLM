@@ -1,5 +1,5 @@
 {
-  "timestamp": "2026-10-12T17:33:45.020092Z",
+  "timestamp": "2026-10-13T13:27:26.440306Z",
   "benchmark_suite": "nexus_slm_synthetic_local_demo_verification",
   "model_version": "qwen25_05b_lora_seed42_q8_0",
   "quantization": "gguf_weight_only_q8_0",
@@ -25,27 +25,27 @@
     "error_count": 0
   },
   "sla_threshold_ms": 2500.0,
-  "sla_met": false,
+  "sla_met": true,
   "client_end_to_end_latency": {
-    "min_ms": 1288.92,
-    "median_ms": 2473.82,
-    "p50_ms": 2473.82,
-    "p90_ms": 3063.04,
-    "p95_ms": 3149.94,
-    "p99_ms": 4065.23,
-    "max_ms": 4424.6,
-    "mean_ms": 2397.7,
+    "min_ms": 819.94,
+    "median_ms": 935.8,
+    "p50_ms": 935.8,
+    "p90_ms": 1130.32,
+    "p95_ms": 1169.09,
+    "p99_ms": 1266.72,
+    "max_ms": 1299.08,
+    "mean_ms": 978.55,
     "request_count": 30
   },
   "model_inference_latency": {
-    "min_ms": 1281.15,
-    "median_ms": 2458.57,
-    "p50_ms": 2458.57,
-    "p90_ms": 3049.14,
-    "p95_ms": 3121.15,
-    "p99_ms": 4023.02,
-    "max_ms": 4383.41,
-    "mean_ms": 2384.21,
+    "min_ms": 815.35,
+    "median_ms": 930.25,
+    "p50_ms": 930.25,
+    "p90_ms": 1125.17,
+    "p95_ms": 1163.64,
+    "p99_ms": 1261.32,
+    "max_ms": 1293.77,
+    "mean_ms": 973.47,
     "request_count": 30
   },
   "escalation_invariant_audit": {
@@ -73,8 +73,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "high_impact_financial_dispute",
-      "client_elapsed_ms": 2346.94,
-      "model_latency_ms": 2334.98,
+      "client_elapsed_ms": 912.84,
+      "model_latency_ms": 908.25,
       "schema_valid": true
     },
     {
@@ -88,8 +88,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "high_impact_financial_dispute",
-      "client_elapsed_ms": 2954.2,
-      "model_latency_ms": 2943.29,
+      "client_elapsed_ms": 880.39,
+      "model_latency_ms": 875.74,
       "schema_valid": true
     },
     {
@@ -103,8 +103,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-      "client_elapsed_ms": 4424.6,
-      "model_latency_ms": 4383.41,
+      "client_elapsed_ms": 1041.8,
+      "model_latency_ms": 1036.72,
       "schema_valid": true
     },
     {
@@ -118,8 +118,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 3185.41,
-      "model_latency_ms": 3140.68,
+      "client_elapsed_ms": 860.23,
+      "model_latency_ms": 855.71,
       "schema_valid": true
     },
     {
@@ -133,8 +133,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 2719.99,
-      "model_latency_ms": 2707.41,
+      "client_elapsed_ms": 946.99,
+      "model_latency_ms": 941.18,
       "schema_valid": true
     },
     {
@@ -148,8 +148,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-      "client_elapsed_ms": 3007.06,
-      "model_latency_ms": 3000.57,
+      "client_elapsed_ms": 1128.51,
+      "model_latency_ms": 1123.37,
       "schema_valid": true
     },
     {
@@ -163,8 +163,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "account_security_lockout",
-      "client_elapsed_ms": 2562.59,
-      "model_latency_ms": 2552.92,
+      "client_elapsed_ms": 884.35,
+      "model_latency_ms": 879.24,
       "schema_valid": true
     },
     {
@@ -178,8 +178,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "account_security_lockout",
-      "client_elapsed_ms": 2481.22,
-      "model_latency_ms": 2463.62,
+      "client_elapsed_ms": 914.25,
+      "model_latency_ms": 908.26,
       "schema_valid": true
     },
     {
@@ -193,8 +193,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-      "client_elapsed_ms": 2858.95,
-      "model_latency_ms": 2847.5,
+      "client_elapsed_ms": 1087.04,
+      "model_latency_ms": 1082.29,
       "schema_valid": true
     },
     {
@@ -208,8 +208,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 2392.92,
-      "model_latency_ms": 2382.03,
+      "client_elapsed_ms": 915.55,
+      "model_latency_ms": 910.05,
       "schema_valid": true
     },
     {
@@ -223,8 +223,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 2565.2,
-      "model_latency_ms": 2556.36,
+      "client_elapsed_ms": 917.19,
+      "model_latency_ms": 912.2,
       "schema_valid": true
     },
     {
@@ -238,8 +238,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-      "client_elapsed_ms": 1889.0,
-      "model_latency_ms": 1878.01,
+      "client_elapsed_ms": 1086.4,
+      "model_latency_ms": 1081.48,
       "schema_valid": true
     },
     {
@@ -253,8 +253,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 2036.38,
-      "model_latency_ms": 2026.2,
+      "client_elapsed_ms": 819.94,
+      "model_latency_ms": 815.35,
       "schema_valid": true
     },
     {
@@ -268,8 +268,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 2332.72,
-      "model_latency_ms": 2323.86,
+      "client_elapsed_ms": 890.86,
+      "model_latency_ms": 885.33,
       "schema_valid": true
     },
     {
@@ -283,8 +283,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-      "client_elapsed_ms": 2404.05,
-      "model_latency_ms": 2378.23,
+      "client_elapsed_ms": 1299.08,
+      "model_latency_ms": 1293.77,
       "schema_valid": true
     },
     {
@@ -298,8 +298,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 2585.86,
-      "model_latency_ms": 2555.66,
+      "client_elapsed_ms": 1187.49,
+      "model_latency_ms": 1181.86,
       "schema_valid": true
     },
     {
@@ -313,8 +313,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "delivery_theft_or_tampering",
-      "client_elapsed_ms": 1597.59,
-      "model_latency_ms": 1588.47,
+      "client_elapsed_ms": 997.85,
+      "model_latency_ms": 992.39,
       "schema_valid": true
     },
     {
@@ -328,8 +328,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-      "client_elapsed_ms": 2806.8,
-      "model_latency_ms": 2798.34,
+      "client_elapsed_ms": 1108.45,
+      "model_latency_ms": 1103.49,
       "schema_valid": true
     },
     {
@@ -343,8 +343,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 3106.59,
-      "model_latency_ms": 3097.29,
+      "client_elapsed_ms": 924.61,
+      "model_latency_ms": 919.32,
       "schema_valid": true
     },
     {
@@ -358,8 +358,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 3058.2,
-      "model_latency_ms": 3043.79,
+      "client_elapsed_ms": 968.43,
+      "model_latency_ms": 963.23,
       "schema_valid": true
     },
     {
@@ -373,8 +373,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-      "client_elapsed_ms": 2862.93,
-      "model_latency_ms": 2850.84,
+      "client_elapsed_ms": 1064.4,
+      "model_latency_ms": 1059.41,
       "schema_valid": true
     },
     {
@@ -388,8 +388,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "safety_critical_fraud_detection",
-      "client_elapsed_ms": 2466.42,
-      "model_latency_ms": 2453.51,
+      "client_elapsed_ms": 844.08,
+      "model_latency_ms": 839.04,
       "schema_valid": true
     },
     {
@@ -403,8 +403,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "safety_critical_fraud_detection",
-      "client_elapsed_ms": 2648.2,
-      "model_latency_ms": 2640.08,
+      "client_elapsed_ms": 1146.6,
+      "model_latency_ms": 1141.38,
       "schema_valid": true
     },
     {
@@ -418,8 +418,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "safety_critical_fraud_detection",
-      "client_elapsed_ms": 1823.63,
-      "model_latency_ms": 1814.14,
+      "client_elapsed_ms": 1090.83,
+      "model_latency_ms": 1085.88,
       "schema_valid": true
     },
     {
@@ -433,8 +433,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "legal_or_account_closure_action",
-      "client_elapsed_ms": 1587.94,
-      "model_latency_ms": 1576.24,
+      "client_elapsed_ms": 850.25,
+      "model_latency_ms": 845.77,
       "schema_valid": true
     },
     {
@@ -448,8 +448,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "legal_or_account_closure_action",
-      "client_elapsed_ms": 1288.92,
-      "model_latency_ms": 1281.15,
+      "client_elapsed_ms": 864.66,
+      "model_latency_ms": 859.64,
       "schema_valid": true
     },
     {
@@ -463,8 +463,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-      "client_elapsed_ms": 1823.19,
-      "model_latency_ms": 1815.42,
+      "client_elapsed_ms": 1014.57,
+      "model_latency_ms": 1009.66,
       "schema_valid": true
     },
     {
@@ -478,8 +478,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 1327.23,
-      "model_latency_ms": 1319.6,
+      "client_elapsed_ms": 882.91,
+      "model_latency_ms": 877.85,
       "schema_valid": true
     },
     {
@@ -493,8 +493,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "confidence_unavailable_conservative_escalation",
-      "client_elapsed_ms": 1399.43,
-      "model_latency_ms": 1392.16,
+      "client_elapsed_ms": 841.32,
+      "model_latency_ms": 836.47,
       "schema_valid": true
     },
     {
@@ -508,8 +508,8 @@
       "confidence": null,
       "confidence_status": "unavailable",
       "escalation_reason": "native_hindi_devanagari_unreliable_tokenization",
-      "client_elapsed_ms": 1386.95,
-      "model_latency_ms": 1380.62,
+      "client_elapsed_ms": 984.71,
+      "model_latency_ms": 979.9,
       "schema_valid": true
     }
   ]

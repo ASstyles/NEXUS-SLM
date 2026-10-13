@@ -237,7 +237,7 @@ def run_evaluation(
                 model_path=str(gguf_file),
                 n_ctx=2048,
                 n_threads=8,
-                logits_all=True,
+                logits_all=False,
                 verbose=False,
             )
             artifact_size_mb = round(gguf_file.stat().st_size / (1024 * 1024), 2)

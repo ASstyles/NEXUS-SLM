@@ -90,6 +90,9 @@ class PredictResponse(BaseModel):
     confidence_status: Optional[str] = Field(default="uncalibrated_heuristic", description="Confidence calibration reliability status")
     escalation_reason: Optional[str] = Field(default=None, description="Safety policy trigger reasoning")
     raw_output: Optional[str] = Field(default=None, description="Raw generation string for debugging")
+    raw_category: Optional[str] = Field(default=None, description="Raw unnormalized category from model before alias standardization")
+    raw_priority: Optional[str] = Field(default=None, description="Raw unnormalized priority from model")
+    raw_language: Optional[str] = Field(default=None, description="Raw unnormalized language from model before alias standardization")
 
 
 class StructuredErrorResponse(BaseModel):

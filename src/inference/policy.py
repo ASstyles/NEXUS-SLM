@@ -30,7 +30,9 @@ ACCOUNT_SECURITY_KEYWORDS = [
     "account locked", "account suspended", "security reasons", "suspicious activity",
     "locked for security", "unauthorized login", "password attempts", "account blocked",
     "otp sms", "otp receive nahi", "otp nahi aa", "sms receive nahi",
-    "authenticator", "backup codes", "mfa"
+    "authenticator", "backup codes", "mfa",
+    "accessed my account", "someone accessed", "unauthorized access", "account accessed",
+    "kisi ne login kiya", "suspicious login", "account compromised", "unrecognized device"
 ]
 
 DELIVERY_INTEGRITY_KEYWORDS = [

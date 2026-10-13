@@ -1,0 +1,258 @@
+{
+  "audit_timestamp": "2026-10-13T16:00:00Z",
+  "dataset_v1": {
+    "family": "Dataset V1",
+    "split_counts": {
+      "train": 316,
+      "validation": 44,
+      "test": 42
+    },
+    "splits": {
+      "train": {
+        "record_count": 316,
+        "unique_raw_texts": 316,
+        "unique_templates": 316,
+        "internal_duplicate_text_count": 0,
+        "internal_duplicate_template_count": 0,
+        "language_distribution": {
+          "hinglish": 108,
+          "english": 100,
+          "hindi": 108
+        },
+        "category_distribution": {
+          "technical_issue": 15,
+          "account_access": 24,
+          "password_reset": 22,
+          "delivery_issue": 22,
+          "payment_failure": 32,
+          "account_closure": 28,
+          "billing": 18,
+          "refund_request": 28,
+          "order_tracking": 21,
+          "subscription": 19,
+          "fraud_report": 20,
+          "order_cancel": 29,
+          "general_query": 18,
+          "product_complaint": 20
+        }
+      },
+      "validation": {
+        "record_count": 44,
+        "unique_raw_texts": 44,
+        "unique_templates": 44,
+        "internal_duplicate_text_count": 0,
+        "internal_duplicate_template_count": 0,
+        "language_distribution": {
+          "hindi": 14,
+          "english": 15,
+          "hinglish": 15
+        },
+        "category_distribution": {
+          "fraud_report": 3,
+          "refund_request": 3,
+          "subscription": 3,
+          "billing": 3,
+          "account_access": 3,
+          "delivery_issue": 3,
+          "general_query": 3,
+          "payment_failure": 4,
+          "password_reset": 3,
+          "order_tracking": 3,
+          "technical_issue": 3,
+          "account_closure": 3,
+          "product_complaint": 3,
+          "order_cancel": 4
+        }
+      },
+      "test": {
+        "record_count": 42,
+        "unique_raw_texts": 42,
+        "unique_templates": 42,
+        "internal_duplicate_text_count": 0,
+        "internal_duplicate_template_count": 0,
+        "language_distribution": {
+          "english": 14,
+          "hinglish": 14,
+          "hindi": 14
+        },
+        "category_distribution": {
+          "payment_failure": 3,
+          "refund_request": 3,
+          "account_access": 3,
+          "password_reset": 3,
+          "order_cancel": 3,
+          "order_tracking": 3,
+          "subscription": 3,
+          "billing": 3,
+          "technical_issue": 3,
+          "fraud_report": 3,
+          "delivery_issue": 3,
+          "account_closure": 3,
+          "product_complaint": 3,
+          "general_query": 3
+        }
+      }
+    },
+    "cross_split_leakage": {
+      "train_vs_validation": {
+        "train_count": 316,
+        "validation_count": 44,
+        "exact_duplicate_unique_strings": 0,
+        "validation_records_exactly_in_train": 0,
+        "validation_exact_overlap_rate_pct": 0.0,
+        "template_duplicate_unique_patterns": 0,
+        "validation_records_with_template_in_train": 0,
+        "validation_template_overlap_rate_pct": 0.0
+      },
+      "train_vs_test": {
+        "train_count": 316,
+        "test_count": 42,
+        "exact_duplicate_unique_strings": 0,
+        "test_records_exactly_in_train": 0,
+        "test_exact_overlap_rate_pct": 0.0,
+        "template_duplicate_unique_patterns": 0,
+        "test_records_with_template_in_train": 0,
+        "test_template_overlap_rate_pct": 0.0
+      },
+      "validation_vs_test": {
+        "validation_count": 44,
+        "test_count": 42,
+        "exact_duplicate_unique_strings": 0,
+        "test_records_exactly_in_validation": 0,
+        "test_exact_overlap_rate_pct": 0.0,
+        "template_duplicate_unique_patterns": 0,
+        "test_records_with_template_in_validation": 0,
+        "test_template_overlap_rate_pct": 0.0
+      }
+    }
+  },
+  "dataset_v2": {
+    "family": "Dataset V2",
+    "split_counts": {
+      "train": 5000,
+      "validation": 500,
+      "test": 492
+    },
+    "splits": {
+      "train": {
+        "record_count": 5000,
+        "unique_raw_texts": 1700,
+        "unique_templates": 618,
+        "internal_duplicate_text_count": 3300,
+        "internal_duplicate_template_count": 4382,
+        "language_distribution": {
+          "english": 1532,
+          "roman_hindi": 1011,
+          "hindi": 1242,
+          "hinglish": 1215
+        },
+        "category_distribution": {
+          "order_tracking": 364,
+          "subscription": 349,
+          "delivery_issue": 362,
+          "product_complaint": 353,
+          "payment_failure": 357,
+          "password_reset": 354,
+          "account_closure": 367,
+          "fraud_report": 373,
+          "general_query": 363,
+          "refund_request": 347,
+          "order_cancel": 344,
+          "account_access": 346,
+          "technical_issue": 357,
+          "billing": 364
+        }
+      },
+      "validation": {
+        "record_count": 500,
+        "unique_raw_texts": 358,
+        "unique_templates": 299,
+        "internal_duplicate_text_count": 142,
+        "internal_duplicate_template_count": 201,
+        "language_distribution": {
+          "roman_hindi": 94,
+          "english": 156,
+          "hinglish": 134,
+          "hindi": 116
+        },
+        "category_distribution": {
+          "general_query": 30,
+          "order_cancel": 53,
+          "account_access": 42,
+          "billing": 38,
+          "order_tracking": 34,
+          "account_closure": 28,
+          "password_reset": 33,
+          "fraud_report": 27,
+          "subscription": 42,
+          "product_complaint": 35,
+          "delivery_issue": 32,
+          "technical_issue": 40,
+          "refund_request": 41,
+          "payment_failure": 25
+        }
+      },
+      "test": {
+        "record_count": 492,
+        "unique_raw_texts": 347,
+        "unique_templates": 301,
+        "internal_duplicate_text_count": 145,
+        "internal_duplicate_template_count": 191,
+        "language_distribution": {
+          "english": 163,
+          "hindi": 108,
+          "hinglish": 125,
+          "roman_hindi": 96
+        },
+        "category_distribution": {
+          "account_access": 40,
+          "refund_request": 40,
+          "billing": 26,
+          "password_reset": 41,
+          "order_cancel": 31,
+          "technical_issue": 31,
+          "fraud_report": 28,
+          "order_tracking": 30,
+          "delivery_issue": 34,
+          "product_complaint": 40,
+          "payment_failure": 46,
+          "subscription": 37,
+          "general_query": 35,
+          "account_closure": 33
+        }
+      }
+    },
+    "cross_split_leakage": {
+      "train_vs_validation": {
+        "train_count": 5000,
+        "validation_count": 500,
+        "exact_duplicate_unique_strings": 215,
+        "validation_records_exactly_in_train": 357,
+        "validation_exact_overlap_rate_pct": 71.4,
+        "template_duplicate_unique_patterns": 284,
+        "validation_records_with_template_in_train": 485,
+        "validation_template_overlap_rate_pct": 97.0
+      },
+      "train_vs_test": {
+        "train_count": 5000,
+        "test_count": 492,
+        "exact_duplicate_unique_strings": 229,
+        "test_records_exactly_in_train": 374,
+        "test_exact_overlap_rate_pct": 76.02,
+        "template_duplicate_unique_patterns": 291,
+        "test_records_with_template_in_train": 482,
+        "test_template_overlap_rate_pct": 97.97
+      },
+      "validation_vs_test": {
+        "validation_count": 500,
+        "test_count": 492,
+        "exact_duplicate_unique_strings": 140,
+        "test_records_exactly_in_validation": 238,
+        "test_exact_overlap_rate_pct": 48.37,
+        "template_duplicate_unique_patterns": 192,
+        "test_records_with_template_in_validation": 329,
+        "test_template_overlap_rate_pct": 66.87
+      }
+    }
+  }
+}

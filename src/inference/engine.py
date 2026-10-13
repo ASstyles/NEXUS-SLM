@@ -127,10 +127,12 @@ class InferenceEngine:
                 priority="medium",
                 language="english",
                 requires_human=True,  # Always escalate on parse failure
-                confidence=0.0,
+                confidence=None,
                 latency_ms=latency_ms,
                 model_version=self.model_version,
                 raw_output=raw_text,
+                is_valid=False,
+                error_message=err,
             )
 
         return TriagePrediction(
@@ -142,4 +144,6 @@ class InferenceEngine:
             latency_ms=latency_ms,
             model_version=self.model_version,
             raw_output=raw_text,
+            is_valid=True,
+            raw_parsed=parsed_data,
         )

@@ -106,7 +106,7 @@ class ModelLoader:
                 model_path=str(gguf_file),
                 n_ctx=2048,
                 n_threads=8,
-                logits_all=True,
+                logits_all=False,
                 verbose=False,
             )
             return model, tokenizer

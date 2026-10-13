@@ -77,3 +77,20 @@ def test_splitter_ratios():
     assert len(train) + len(val) + len(test) == 100
     assert len(train) >= 75
     assert len(test) >= 8
+
+
+def test_v1_dataset_zero_leakage_guarantee():
+    """Verify that the locked canonical V1 dataset has strictly zero cross-split leakage."""
+    import json
+    from pathlib import Path
+    root = Path(__file__).resolve().parent.parent
+    train_recs = [TicketRecord(**json.loads(l)) for l in open(root / "data" / "train" / "train.jsonl", encoding="utf-8") if l.strip()]
+    val_recs = [TicketRecord(**json.loads(l)) for l in open(root / "data" / "validation" / "validation.jsonl", encoding="utf-8") if l.strip()]
+    test_recs = [TicketRecord(**json.loads(l)) for l in open(root / "data" / "test" / "test.jsonl", encoding="utf-8") if l.strip()]
+    
+    detector = LeakageDetector()
+    rep = detector.detect_leakage(train_recs, val_recs, test_recs, dataset_version="dataset_v1")
+    assert rep.status == "PASSED_ZERO_LEAKAGE"
+    assert rep.exact_duplicates_across_splits == 0
+    assert rep.near_duplicates_flagged == 0
+

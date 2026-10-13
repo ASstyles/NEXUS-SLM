@@ -45,3 +45,38 @@ def test_parser_rejects_invalid_taxonomy():
     valid, data, err = parser.parse_and_validate(raw)
     assert valid is False
     assert "Invalid category" in err
+
+
+def test_parser_normalizes_language_aliases():
+    """Verify OutputParser normalizes language aliases like roman_hindi to canonical hinglish."""
+    raw = '{"category": "order_tracking", "priority": "medium", "language": "roman_hindi", "requires_human": false}'
+    parser = OutputParser()
+    valid, data, err = parser.parse_and_validate(raw)
+    assert valid is True
+    assert data["language"] == "hinglish"
+    assert data["_raw_language"] == "roman_hindi"
+
+
+def test_parser_normalizes_category_aliases():
+    """Verify OutputParser deterministically maps unambiguous aliases to canonical taxonomy."""
+    raw = '{"category": "refund", "priority": "medium", "language": "en", "requires_human": false}'
+    parser = OutputParser()
+    valid, data, err = parser.parse_and_validate(raw)
+    assert valid is True
+    assert data["category"] == "refund_request"
+    assert data["language"] == "english"
+    assert data["_raw_category"] == "refund"
+    assert data["_raw_language"] == "en"
+
+
+def test_parser_preserves_raw_unnormalized_fields():
+    """Verify raw parsed values are preserved separately from canonicalized values."""
+    raw = '{"category": "order_cancellation", "priority": "high", "language": "hi", "requires_human": true}'
+    parser = OutputParser()
+    valid, data, err = parser.parse_and_validate(raw)
+    assert valid is True
+    assert data["category"] == "order_cancel"
+    assert data["_raw_category"] == "order_cancellation"
+    assert data["language"] == "hindi"
+    assert data["_raw_language"] == "hi"
+

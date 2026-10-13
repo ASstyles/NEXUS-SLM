@@ -81,3 +81,27 @@ def test_benchmark_matrix():
     data = resp.json()
     assert "columns" in data
     assert "rows" in data
+
+
+def test_ready_endpoint():
+    """Verify Kubernetes readiness probe endpoint."""
+    resp = client.get("/ready")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "ready"
+    assert data["ready"] is True
+    assert "active_model_version" in data
+
+
+def test_predict_returns_raw_fields():
+    """Verify predict response includes observable raw output fields."""
+    resp = client.post("/predict", json={
+        "ticket": "Mera payment kat gaya but order confirm nahi hua."
+    })
+    assert resp.status_code == 200
+    data = resp.json()
+    assert "raw_category" in data
+    assert "raw_priority" in data
+    assert "raw_language" in data
+    assert data["raw_category"] is not None
+

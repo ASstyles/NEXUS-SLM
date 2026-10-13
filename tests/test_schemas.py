@@ -58,3 +58,35 @@ def test_triage_prediction_schema():
     assert pred.category == "fraud_report"
     assert pred.priority == "critical"
     assert pred.confidence == 0.98
+    assert pred.is_valid is True
+    assert pred.error_message is None
+
+
+def test_ticket_record_normalizes_roman_hindi():
+    """Verify TicketRecord normalizes roman_hindi to hinglish without validation error."""
+    rec = TicketRecord(
+        id="ticket_v2_001",
+        text="Mera order deliver nahi hua bhai.",
+        language="roman_hindi",
+        category="delivery_issue",
+        priority="medium",
+        requires_human=False,
+    )
+    assert rec.language == "hinglish"
+
+
+def test_triage_prediction_invalid_output_contract():
+    """Verify TriagePrediction supports is_valid=False with nullable confidence."""
+    pred = TriagePrediction(
+        category="general_query",
+        priority="medium",
+        language="english",
+        requires_human=True,
+        confidence=None,
+        is_valid=False,
+        error_message="JSON syntax error: Unterminated string",
+    )
+    assert pred.is_valid is False
+    assert pred.confidence is None
+    assert "JSON syntax error" in pred.error_message
+
