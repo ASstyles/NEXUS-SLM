@@ -201,7 +201,7 @@
       "macro_f1": 0.88
     },
     "deployment_status": "STAGING",
-    "registered_at": "2026-10-13T15:34:37.644845"
+    "registered_at": "2026-10-14T14:00:05.731625"
   },
   {
     "version": "qwen25_05b_lora_seed42_int8",

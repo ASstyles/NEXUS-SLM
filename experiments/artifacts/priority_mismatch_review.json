@@ -1,0 +1,182 @@
+[
+  {
+    "ticket_id": "ticket_000928",
+    "text": "Latest invoice me unexpected?",
+    "ground_truth_priority": "medium",
+    "predicted_priority": "high",
+    "evidence": "Ticket content: 'Latest invoice me unexpected?'",
+    "ambiguity_type": "Subjective boundary discrepancy between medium and high.",
+    "recommended_action": "Submit to certified support operations panel for human consensus adjudication."
+  },
+  {
+    "ticket_id": "ticket_000099",
+    "text": "\u0917\u0932\u0924 \u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0921\u093e\u0932\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u092e\u0947\u0930\u093e \u0905\u0915\u093e\u0909\u0902\u091f \u0932\u0949\u0915 \u0939\u094b \u0917\u092f\u093e \u0939\u0948, \u092e\u0926\u0926 \u0915\u0930\u0947\u0902\u0964 \u0915\u0943\u092a\u092f\u093e \u0924\u0941\u0930\u0902\u0924 \u0938\u0902\u091c\u094d\u091e\u093e\u0928 \u0932\u0947\u0902 \u0905\u0928\u094d\u092f\u0925\u093e \u092e\u0941\u091d\u0947 \u0909\u092a\u092d\u094b\u0915\u094d\u0924\u093e \u092b\u094b\u0930\u092e \u092e\u0947\u0902 \u0936\u093f\u0915\u093e\u092f\u0924 \u0915\u0930\u0928\u0940 \u092a\u0921\u093c\u0947\u0917\u0940\u0964",
+    "ground_truth_priority": "critical",
+    "predicted_priority": "medium",
+    "evidence": "Ticket content: '\u0917\u0932\u0924 \u092a\u093e\u0938\u0935\u0930\u094d\u0921 \u0921\u093e\u0932\u0928\u0947 \u0915\u0947 \u092c\u093e\u0926 \u092e\u0947\u0930\u093e \u0905\u0915\u093e\u0909\u0902\u091f \u0932\u0949\u0915 \u0939\u094b \u0917\u092f\u093e \u0939\u0948, \u092e\u0926\u0926 \u0915\u0930\u0947\u0902\u0964 \u0915\u0943\u092a\u092f\u093e \u0924\u0941\u0930\u0902\u0924 \u0938\u0902\u091c\u094d\u091e\u093e'",
+    "ambiguity_type": "Subjective boundary discrepancy between critical and medium.",
+    "recommended_action": "Submit to certified support operations panel for human consensus adjudication."
+  },
+  {
+    "ticket_id": "ticket_000810",
+    "text": "Package arrived torn and?",
+    "ground_truth_priority": "low",
+    "predicted_priority": "high",
+    "evidence": "Package arrived torn with contents missing/stolen (tampering/theft incident).",
+    "ambiguity_type": "Damage Inversion: Ground truth marked physical package tampering as 'low'.",
+    "recommended_action": "Re-annotate ground truth from 'low' to 'high'."
+  },
+  {
+    "ticket_id": "ticket_000621",
+    "text": "Packet phata hua tha aur andar ka saman gayab tha.",
+    "ground_truth_priority": "high",
+    "predicted_priority": "medium",
+    "evidence": "Package arrived torn with contents missing/stolen (tampering/theft incident).",
+    "ambiguity_type": "Damage Inversion: Ground truth marked physical package tampering as 'low'.",
+    "recommended_action": "Re-annotate ground truth from 'low' to 'high'."
+  },
+  {
+    "ticket_id": "ticket_000107",
+    "text": "Delivery date kal ki thi but package abhi tak out for delivery nahi hua.",
+    "ground_truth_priority": "medium",
+    "predicted_priority": "high",
+    "evidence": "In-transit package past estimated delivery date.",
+    "ambiguity_type": "High vs Medium: Ground truth used 'high' or 'medium'; in-transit delay without theft.",
+    "recommended_action": "Standardize rubric: Standard in-transit shipment delays are 'medium'."
+  },
+  {
+    "ticket_id": "ticket_000536",
+    "text": "Someone accessed my account?",
+    "ground_truth_priority": "critical",
+    "predicted_priority": "high",
+    "evidence": "Account takeover indicator: unauthorized third-party login suspected.",
+    "ambiguity_type": "Critical vs High Boundary: Ground truth used 'critical'; model assigned 'high'.",
+    "recommended_action": "Clarify rubric: Account takeover is 'critical'. Model should be fine-tuned to predict 'critical'."
+  },
+  {
+    "ticket_id": "ticket_000053",
+    "text": "APP BAHUT SLOW CHAL RAHA HAI AUR SCREEN BLANK HO RAHI HAI.???!!!!",
+    "ground_truth_priority": "low",
+    "predicted_priority": "high",
+    "evidence": "User describes complete app freeze/blank screen rendering preventing app usage.",
+    "ambiguity_type": "Severity Inversion: Ground truth marked complete app failure as 'low'.",
+    "recommended_action": "Re-annotate ground truth from 'low' to 'high'."
+  },
+  {
+    "ticket_id": "ticket_000346",
+    "text": "Paisa cut ho gya mere accnt se par order summary me pending hai.",
+    "ground_truth_priority": "critical",
+    "predicted_priority": "high",
+    "evidence": "Payment debited from bank account but order is pending in system.",
+    "ambiguity_type": "Critical vs High Boundary: Ground truth used 'critical'; model assigned 'high'.",
+    "recommended_action": "Clarify rubric: Financial disputes with unconfirmed orders are 'high'; active fraudulent theft is 'critical'."
+  },
+  {
+    "ticket_id": "ticket_000067",
+    "text": "Where is the option to permanently deactivate and delete my profile? I have been contacting customer support for the last 3 days with no resolution.",
+    "ground_truth_priority": "medium",
+    "predicted_priority": "low",
+    "evidence": "Customer inquiring about how-to procedure for account profile deletion.",
+    "ambiguity_type": "Medium vs Low: Ground truth used 'medium' or 'low'; routine closure inquiry without legal dispute.",
+    "recommended_action": "Standardize rubric: Routine deletion requests are 'low'; legal GDPR/dispute demands are 'high'."
+  },
+  {
+    "ticket_id": "ticket_000051",
+    "text": "MAIN APNE ACCOUNT ME LOGIN NAHI KAR PA RAHA, ACCOUNT LOCKED SHOW HO RAHA HAI.???!!!!",
+    "ground_truth_priority": "high",
+    "predicted_priority": "medium",
+    "evidence": "Customer locked out of account following failed authentication.",
+    "ambiguity_type": "Critical/High vs Medium: Ground truth used 'critical' or 'high'; model assigned 'medium'.",
+    "recommended_action": "Standardize rubric: Account lockout without takeover is 'high'."
+  },
+  {
+    "ticket_id": "ticket_000359",
+    "text": "\u0915\u0932 \u0921\u093f\u0932\u0940\u0935\u0930\u0940 \u0939\u094b\u0928\u0947 \u0935\u093e\u0932\u0940 \u0925\u0940 \u0932\u0947\u0915\u093f\u0928 \u0905\u092d\u0940 \u0924\u0915 \u0915\u094b\u0908 \u0915\u0942\u0930\u093f\u092f\u0930 \u0928\u0939\u0940\u0902 \u0906\u092f\u093e\u0964",
+    "ground_truth_priority": "high",
+    "predicted_priority": "medium",
+    "evidence": "In-transit package past estimated delivery date.",
+    "ambiguity_type": "High vs Medium: Ground truth used 'high' or 'medium'; in-transit delay without theft.",
+    "recommended_action": "Standardize rubric: Standard in-transit shipment delays are 'medium'."
+  },
+  {
+    "ticket_id": "ticket_000527",
+    "text": "Order cancel ho gya tha, please mera refnd jaldi initiate karo.",
+    "ground_truth_priority": "high",
+    "predicted_priority": "medium",
+    "evidence": "Ticket content: 'Order cancel ho gya tha, please mera refnd jaldi initiate karo.'",
+    "ambiguity_type": "Subjective boundary discrepancy between high and medium.",
+    "recommended_action": "Submit to certified support operations panel for human consensus adjudication."
+  },
+  {
+    "ticket_id": "ticket_000461",
+    "text": "I placed this order?",
+    "ground_truth_priority": "low",
+    "predicted_priority": "high",
+    "evidence": "Ticket content: 'I placed this order?'",
+    "ambiguity_type": "Subjective boundary discrepancy between low and high.",
+    "recommended_action": "Submit to certified support operations panel for human consensus adjudication."
+  },
+  {
+    "ticket_id": "ticket_000154",
+    "text": "bhai Order cancel karna hai mujhe kyunki galat address select ho gaya tha. \ud83d\ude4f",
+    "ground_truth_priority": "medium",
+    "predicted_priority": "high",
+    "evidence": "Urgent dispatch stop: customer entered wrong delivery address and needs order halted.",
+    "ambiguity_type": "Urgency Overlap: Ground truth used 'medium'; model rationally assigned 'high' for time-sensitive halt.",
+    "recommended_action": "Re-annotate ground truth to 'high' for time-critical dispatch stops."
+  },
+  {
+    "ticket_id": "ticket_000207",
+    "text": "The password reset link?",
+    "ground_truth_priority": "low",
+    "predicted_priority": "medium",
+    "evidence": "Password reset link delivery inquiry.",
+    "ambiguity_type": "Low vs Medium: Ground truth used 'low'; model assigned 'medium'.",
+    "recommended_action": "Standardize rubric: Password reset link issues are 'medium'."
+  },
+  {
+    "ticket_id": "ticket_000985",
+    "text": "plz help \u0910\u092a \u092e\u0947\u0902 \u0915\u0948\u0902\u0938\u093f\u0932 \u092c\u091f\u0928 \u0928\u0939\u0940\u0902 \u0926\u093f\u0916 \u0930\u0939\u093e \u0939\u0948, \u0915\u094d\u092f\u093e \u0906\u092a \u0907\u0938 \u0911\u0930\u094d\u0921\u0930 \u0915\u094b \u0930\u094b\u0915 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902? \u26a0\ufe0f",
+    "ground_truth_priority": "high",
+    "predicted_priority": "medium",
+    "evidence": "Ticket content: 'plz help \u0910\u092a \u092e\u0947\u0902 \u0915\u0948\u0902\u0938\u093f\u0932 \u092c\u091f\u0928 \u0928\u0939\u0940\u0902 \u0926\u093f\u0916 \u0930\u0939\u093e \u0939\u0948, \u0915\u094d\u092f\u093e \u0906\u092a \u0907\u0938 \u0911\u0930\u094d\u0921\u0930 \u0915\u094b \u0930\u094b\u0915 \u0938\u0915\u0924\u0947 \u0939\u0948\u0902? \u26a0\ufe0f'",
+    "ambiguity_type": "Subjective boundary discrepancy between high and medium.",
+    "recommended_action": "Submit to certified support operations panel for human consensus adjudication."
+  },
+  {
+    "ticket_id": "ticket_000144",
+    "text": "Family plan me upgrade karne ka process kya hai?",
+    "ground_truth_priority": "high",
+    "predicted_priority": "medium",
+    "evidence": "Standard informational pricing query regarding subscription plan upgrade.",
+    "ambiguity_type": "Severity Over-rating: Ground truth marked standard pricing inquiry as 'high'.",
+    "recommended_action": "Re-annotate ground truth from 'high' to 'medium'."
+  },
+  {
+    "ticket_id": "ticket_000094",
+    "text": "\u0905\u0915\u093e\u0909\u0902\u091f \u0915\u094b \u0939\u092e\u0947\u0936\u093e \u0915\u0947 \u0932\u093f\u090f \u0921\u093f\u0932\u0940\u091f \u0915\u0930\u0928\u0947 \u0915\u0940 \u092a\u094d\u0930\u0915\u094d\u0930\u093f\u092f\u093e \u0915\u094d\u092f\u093e \u0939\u0948?",
+    "ground_truth_priority": "low",
+    "predicted_priority": "medium",
+    "evidence": "Customer inquiring about how-to procedure for account profile deletion.",
+    "ambiguity_type": "Medium vs Low: Ground truth used 'medium' or 'low'; routine closure inquiry without legal dispute.",
+    "recommended_action": "Standardize rubric: Routine deletion requests are 'low'; legal GDPR/dispute demands are 'high'."
+  },
+  {
+    "ticket_id": "ticket_000069",
+    "text": "\u092e\u0941\u091d\u0947 \u0905\u092a\u0928\u0940 \u0939\u093e\u0932\u093f\u092f\u093e \u0916\u0930\u0940\u0926 \u0915\u093e \u091c\u0940\u090f\u0938\u091f\u0940 \u091f\u0948\u0915\u094d\u0938 \u0907\u0928\u0935\u0949\u0907\u0938 \u091a\u093e\u0939\u093f\u090f\u0964???!!!!",
+    "ground_truth_priority": "medium",
+    "predicted_priority": "high",
+    "evidence": "Ticket content: '\u092e\u0941\u091d\u0947 \u0905\u092a\u0928\u0940 \u0939\u093e\u0932\u093f\u092f\u093e \u0916\u0930\u0940\u0926 \u0915\u093e \u091c\u0940\u090f\u0938\u091f\u0940 \u091f\u0948\u0915\u094d\u0938 \u0907\u0928\u0935\u0949\u0907\u0938 \u091a\u093e\u0939\u093f\u090f\u0964???!!!!'",
+    "ambiguity_type": "Subjective boundary discrepancy between medium and high.",
+    "recommended_action": "Submit to certified support operations panel for human consensus adjudication."
+  },
+  {
+    "ticket_id": "ticket_000111",
+    "text": "plz help I need to cancel order #98214 as I selected the wrong delivery address. !!",
+    "ground_truth_priority": "medium",
+    "predicted_priority": "high",
+    "evidence": "Urgent dispatch stop: customer entered wrong delivery address and needs order halted.",
+    "ambiguity_type": "Urgency Overlap: Ground truth used 'medium'; model rationally assigned 'high' for time-sensitive halt.",
+    "recommended_action": "Re-annotate ground truth to 'high' for time-critical dispatch stops."
+  }
+]

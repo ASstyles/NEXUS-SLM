@@ -1,0 +1,87 @@
+{
+  "experiment_name": "qwen25_05b_clean_template_v2",
+  "description": "Reproducible GPU LoRA fine-tuning for Qwen2.5-0.5B-Instruct on clean template-grouped Dataset V2 (zero template leakage)",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "seed": 42,
+  "lora": {
+    "r": 16,
+    "lora_alpha": 32,
+    "lora_dropout": 0.05,
+    "target_modules": [
+      "q_proj",
+      "k_proj",
+      "v_proj",
+      "o_proj",
+      "gate_proj",
+      "up_proj",
+      "down_proj"
+    ],
+    "bias": "none",
+    "task_type": "CAUSAL_LM"
+  },
+  "training": {
+    "num_train_epochs": 2,
+    "learning_rate": 0.0002,
+    "lr_scheduler_type": "cosine",
+    "warmup_ratio": 0.05,
+    "per_device_train_batch_size": 4,
+    "per_device_eval_batch_size": 4,
+    "gradient_accumulation_steps": 2,
+    "effective_batch_size": 8,
+    "max_seq_length": 384,
+    "weight_decay": 0.01,
+    "logging_steps": 10,
+    "eval_strategy": "epoch",
+    "save_strategy": "epoch",
+    "save_total_limit": 2,
+    "load_best_model_at_end": true,
+    "metric_for_best_model": "eval_loss",
+    "greater_is_better": false,
+    "fp16": true,
+    "bf16": false,
+    "gradient_checkpointing": false
+  },
+  "prompt_template": {
+    "format": "ChatML",
+    "system_prompt": "You are NEXUS-SLM, an enterprise customer support intelligence triage agent. Analyze the customer support ticket and classify it into the predefined taxonomy. Return valid JSON only.",
+    "add_generation_prompt": true
+  },
+  "loss_computation": {
+    "masking_strategy": "completion_only",
+    "prompt_tokens_label": -100,
+    "padding_tokens_label": -100,
+    "completion_target": "strict_json_with_eos"
+  },
+  "tokenizer_metadata": {
+    "model_id": "Qwen/Qwen2.5-0.5B-Instruct",
+    "len_tokenizer": 151665,
+    "model_config_vocab_size": 151936,
+    "pad_token": "<|endoftext|>",
+    "pad_token_id": 151643,
+    "eos_token": "<|im_end|>",
+    "eos_token_id": 151645
+  },
+  "splits": {
+    "train": {
+      "path": "data/v2_clean_template_grouped/train_clean.jsonl",
+      "count": 4797,
+      "sha256": "f67b50c7724e8cd53d029058c688e712b99b9a3f1be3df0a92c756975220fe1c"
+    },
+    "validation": {
+      "path": "data/v2_clean_template_grouped/val_clean.jsonl",
+      "count": 449,
+      "sha256": "faa98cf83cbe209736d8890a902f65fa382cb2ff31b96e55608d98d9e68fa29a"
+    },
+    "locked_test_clean": {
+      "path": "data/v2_clean_template_grouped/test_clean.jsonl",
+      "count": 746,
+      "sha256": "fc65071b1e9f3303facf64711e72f8bb0f31b450c7f6a3c381bd4a9f8408cf9b",
+      "policy": "Preserved strictly for final post-training evaluation; never used during training or model selection"
+    }
+  },
+  "paths": {
+    "checkpoint_dir": "models/checkpoints/qwen25_05b_clean_v2",
+    "export_dir": "models/qwen25_05b_clean_v2",
+    "evaluation_report": "experiments/artifacts/qwen25_05b_clean_v2_evaluation_report.json"
+  }
+}

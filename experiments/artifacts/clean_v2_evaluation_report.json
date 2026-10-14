@@ -1,0 +1,463 @@
+{
+  "timestamp": "2026-10-13T16:20:39.072129Z",
+  "clean_test_file": "data\\v2_clean_template_grouped\\test_clean.jsonl",
+  "evaluation_sample_size": 100,
+  "models": {
+    "nexus-qlora-v1": {
+      "model_version": "nexus-qlora-v1",
+      "dataset": "data\\v2_clean_template_grouped\\test_clean.jsonl",
+      "sample_count": 100,
+      "total_split_size": 746,
+      "category_metrics": {
+        "accuracy": 0.56,
+        "correct_count": 56,
+        "macro_precision": 0.4643,
+        "macro_recall": 0.5,
+        "macro_f1": 0.4562,
+        "weighted_f1": 0.511,
+        "per_class": {
+          "payment_failure": {
+            "precision": 0.5,
+            "recall": 0.125,
+            "f1": 0.2,
+            "support": 8
+          },
+          "refund_request": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 8
+          },
+          "account_access": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "password_reset": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "order_cancel": {
+            "precision": 0.7778,
+            "recall": 0.875,
+            "f1": 0.8235,
+            "support": 8
+          },
+          "order_tracking": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 8
+          },
+          "subscription": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2
+          },
+          "billing": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "technical_issue": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 8
+          },
+          "fraud_report": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "delivery_issue": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "account_closure": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2
+          },
+          "product_complaint": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 8
+          },
+          "general_query": {
+            "precision": 0.2222,
+            "recall": 1.0,
+            "f1": 0.3636,
+            "support": 8
+          }
+        }
+      },
+      "priority_metrics": {
+        "accuracy": 0.45,
+        "macro_f1": 0.4473
+      },
+      "language_metrics": {
+        "accuracy": 0.7,
+        "per_language_breakdown": {
+          "english": {
+            "count": 18,
+            "accuracy": 0.3889,
+            "macro_f1": 0.0714
+          },
+          "hindi": {
+            "count": 24,
+            "accuracy": 0.5833,
+            "macro_f1": 0.1429
+          },
+          "hinglish": {
+            "count": 58,
+            "accuracy": 0.6034,
+            "macro_f1": 0.4049
+          }
+        }
+      },
+      "exact_structured_match": {
+        "match_count": 7,
+        "match_rate": 0.07
+      },
+      "json_validity": {
+        "valid_count": 100,
+        "validity_rate": 1.0
+      },
+      "escalation_metrics": {
+        "true_positives": 26,
+        "false_negatives": 0,
+        "false_positives": 74,
+        "true_negatives": 0,
+        "precision": 0.26,
+        "recall": 1.0,
+        "f1": 0.4127,
+        "escalation_rate": 1.0
+      },
+      "latency_and_resources": {
+        "p50_api_ms": 6.57,
+        "p95_api_ms": 10.81,
+        "mean_api_ms": 7.11,
+        "p50_model_ms": 35.07,
+        "p95_model_ms": 35.16,
+        "throughput_req_per_sec": 139.46,
+        "peak_rss_memory_mb": 293.14,
+        "total_duration_sec": 0.72
+      }
+    },
+    "qwen25_05b_lora_seed42_q8_0": {
+      "model_version": "qwen25_05b_lora_seed42_q8_0",
+      "dataset": "data\\v2_clean_template_grouped\\test_clean.jsonl",
+      "sample_count": 100,
+      "total_split_size": 746,
+      "category_metrics": {
+        "accuracy": 0.91,
+        "correct_count": 91,
+        "macro_precision": 0.893,
+        "macro_recall": 0.9196,
+        "macro_f1": 0.8925,
+        "weighted_f1": 0.9115,
+        "per_class": {
+          "payment_failure": {
+            "precision": 0.8571,
+            "recall": 0.75,
+            "f1": 0.8,
+            "support": 8
+          },
+          "refund_request": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "account_access": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "password_reset": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "order_cancel": {
+            "precision": 0.7778,
+            "recall": 0.875,
+            "f1": 0.8235,
+            "support": 8
+          },
+          "order_tracking": {
+            "precision": 1.0,
+            "recall": 0.75,
+            "f1": 0.8571,
+            "support": 8
+          },
+          "subscription": {
+            "precision": 0.5,
+            "recall": 1.0,
+            "f1": 0.6667,
+            "support": 2
+          },
+          "billing": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "technical_issue": {
+            "precision": 1.0,
+            "recall": 0.625,
+            "f1": 0.7692,
+            "support": 8
+          },
+          "fraud_report": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "delivery_issue": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "account_closure": {
+            "precision": 0.6667,
+            "recall": 1.0,
+            "f1": 0.8,
+            "support": 2
+          },
+          "product_complaint": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "general_query": {
+            "precision": 0.7,
+            "recall": 0.875,
+            "f1": 0.7778,
+            "support": 8
+          }
+        }
+      },
+      "priority_metrics": {
+        "accuracy": 0.43,
+        "macro_f1": 0.4507
+      },
+      "language_metrics": {
+        "accuracy": 0.88,
+        "per_language_breakdown": {
+          "english": {
+            "count": 18,
+            "accuracy": 1.0,
+            "macro_f1": 0.2143
+          },
+          "hindi": {
+            "count": 24,
+            "accuracy": 1.0,
+            "macro_f1": 0.2857
+          },
+          "hinglish": {
+            "count": 58,
+            "accuracy": 0.8448,
+            "macro_f1": 0.6584
+          }
+        }
+      },
+      "exact_structured_match": {
+        "match_count": 8,
+        "match_rate": 0.08
+      },
+      "json_validity": {
+        "valid_count": 100,
+        "validity_rate": 1.0
+      },
+      "escalation_metrics": {
+        "true_positives": 26,
+        "false_negatives": 0,
+        "false_positives": 74,
+        "true_negatives": 0,
+        "precision": 0.26,
+        "recall": 1.0,
+        "f1": 0.4127,
+        "escalation_rate": 1.0
+      },
+      "latency_and_resources": {
+        "p50_api_ms": 856.82,
+        "p95_api_ms": 1180.47,
+        "mean_api_ms": 857.04,
+        "p50_model_ms": 850.18,
+        "p95_model_ms": 1173.45,
+        "throughput_req_per_sec": 1.17,
+        "peak_rss_memory_mb": 1034.16,
+        "total_duration_sec": 85.71
+      }
+    },
+    "qwen25_05b_lora_seed42_q4_k_m": {
+      "model_version": "qwen25_05b_lora_seed42_q4_k_m",
+      "dataset": "data\\v2_clean_template_grouped\\test_clean.jsonl",
+      "sample_count": 100,
+      "total_split_size": 746,
+      "category_metrics": {
+        "accuracy": 0.89,
+        "correct_count": 89,
+        "macro_precision": 0.8829,
+        "macro_recall": 0.9018,
+        "macro_f1": 0.8727,
+        "weighted_f1": 0.8894,
+        "per_class": {
+          "payment_failure": {
+            "precision": 0.8571,
+            "recall": 0.75,
+            "f1": 0.8,
+            "support": 8
+          },
+          "refund_request": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "account_access": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "password_reset": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "order_cancel": {
+            "precision": 0.6364,
+            "recall": 0.875,
+            "f1": 0.7368,
+            "support": 8
+          },
+          "order_tracking": {
+            "precision": 1.0,
+            "recall": 0.5,
+            "f1": 0.6667,
+            "support": 8
+          },
+          "subscription": {
+            "precision": 0.5,
+            "recall": 1.0,
+            "f1": 0.6667,
+            "support": 2
+          },
+          "billing": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "technical_issue": {
+            "precision": 1.0,
+            "recall": 0.625,
+            "f1": 0.7692,
+            "support": 8
+          },
+          "fraud_report": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "delivery_issue": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "account_closure": {
+            "precision": 0.6667,
+            "recall": 1.0,
+            "f1": 0.8,
+            "support": 2
+          },
+          "product_complaint": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "general_query": {
+            "precision": 0.7,
+            "recall": 0.875,
+            "f1": 0.7778,
+            "support": 8
+          }
+        }
+      },
+      "priority_metrics": {
+        "accuracy": 0.44,
+        "macro_f1": 0.4523
+      },
+      "language_metrics": {
+        "accuracy": 0.88,
+        "per_language_breakdown": {
+          "english": {
+            "count": 18,
+            "accuracy": 1.0,
+            "macro_f1": 0.2143
+          },
+          "hindi": {
+            "count": 24,
+            "accuracy": 1.0,
+            "macro_f1": 0.2857
+          },
+          "hinglish": {
+            "count": 58,
+            "accuracy": 0.8103,
+            "macro_f1": 0.6225
+          }
+        }
+      },
+      "exact_structured_match": {
+        "match_count": 7,
+        "match_rate": 0.07
+      },
+      "json_validity": {
+        "valid_count": 100,
+        "validity_rate": 1.0
+      },
+      "escalation_metrics": {
+        "true_positives": 26,
+        "false_negatives": 0,
+        "false_positives": 74,
+        "true_negatives": 0,
+        "precision": 0.26,
+        "recall": 1.0,
+        "f1": 0.4127,
+        "escalation_rate": 1.0
+      },
+      "latency_and_resources": {
+        "p50_api_ms": 763.2,
+        "p95_api_ms": 1262.09,
+        "mean_api_ms": 784.89,
+        "p50_model_ms": 755.04,
+        "p95_model_ms": 1254.59,
+        "throughput_req_per_sec": 1.27,
+        "peak_rss_memory_mb": 972.29,
+        "total_duration_sec": 78.5
+      }
+    }
+  }
+}
