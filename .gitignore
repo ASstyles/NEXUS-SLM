@@ -85,3 +85,8 @@ mlflow.db
 *.db
 scratch/
 experiments/tmp_v2_training/
+experiments/artifacts/training_runs/
+notebooks/kaggle_clean_v2_bundle/
+monitoring/telemetry_eval_archive.jsonl
+monitoring/*.bak
+

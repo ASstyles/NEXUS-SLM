@@ -84,9 +84,10 @@ class TelemetryLogger:
             "error_msg": error_msg,
         }
 
-        # Privacy guard: NEVER log ticket text unless explicitly configured
+        # Privacy guard: NEVER log ticket text unless explicitly configured, and always sanitize PII
         if self.log_ticket_text and text:
-            entry["ticket_text"] = text
+            from src.utils.security import sanitize_pii
+            entry["ticket_text"] = sanitize_pii(text)
 
         try:
             with open(self.log_file, "a", encoding="utf-8") as f:

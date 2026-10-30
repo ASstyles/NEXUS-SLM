@@ -8,7 +8,15 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import FastAPI, HTTPException, Request, status
+from fastapi import Depends, FastAPI, HTTPException, Request, status
+from api.auth import verify_admin_access
+from api.middleware import (
+    ConcurrencyAndTimeoutMiddleware,
+    RateLimitingMiddleware,
+    RequestTracingMiddleware,
+)
+from src.utils.config import get_config
+from src.utils.security import inspect_prompt_injection, sanitize_pii
 from fastapi.exceptions import RequestValidationError
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
@@ -49,6 +57,8 @@ human_evaluator = HumanEvaluator()
 def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
     """Loads model weights for a designated version if available on disk."""
     adapter_candidates = []
+    if os.environ.get('NEXUS_ADAPTER_PATH'):
+        adapter_candidates.append(Path(os.environ['NEXUS_ADAPTER_PATH']))
     reg_entry = registry.get_model(version_name)
     if reg_entry and "adapter_path" in reg_entry:
         adapter_candidates.append(Path(reg_entry["adapter_path"]))
@@ -58,6 +68,11 @@ def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
         Path(f"./models/{version_name}"),
         Path(f"./models/{version_name.replace('seed42_', 'seed42_gguf_')}"),
     ])
+    tr_dir = Path("./experiments/artifacts/training_runs")
+    if tr_dir.exists():
+        for d in sorted(tr_dir.glob(f"*{version_name}*"), reverse=True):
+            if (d / "adapter").exists():
+                adapter_candidates.append(d / "adapter")
     if version_name in ("nexus-qlora-v1", "nexus_qlora_v1", "default"):
         adapter_candidates.append(Path("./models/nexus_qlora_v1"))
 
@@ -124,11 +139,28 @@ def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
             import torch
 
             logger.info(f"Loading weights from {adapter_path} for version {version_name}...")
-            tokenizer = AutoTokenizer.from_pretrained(str(adapter_path))
+            tok_dir = adapter_path if (adapter_path / "tokenizer.json").exists() else Path("models/scratch_merged_qwen")
+            tokenizer = AutoTokenizer.from_pretrained(str(tok_dir))
             if tokenizer.pad_token is None:
                 tokenizer.pad_token = tokenizer.eos_token
+
+            base_model_id = "HuggingFaceTB/SmolLM-135M-Instruct"
+            adapter_cfg_file = adapter_path / "adapter_config.json"
+            if adapter_cfg_file.exists():
+                try:
+                    with open(adapter_cfg_file, "r", encoding="utf-8") as f:
+                        cfg_data = json.load(f)
+                    base_model_id = cfg_data.get("base_model_name_or_path", base_model_id)
+                except Exception:
+                    pass
+
+            if "qwen" in base_model_id.lower() and Path("models/scratch_merged_qwen").exists():
+                base_load_target = "models/scratch_merged_qwen"
+            else:
+                base_load_target = base_model_id
+
             base_model = AutoModelForCausalLM.from_pretrained(
-                "HuggingFaceTB/SmolLM-135M-Instruct",
+                base_load_target,
                 torch_dtype=torch.float32,
                 low_cpu_mem_usage=True,
             )
@@ -166,7 +198,7 @@ app = FastAPI(
 # Exception handler for schema validation failures
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
-    req_id = str(uuid.uuid4())
+    req_id = getattr(request.state, "request_id", str(uuid.uuid4()))
     logger.warning(f"Request validation rejection [ID={req_id}]: {exc}")
     telemetry.log_request(
         category="general_query",
@@ -210,19 +242,26 @@ async def unhandled_exception_handler(request: Request, exc: Exception):
     )
 
 
-# CORS Configuration: Secure origin configuration
-ALLOWED_ORIGINS_ENV = os.getenv("ALLOWED_ORIGINS")
-if ALLOWED_ORIGINS_ENV:
-    allow_origins = [o.strip() for o in ALLOWED_ORIGINS_ENV.split(",") if o.strip()]
-    allow_credentials = True
-else:
-    allow_origins = ["*"]
-    allow_credentials = False
+cfg = get_config()
 
+# Request Tracing Middleware (Injects and traces X-Request-ID)
+app.add_middleware(RequestTracingMiddleware)
+
+# Rate Limiting Middleware (Sliding window rate limit with standard 429 headers)
+app.add_middleware(RateLimitingMiddleware)
+
+# Concurrency & Request Timeout Middleware
+app.add_middleware(
+    ConcurrencyAndTimeoutMiddleware,
+    timeout_seconds=cfg.request_timeout_seconds,
+    max_concurrency=cfg.concurrency_limit,
+)
+
+# CORS Configuration
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allow_origins,
-    allow_credentials=allow_credentials,
+    allow_origins=cfg.allowed_origins,
+    allow_credentials=(cfg.allowed_origins != ["*"]),
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -313,7 +352,7 @@ def get_fallback_prediction(text: str) -> Dict[str, Any]:
     },
     summary="Triage a customer support ticket",
 )
-async def predict_ticket(req: PredictRequest):
+async def predict_ticket(req: PredictRequest, request: Request):
     """
     Accepts raw customer ticket text and returns strictly validated structured triage predictions.
     Deterministic safeguards enforce human escalation for safety-critical inputs.
@@ -485,7 +524,7 @@ async def get_model_info():
     )
 
 
-@app.post("/model/rollback", summary="Rollback or switch active model version")
+@app.post("/model/rollback", summary="Rollback or switch active model version", dependencies=[Depends(verify_admin_access)])
 async def rollback_model(target_version: str):
     """
     Switches active model version between candidates without container rebuilds.
@@ -513,10 +552,32 @@ async def rollback_model(target_version: str):
     }
 
 
-@app.get("/metrics", summary="Live telemetry statistics")
-async def get_metrics():
-    """Returns aggregated latency percentiles, error rate, and triage telemetry."""
-    return telemetry.get_summary_statistics()
+@app.get("/metrics", summary="Live telemetry statistics and Prometheus metrics")
+async def get_metrics(request: Request, format: Optional[str] = None):
+    """Returns aggregated latency percentiles, error rate, and triage telemetry (JSON or Prometheus)."""
+    stats = telemetry.get_summary_statistics()
+    is_prom = (format == "prometheus") or ("text/plain" in request.headers.get("accept", ""))
+    if is_prom:
+        from fastapi.responses import PlainTextResponse
+        lines = [
+            "# HELP nexus_requests_total Total triage inference requests processed",
+            "# TYPE nexus_requests_total counter",
+            f"nexus_requests_total {stats.get('total_requests', 0)}",
+            "# HELP nexus_error_rate Ratio of failed requests",
+            "# TYPE nexus_error_rate gauge",
+            f"nexus_error_rate {stats.get('error_rate', 0.0)}",
+            "# HELP nexus_latency_p50_ms 50th percentile inference latency",
+            "# TYPE nexus_latency_p50_ms gauge",
+            f"nexus_latency_p50_ms {stats.get('latency_p50_ms', 0.0)}",
+            "# HELP nexus_latency_p95_ms 95th percentile inference latency",
+            "# TYPE nexus_latency_p95_ms gauge",
+            f"nexus_latency_p95_ms {stats.get('latency_p95_ms', 0.0)}",
+            "# HELP nexus_escalation_rate Ratio of tickets routed to human review",
+            "# TYPE nexus_escalation_rate gauge",
+            f"nexus_escalation_rate {stats.get('escalation_rate', 0.0)}",
+        ]
+        return PlainTextResponse("\n".join(lines) + "\n")
+    return stats
 
 
 @app.get("/monitoring/drift", summary="Data drift detection (PSI)")
@@ -684,6 +745,19 @@ async def submit_human_review(review_data: Dict[str, Any]):
 @app.get("/human-eval", summary="Human evaluation summary")
 async def get_human_eval_summary():
     return human_evaluator.compute_human_agreement()
+
+
+# ===========================================================================
+# API v1 Versioned Endpoints (Dual-mounted for API contract compliance)
+# ===========================================================================
+app.add_api_route("/api/v1/predict", predict_ticket, methods=["POST"], response_model=PredictResponse, include_in_schema=True)
+app.add_api_route("/api/v1/health", health_check, methods=["GET"], response_model=HealthResponse, include_in_schema=True)
+app.add_api_route("/api/v1/ready", readiness_check, methods=["GET"], include_in_schema=True)
+app.add_api_route("/api/v1/model", get_model_info, methods=["GET"], response_model=ModelInfoResponse, include_in_schema=True)
+app.add_api_route("/api/v1/metrics", get_metrics, methods=["GET"], include_in_schema=True)
+app.add_api_route("/api/v1/monitoring/drift", get_data_drift, methods=["GET"], include_in_schema=True)
+app.add_api_route("/api/v1/monitoring/alerts", get_monitoring_alerts, methods=["GET"], include_in_schema=True)
+app.add_api_route("/api/v1/labels", get_taxonomy_labels, methods=["GET"], include_in_schema=True)
 
 
 def start():

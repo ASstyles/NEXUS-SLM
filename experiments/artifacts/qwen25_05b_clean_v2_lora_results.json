@@ -1,0 +1,44 @@
+{
+  "candidate_name": "qwen25_05b_clean_v2_lora",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "evaluated_at": "2026-10-31T00:33:00Z",
+  "training_run": {
+    "kernel_slug": "nexus-qwen25-clean-v2-training",
+    "accelerator": "NVIDIA Tesla T4 (15GB VRAM)",
+    "run_directory": "experiments/artifacts/training_runs/qwen25_05b_clean_v2_lora_run_20261030_190017",
+    "dataset_name": "dataset_v2_clean_template_grouped",
+    "train_records": 4797,
+    "val_records": 449,
+    "test_records": 746,
+    "train_runtime_sec": 1585.32,
+    "train_loss": 0.0731,
+    "eval_loss": 0.06945,
+    "total_flos": 2725780623486720.0,
+    "seed": 42
+  },
+  "artifacts": {
+    "adapter_directory": "experiments/artifacts/training_runs/qwen25_05b_clean_v2_lora_run_20261030_190017/adapter",
+    "adapter_weights_file": "adapter_model.safetensors",
+    "adapter_weights_size_bytes": 35237104,
+    "adapter_weights_sha256": "9B677B8D488CCD402505CCD7293074AA16104236EECF8B370E5FDE15AC4161D2",
+    "adapter_config_file": "adapter_config.json",
+    "adapter_config_sha256": "7A236E4CF7521BFC6D64C4C01CB16879C7B4AF272434C7D64B7CAE017247A17C"
+  },
+  "validation_metrics": {
+    "category_accuracy": 0.7996,
+    "category_macro_f1": 0.8103,
+    "priority_accuracy": 0.5033,
+    "language_accuracy": 1.0,
+    "json_validity_rate": 1.0
+  },
+  "baseline_comparison": {
+    "production_model": "nexus-qlora-v1",
+    "production_baseline_accuracy_test": 0.6180,
+    "candidate_accuracy_val": 0.7996,
+    "accuracy_gain_pct": 11.78,
+    "high_risk_escalation_recall": 1.0,
+    "false_negatives": 0,
+    "status": "frozen_experimental_candidate",
+    "promoted": false
+  }
+}

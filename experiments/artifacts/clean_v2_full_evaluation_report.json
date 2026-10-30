@@ -1,0 +1,1651 @@
+{
+  "report_generated_at": "2026-10-14T13:52:26.403018Z",
+  "split_evaluated": "data\\v2_clean_template_grouped\\test_clean.jsonl",
+  "hardware_environment": {
+    "os": "Windows 11 Enterprise",
+    "cpu": "AMD Ryzen 5 5600H (8 physical cores, 12 logical threads)",
+    "ram_total_gb": 15.65,
+    "cuda_available": false
+  },
+  "models": {
+    "nexus-qlora-v1__full_746": {
+      "model_version": "nexus-qlora-v1",
+      "dataset_split": "test_clean.jsonl",
+      "dataset_path": "data\\v2_clean_template_grouped\\test_clean.jsonl",
+      "sample_count": 746,
+      "total_split_size": 746,
+      "evaluation_type": "full_split",
+      "category_metrics": {
+        "accuracy": 0.618,
+        "correct_count": 461,
+        "macro_precision": 0.666,
+        "macro_recall": 0.5528,
+        "macro_f1": 0.5473,
+        "weighted_precision": 0.7566,
+        "weighted_recall": 0.618,
+        "weighted_f1": 0.6356,
+        "per_class": {
+          "payment_failure": {
+            "precision": 0.5,
+            "recall": 0.0357,
+            "f1": 0.0667,
+            "support": 28
+          },
+          "refund_request": {
+            "precision": 1.0,
+            "recall": 0.7051,
+            "f1": 0.8271,
+            "support": 78
+          },
+          "account_access": {
+            "precision": 1.0,
+            "recall": 0.46,
+            "f1": 0.6301,
+            "support": 50
+          },
+          "password_reset": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 64
+          },
+          "order_cancel": {
+            "precision": 0.7895,
+            "recall": 0.5455,
+            "f1": 0.6452,
+            "support": 110
+          },
+          "order_tracking": {
+            "precision": 0.7231,
+            "recall": 0.6184,
+            "f1": 0.6667,
+            "support": 76
+          },
+          "subscription": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 2
+          },
+          "billing": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 69
+          },
+          "technical_issue": {
+            "precision": 1.0,
+            "recall": 0.3333,
+            "f1": 0.5,
+            "support": 51
+          },
+          "fraud_report": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 47
+          },
+          "delivery_issue": {
+            "precision": 0.5526,
+            "recall": 0.7,
+            "f1": 0.6176,
+            "support": 30
+          },
+          "account_closure": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 55
+          },
+          "product_complaint": {
+            "precision": 0.6,
+            "recall": 0.3409,
+            "f1": 0.4348,
+            "support": 44
+          },
+          "general_query": {
+            "precision": 0.1585,
+            "recall": 1.0,
+            "f1": 0.2736,
+            "support": 42
+          }
+        },
+        "top_confusion_pairs": {
+          "account_closure -> general_query": 55,
+          "order_cancel -> general_query": 33,
+          "order_tracking -> general_query": 29,
+          "product_complaint -> general_query": 29,
+          "payment_failure -> general_query": 27,
+          "account_access -> general_query": 27,
+          "technical_issue -> general_query": 23,
+          "order_cancel -> delivery_issue": 17
+        },
+        "confusion_matrix_labels": [
+          "payment_failure",
+          "refund_request",
+          "account_access",
+          "password_reset",
+          "order_cancel",
+          "order_tracking",
+          "subscription",
+          "billing",
+          "technical_issue",
+          "fraud_report",
+          "delivery_issue",
+          "account_closure",
+          "product_complaint",
+          "general_query"
+        ],
+        "confusion_matrix": [
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            27
+          ],
+          [
+            0,
+            55,
+            0,
+            0,
+            14,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            23,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            27
+          ],
+          [
+            0,
+            0,
+            0,
+            64,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            60,
+            0,
+            0,
+            0,
+            0,
+            0,
+            17,
+            0,
+            0,
+            33
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            47,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            29
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            69,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            17,
+            0,
+            0,
+            0,
+            10,
+            23
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            47,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            9,
+            0,
+            0,
+            0,
+            0,
+            21,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            55
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            15,
+            29
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            42
+          ]
+        ]
+      },
+      "priority_metrics": {
+        "accuracy": 0.4517,
+        "macro_precision": 0.4005,
+        "macro_recall": 0.4503,
+        "macro_f1": 0.407,
+        "per_priority": {
+          "low": {
+            "precision": 0.3188,
+            "recall": 0.1375,
+            "f1": 0.1921,
+            "support": 160
+          },
+          "medium": {
+            "precision": 0.5323,
+            "recall": 0.634,
+            "f1": 0.5787,
+            "support": 377
+          },
+          "high": {
+            "precision": 0.3039,
+            "recall": 0.3056,
+            "f1": 0.3047,
+            "support": 180
+          },
+          "critical": {
+            "precision": 0.4468,
+            "recall": 0.7241,
+            "f1": 0.5526,
+            "support": 29
+          }
+        },
+        "top_confusion_pairs": {
+          "low -> medium": 103,
+          "high -> medium": 99,
+          "medium -> high": 91,
+          "medium -> low": 43,
+          "low -> high": 35,
+          "high -> critical": 22
+        }
+      },
+      "language_metrics": {
+        "accuracy": 0.8083,
+        "per_language_breakdown": {
+          "english": {
+            "count": 246,
+            "category_accuracy": 0.8171,
+            "category_macro_f1": 0.5102,
+            "language_id_accuracy": 1.0
+          },
+          "hindi": {
+            "count": 178,
+            "category_accuracy": 0.5281,
+            "category_macro_f1": 0.3183,
+            "language_id_accuracy": 1.0
+          },
+          "hinglish": {
+            "count": 322,
+            "category_accuracy": 0.5155,
+            "category_macro_f1": 0.4615,
+            "language_id_accuracy": 0.5559
+          }
+        }
+      },
+      "exact_structured_match": {
+        "match_count": 56,
+        "match_rate": 0.0751,
+        "field_match_rates": {
+          "priority": 0.4517,
+          "language": 0.8083,
+          "category": 0.618,
+          "requires_human": 0.2802
+        }
+      },
+      "json_validity": {
+        "valid_count": 746,
+        "validity_rate": 1.0,
+        "schema_compliant_rate": 1.0
+      },
+      "escalation_metrics": {
+        "true_positives": 209,
+        "false_negatives": 0,
+        "false_positives": 537,
+        "true_negatives": 0,
+        "precision": 0.2802,
+        "recall": 1.0,
+        "f1": 0.4377,
+        "escalation_rate": 1.0
+      },
+      "field_error_samples": [
+        {
+          "id": "v2_002079",
+          "text_snippet": "Order ORD-743851 kab tak deliver hoga Jaipur me?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_002005",
+          "text_snippet": "Arrey bhai Order ORD-513893 kab tak deliver hoga Hyderabad me?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_001072",
+          "text_snippet": "Arrey bhai Aadesh radd karo",
+          "expected": "order_cancel",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_003910",
+          "text_snippet": "Arrey bhai Maine subscription cancel kiya tha fir bhi account se auto-debit ho g",
+          "expected": "subscription",
+          "predicted": "order_cancel",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_003143",
+          "text_snippet": "Arrey bhai Website hang ho rahi hai payment button press karne par.",
+          "expected": "technical_issue",
+          "predicted": "payment_failure",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_004148",
+          "text_snippet": "Maine subscription cancel kiya tha fir bhi acount se auto-debit ho gaya.",
+          "expected": "subscription",
+          "predicted": "order_cancel",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_005893",
+          "text_snippet": "Profile delete kro",
+          "expected": "account_closure",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_001859",
+          "text_snippet": "Yaar Aadesh ORD-771231 kab tak mere pate par pahunchega?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_003090",
+          "text_snippet": "Sir please App kholte hi band ho ja raha hai, takneeki samasya hai.",
+          "expected": "technical_issue",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_003102",
+          "text_snippet": "Sir please App kholte hi band ho ja raha hai, takneeki samasya hai.",
+          "expected": "technical_issue",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_001950",
+          "text_snippet": "When will order ORD-776562 reach my location in Ahmedabad?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "english"
+        },
+        {
+          "id": "v2_001738",
+          "text_snippet": "When will order ORD-122733 reach my location in Ahmedabad?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "english"
+        },
+        {
+          "id": "v2_001775",
+          "text_snippet": "When will order ORD-777141 reach my location in Ahmedabad?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "english"
+        },
+        {
+          "id": "v2_000072",
+          "text_snippet": "\u092d\u0941\u0917\u0924\u093e\u0928 \u0917\u0947\u091f\u0935\u0947 \u0924\u094d\u0930\u0941\u091f\u093f \u0915\u0947 \u0915\u093e\u0930\u0923 \u0930\u093e\u0936\u093f \u0905\u091f\u0915 \u0917\u0908 \u0939\u0948\u0964",
+          "expected": "payment_failure",
+          "predicted": "general_query",
+          "language": "hindi"
+        },
+        {
+          "id": "v2_000327",
+          "text_snippet": "\u092d\u0941\u0917\u0924\u093e\u0928 \u0917\u0947\u091f\u0935\u0947 \u0924\u094d\u0930\u0941\u091f\u093f \u0915\u0947 \u0915\u093e\u0930\u0923 \u0930\u093e\u0936\u093f \u0905\u091f\u0915 \u0917\u0908 \u0939\u0948\u0964",
+          "expected": "payment_failure",
+          "predicted": "general_query",
+          "language": "hindi"
+        }
+      ],
+      "latency_and_resources": {
+        "p50_api_ms": 4.62,
+        "p95_api_ms": 6.1,
+        "mean_api_ms": 4.73,
+        "p50_model_ms": 35.05,
+        "p95_model_ms": 35.09,
+        "throughput_req_per_sec": 209.48,
+        "peak_rss_memory_mb": 295.5,
+        "total_duration_sec": 3.56
+      }
+    },
+    "nexus-qlora-v1__full_449": {
+      "model_version": "nexus-qlora-v1",
+      "dataset_split": "val_clean.jsonl",
+      "dataset_path": "data\\v2_clean_template_grouped\\val_clean.jsonl",
+      "sample_count": 449,
+      "total_split_size": 449,
+      "evaluation_type": "full_split",
+      "category_metrics": {
+        "accuracy": 0.5412,
+        "correct_count": 243,
+        "macro_precision": 0.7411,
+        "macro_recall": 0.526,
+        "macro_f1": 0.5489,
+        "weighted_precision": 0.8445,
+        "weighted_recall": 0.5412,
+        "weighted_f1": 0.6172,
+        "per_class": {
+          "payment_failure": {
+            "precision": 0.7647,
+            "recall": 0.4333,
+            "f1": 0.5532,
+            "support": 30
+          },
+          "refund_request": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 33
+          },
+          "account_access": {
+            "precision": 1.0,
+            "recall": 0.1957,
+            "f1": 0.3273,
+            "support": 46
+          },
+          "password_reset": {
+            "precision": 1.0,
+            "recall": 0.9744,
+            "f1": 0.987,
+            "support": 39
+          },
+          "order_cancel": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 35
+          },
+          "order_tracking": {
+            "precision": 1.0,
+            "recall": 0.4,
+            "f1": 0.5714,
+            "support": 35
+          },
+          "subscription": {
+            "precision": 1.0,
+            "recall": 0.439,
+            "f1": 0.6102,
+            "support": 41
+          },
+          "billing": {
+            "precision": 1.0,
+            "recall": 0.7556,
+            "f1": 0.8608,
+            "support": 45
+          },
+          "technical_issue": {
+            "precision": 1.0,
+            "recall": 0.9677,
+            "f1": 0.9836,
+            "support": 31
+          },
+          "fraud_report": {
+            "precision": 1.0,
+            "recall": 0.4375,
+            "f1": 0.6087,
+            "support": 32
+          },
+          "delivery_issue": {
+            "precision": 0.6,
+            "recall": 0.0938,
+            "f1": 0.1622,
+            "support": 32
+          },
+          "account_closure": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 17
+          },
+          "product_complaint": {
+            "precision": 0.0,
+            "recall": 0.0,
+            "f1": 0.0,
+            "support": 30
+          },
+          "general_query": {
+            "precision": 0.0106,
+            "recall": 0.6667,
+            "f1": 0.0209,
+            "support": 3
+          }
+        },
+        "top_confusion_pairs": {
+          "account_access -> general_query": 37,
+          "product_complaint -> general_query": 30,
+          "subscription -> general_query": 22,
+          "order_tracking -> general_query": 21,
+          "payment_failure -> general_query": 17,
+          "account_closure -> general_query": 17,
+          "delivery_issue -> general_query": 15,
+          "fraud_report -> general_query": 14
+        },
+        "confusion_matrix_labels": [
+          "payment_failure",
+          "refund_request",
+          "account_access",
+          "password_reset",
+          "order_cancel",
+          "order_tracking",
+          "subscription",
+          "billing",
+          "technical_issue",
+          "fraud_report",
+          "delivery_issue",
+          "account_closure",
+          "product_complaint",
+          "general_query"
+        ],
+        "confusion_matrix": [
+          [
+            13,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            17
+          ],
+          [
+            0,
+            33,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            9,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            37
+          ],
+          [
+            0,
+            0,
+            0,
+            38,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            35,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            14,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            21
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            18,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            22
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            34,
+            0,
+            0,
+            0,
+            0,
+            0,
+            11
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            30,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            4,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            14,
+            0,
+            0,
+            0,
+            14
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            3,
+            0,
+            14,
+            15
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            17
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            30
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0,
+            2
+          ]
+        ]
+      },
+      "priority_metrics": {
+        "accuracy": 0.4232,
+        "macro_precision": 0.2845,
+        "macro_recall": 0.2798,
+        "macro_f1": 0.2693,
+        "per_priority": {
+          "low": {
+            "precision": 0.2353,
+            "recall": 0.0777,
+            "f1": 0.1168,
+            "support": 103
+          },
+          "medium": {
+            "precision": 0.5326,
+            "recall": 0.6828,
+            "f1": 0.5985,
+            "support": 227
+          },
+          "high": {
+            "precision": 0.2273,
+            "recall": 0.2475,
+            "f1": 0.237,
+            "support": 101
+          },
+          "critical": {
+            "precision": 0.1429,
+            "recall": 0.1111,
+            "f1": 0.125,
+            "support": 18
+          }
+        },
+        "top_confusion_pairs": {
+          "low -> medium": 65,
+          "high -> medium": 61,
+          "medium -> high": 49,
+          "low -> high": 30,
+          "medium -> low": 20,
+          "critical -> medium": 10
+        }
+      },
+      "language_metrics": {
+        "accuracy": 0.8263,
+        "per_language_breakdown": {
+          "english": {
+            "count": 117,
+            "category_accuracy": 0.6154,
+            "category_macro_f1": 0.3485,
+            "language_id_accuracy": 1.0
+          },
+          "hindi": {
+            "count": 115,
+            "category_accuracy": 0.5391,
+            "category_macro_f1": 0.2594,
+            "language_id_accuracy": 1.0
+          },
+          "hinglish": {
+            "count": 217,
+            "category_accuracy": 0.5023,
+            "category_macro_f1": 0.5243,
+            "language_id_accuracy": 0.6406
+          }
+        }
+      },
+      "exact_structured_match": {
+        "match_count": 23,
+        "match_rate": 0.0512,
+        "field_match_rates": {
+          "category": 0.5412,
+          "priority": 0.4232,
+          "language": 0.8263,
+          "requires_human": 0.265
+        }
+      },
+      "json_validity": {
+        "valid_count": 449,
+        "validity_rate": 1.0,
+        "schema_compliant_rate": 1.0
+      },
+      "escalation_metrics": {
+        "true_positives": 119,
+        "false_negatives": 0,
+        "false_positives": 330,
+        "true_negatives": 0,
+        "precision": 0.265,
+        "recall": 1.0,
+        "f1": 0.419,
+        "escalation_rate": 1.0
+      },
+      "field_error_samples": [
+        {
+          "id": "v2_005290",
+          "text_snippet": "Kya aap Mumbai me bulk order delivery provide karte ho?",
+          "expected": "general_query",
+          "predicted": "delivery_issue",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_004431",
+          "text_snippet": "Mera khata surakshit nhi hai, kisi ne anadhikrit order kiya hai.",
+          "expected": "fraud_report",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_002530",
+          "text_snippet": "Purana phone number band ho gaya hai, acount access kaise milega?",
+          "expected": "account_access",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_002938",
+          "text_snippet": "Security questions verification fails during paswrd change process.",
+          "expected": "password_reset",
+          "predicted": "general_query",
+          "language": "english"
+        },
+        {
+          "id": "v2_004965",
+          "text_snippet": "Sir please Expiry date nikal chuki hai jo product deliver hua hai.",
+          "expected": "product_complaint",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_000038",
+          "text_snippet": "Sir please Maine HDFC Netbanking se aadesh sankhya ORD-108203 ke liye bhugtan ki",
+          "expected": "payment_failure",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_004272",
+          "text_snippet": "Sir please Premium plan band karo",
+          "expected": "subscription",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_003004",
+          "text_snippet": "Yaar App band ho raha hai",
+          "expected": "technical_issue",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_003983",
+          "text_snippet": "Yaar Subscription active dikha raha hai par free delivery ka fayda nahi mil raha",
+          "expected": "subscription",
+          "predicted": "delivery_issue",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_001973",
+          "text_snippet": "\u092e\u0948\u0902\u0928\u0947 \u0906\u0926\u0947\u0936 ORD-909300 \u0915\u093e \u0911\u0930\u094d\u0921\u0930 \u0926\u093f\u092f\u093e \u0925\u093e\u0964 \u0915\u0943\u092a\u092f\u093e \u092c\u0924\u093e\u090f\u0902 \u0915\u093f \u092f\u0939 Mumbai \u092e\u0947\u0902 \u092e\u0947\u0930\u0947 \u092a\u0924\u0947 \u092a\u0930",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "hindi"
+        },
+        {
+          "id": "v2_002092",
+          "text_snippet": "When will order ORD-421513 reach my location in Chandigarh?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "english"
+        },
+        {
+          "id": "v2_002037",
+          "text_snippet": "When will order ORD-441603 reach my location in Chandigarh?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "english"
+        },
+        {
+          "id": "v2_001988",
+          "text_snippet": "When will order ORD-437264 reach my location in Mumbai?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "english"
+        },
+        {
+          "id": "v2_001941",
+          "text_snippet": "When will order ORD-238882 reach my location in Mumbai?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "english"
+        },
+        {
+          "id": "v2_001840",
+          "text_snippet": "When will order ORD-986447 reach my location in Hyderabad?",
+          "expected": "order_tracking",
+          "predicted": "general_query",
+          "language": "english"
+        }
+      ],
+      "latency_and_resources": {
+        "p50_api_ms": 4.58,
+        "p95_api_ms": 6.36,
+        "mean_api_ms": 4.73,
+        "p50_model_ms": 35.05,
+        "p95_model_ms": 35.1,
+        "throughput_req_per_sec": 209.54,
+        "peak_rss_memory_mb": 293.79,
+        "total_duration_sec": 2.14
+      }
+    },
+    "qwen25_05b_lora_seed42_q8_0__sample_100": {
+      "model_version": "qwen25_05b_lora_seed42_q8_0",
+      "dataset_split": "test_clean.jsonl",
+      "dataset_path": "data\\v2_clean_template_grouped\\test_clean.jsonl",
+      "sample_count": 100,
+      "total_split_size": 746,
+      "evaluation_type": "stratified_sample_100",
+      "category_metrics": {
+        "accuracy": 0.91,
+        "correct_count": 91,
+        "macro_precision": 0.893,
+        "macro_recall": 0.9196,
+        "macro_f1": 0.8925,
+        "weighted_precision": 0.9301,
+        "weighted_recall": 0.91,
+        "weighted_f1": 0.9115,
+        "per_class": {
+          "payment_failure": {
+            "precision": 0.8571,
+            "recall": 0.75,
+            "f1": 0.8,
+            "support": 8
+          },
+          "refund_request": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "account_access": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "password_reset": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "order_cancel": {
+            "precision": 0.7778,
+            "recall": 0.875,
+            "f1": 0.8235,
+            "support": 8
+          },
+          "order_tracking": {
+            "precision": 1.0,
+            "recall": 0.75,
+            "f1": 0.8571,
+            "support": 8
+          },
+          "subscription": {
+            "precision": 0.5,
+            "recall": 1.0,
+            "f1": 0.6667,
+            "support": 2
+          },
+          "billing": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "technical_issue": {
+            "precision": 1.0,
+            "recall": 0.625,
+            "f1": 0.7692,
+            "support": 8
+          },
+          "fraud_report": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "delivery_issue": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "account_closure": {
+            "precision": 0.6667,
+            "recall": 1.0,
+            "f1": 0.8,
+            "support": 2
+          },
+          "product_complaint": {
+            "precision": 1.0,
+            "recall": 1.0,
+            "f1": 1.0,
+            "support": 8
+          },
+          "general_query": {
+            "precision": 0.7,
+            "recall": 0.875,
+            "f1": 0.7778,
+            "support": 8
+          }
+        },
+        "top_confusion_pairs": {
+          "technical_issue -> general_query": 2,
+          "order_tracking -> order_cancel": 2,
+          "payment_failure -> subscription": 2,
+          "order_cancel -> general_query": 1,
+          "technical_issue -> payment_failure": 1,
+          "general_query -> account_closure": 1
+        },
+        "confusion_matrix_labels": [
+          "payment_failure",
+          "refund_request",
+          "account_access",
+          "password_reset",
+          "order_cancel",
+          "order_tracking",
+          "subscription",
+          "billing",
+          "technical_issue",
+          "fraud_report",
+          "delivery_issue",
+          "account_closure",
+          "product_complaint",
+          "general_query"
+        ],
+        "confusion_matrix": [
+          [
+            6,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            7,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            2,
+            6,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            1,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            5,
+            0,
+            0,
+            0,
+            0,
+            2
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            8,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            7
+          ]
+        ]
+      },
+      "priority_metrics": {
+        "accuracy": 0.43,
+        "macro_precision": 0.4636,
+        "macro_recall": 0.4642,
+        "macro_f1": 0.4507,
+        "per_priority": {
+          "low": {
+            "precision": 0.3077,
+            "recall": 0.1905,
+            "f1": 0.2353,
+            "support": 21
+          },
+          "medium": {
+            "precision": 0.5682,
+            "recall": 0.4717,
+            "f1": 0.5155,
+            "support": 53
+          },
+          "high": {
+            "precision": 0.2286,
+            "recall": 0.4444,
+            "f1": 0.3019,
+            "support": 18
+          },
+          "critical": {
+            "precision": 0.75,
+            "recall": 0.75,
+            "f1": 0.75,
+            "support": 8
+          }
+        },
+        "top_confusion_pairs": {
+          "medium -> high": 19,
+          "low -> medium": 11,
+          "medium -> low": 9,
+          "high -> medium": 8,
+          "low -> high": 6,
+          "high -> critical": 2
+        }
+      },
+      "language_metrics": {
+        "accuracy": 0.88,
+        "per_language_breakdown": {
+          "english": {
+            "count": 18,
+            "category_accuracy": 1.0,
+            "category_macro_f1": 0.2143,
+            "language_id_accuracy": 0.8333
+          },
+          "hindi": {
+            "count": 24,
+            "category_accuracy": 1.0,
+            "category_macro_f1": 0.2857,
+            "language_id_accuracy": 1.0
+          },
+          "hinglish": {
+            "count": 58,
+            "category_accuracy": 0.8448,
+            "category_macro_f1": 0.6584,
+            "language_id_accuracy": 0.8448
+          }
+        }
+      },
+      "exact_structured_match": {
+        "match_count": 8,
+        "match_rate": 0.08,
+        "field_match_rates": {
+          "category": 0.91,
+          "priority": 0.43,
+          "language": 0.88,
+          "requires_human": 0.26
+        }
+      },
+      "json_validity": {
+        "valid_count": 100,
+        "validity_rate": 1.0,
+        "schema_compliant_rate": 1.0
+      },
+      "escalation_metrics": {
+        "true_positives": 26,
+        "false_negatives": 0,
+        "false_positives": 74,
+        "true_negatives": 0,
+        "precision": 0.26,
+        "recall": 1.0,
+        "f1": 0.4127,
+        "escalation_rate": 1.0
+      },
+      "field_error_samples": [
+        {
+          "id": "v2_001072",
+          "text_snippet": "Arrey bhai Aadesh radd karo",
+          "expected": "order_cancel",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_003143",
+          "text_snippet": "Arrey bhai Website hang ho rahi hai payment button press karne par.",
+          "expected": "technical_issue",
+          "predicted": "payment_failure",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_005343",
+          "text_snippet": "Hello team, Sahayata number chahiye",
+          "expected": "general_query",
+          "predicted": "account_closure",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_003090",
+          "text_snippet": "Sir please App kholte hi band ho ja raha hai, takneeki samasya hai.",
+          "expected": "technical_issue",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_003102",
+          "text_snippet": "Sir please App kholte hi band ho ja raha hai, takneeki samasya hai.",
+          "expected": "technical_issue",
+          "predicted": "general_query",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_002012",
+          "text_snippet": "Order kahan hai?",
+          "expected": "order_tracking",
+          "predicted": "order_cancel",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_001996",
+          "text_snippet": "Order kahan hai?",
+          "expected": "order_tracking",
+          "predicted": "order_cancel",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_000420",
+          "text_snippet": "Bhugtan viphal hua",
+          "expected": "payment_failure",
+          "predicted": "subscription",
+          "language": "hinglish"
+        },
+        {
+          "id": "v2_000372",
+          "text_snippet": "Bhugtan viphal hua",
+          "expected": "payment_failure",
+          "predicted": "subscription",
+          "language": "hinglish"
+        }
+      ],
+      "latency_and_resources": {
+        "p50_api_ms": 1048.66,
+        "p95_api_ms": 2194.77,
+        "mean_api_ms": 1138.62,
+        "p50_model_ms": 1041.47,
+        "p95_model_ms": 2183.77,
+        "throughput_req_per_sec": 0.88,
+        "peak_rss_memory_mb": 1024.82,
+        "total_duration_sec": 113.87
+      }
+    }
+  }
+}

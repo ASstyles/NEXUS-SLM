@@ -1,0 +1,13 @@
+{
+  "dataset_name": "dataset_v2_clean_template_grouped",
+  "created_at": "2026-10-13T16:00:00Z",
+  "source": "Re-clustered from data/v2/ with strict template disjointness",
+  "total_records": 5992,
+  "total_template_clusters": 643,
+  "split_counts": {
+    "train": 4797,
+    "val": 449,
+    "test": 746
+  },
+  "guarantee": "Zero template overlap across train, val, and test splits (100% disjoint clusters)."
+}
