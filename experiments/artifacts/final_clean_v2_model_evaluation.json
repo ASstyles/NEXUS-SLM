@@ -1,0 +1,969 @@
+{
+  "evaluation_timestamp": "2026-10-30T20:02:04.703093Z",
+  "dataset_metadata": {
+    "file": "data\\v2_clean_template_grouped\\test_clean.jsonl",
+    "sample_count": 746,
+    "source": "data/v2_clean_template_grouped/test_clean.jsonl",
+    "is_quarantined_test_split": true
+  },
+  "production_baseline": {
+    "model_version": "nexus-qlora-v1",
+    "inference_mode": "heuristic_fallback",
+    "sample_count": 746,
+    "total_test_samples": 746,
+    "category_metrics": {
+      "accuracy": 0.618,
+      "correct_count": 461,
+      "raw_model_accuracy": 0.5925,
+      "macro_precision": 0.666,
+      "macro_recall": 0.5528,
+      "macro_f1": 0.5473,
+      "weighted_precision": 0.7566,
+      "weighted_recall": 0.618,
+      "weighted_f1": 0.6356,
+      "per_class": {
+        "payment_failure": {
+          "precision": 0.5,
+          "recall": 0.0357,
+          "f1": 0.0667,
+          "support": 28
+        },
+        "refund_request": {
+          "precision": 1.0,
+          "recall": 0.7051,
+          "f1": 0.8271,
+          "support": 78
+        },
+        "account_access": {
+          "precision": 1.0,
+          "recall": 0.46,
+          "f1": 0.6301,
+          "support": 50
+        },
+        "password_reset": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 64
+        },
+        "order_cancel": {
+          "precision": 0.7895,
+          "recall": 0.5455,
+          "f1": 0.6452,
+          "support": 110
+        },
+        "order_tracking": {
+          "precision": 0.7231,
+          "recall": 0.6184,
+          "f1": 0.6667,
+          "support": 76
+        },
+        "subscription": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 2
+        },
+        "billing": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 69
+        },
+        "technical_issue": {
+          "precision": 1.0,
+          "recall": 0.3333,
+          "f1": 0.5,
+          "support": 51
+        },
+        "fraud_report": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 47
+        },
+        "delivery_issue": {
+          "precision": 0.5526,
+          "recall": 0.7,
+          "f1": 0.6176,
+          "support": 30
+        },
+        "account_closure": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 55
+        },
+        "product_complaint": {
+          "precision": 0.6,
+          "recall": 0.3409,
+          "f1": 0.4348,
+          "support": 44
+        },
+        "general_query": {
+          "precision": 0.1585,
+          "recall": 1.0,
+          "f1": 0.2736,
+          "support": 42
+        }
+      },
+      "confusion_matrix_labels": [
+        "payment_failure",
+        "refund_request",
+        "account_access",
+        "password_reset",
+        "order_cancel",
+        "order_tracking",
+        "subscription",
+        "billing",
+        "technical_issue",
+        "fraud_report",
+        "delivery_issue",
+        "account_closure",
+        "product_complaint",
+        "general_query"
+      ],
+      "confusion_matrix": [
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          27
+        ],
+        [
+          0,
+          55,
+          0,
+          0,
+          14,
+          9,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          23,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          27
+        ],
+        [
+          0,
+          0,
+          0,
+          64,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          60,
+          0,
+          0,
+          0,
+          0,
+          0,
+          17,
+          0,
+          0,
+          33
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          47,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          29
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          69,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          17,
+          0,
+          0,
+          0,
+          10,
+          23
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          47,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          9,
+          0,
+          0,
+          0,
+          0,
+          21,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          55
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          29
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          42
+        ]
+      ]
+    },
+    "priority_metrics": {
+      "accuracy": 0.4517,
+      "macro_precision": 0.4005,
+      "macro_recall": 0.4503,
+      "macro_f1": 0.407,
+      "per_priority": {
+        "low": {
+          "precision": 0.3188,
+          "recall": 0.1375,
+          "f1": 0.1921,
+          "support": 160
+        },
+        "medium": {
+          "precision": 0.5323,
+          "recall": 0.634,
+          "f1": 0.5787,
+          "support": 377
+        },
+        "high": {
+          "precision": 0.3039,
+          "recall": 0.3056,
+          "f1": 0.3047,
+          "support": 180
+        },
+        "critical": {
+          "precision": 0.4468,
+          "recall": 0.7241,
+          "f1": 0.5526,
+          "support": 29
+        }
+      },
+      "confusion_matrix_labels": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "confusion_matrix": [
+        [
+          22,
+          103,
+          35,
+          0
+        ],
+        [
+          43,
+          239,
+          91,
+          4
+        ],
+        [
+          4,
+          99,
+          55,
+          22
+        ],
+        [
+          0,
+          8,
+          0,
+          21
+        ]
+      ]
+    },
+    "language_metrics": {
+      "accuracy": 0.8083,
+      "per_language_breakdown": {
+        "english": {
+          "count": 246,
+          "category_accuracy": 0.8171,
+          "category_macro_f1": 0.5102,
+          "language_id_accuracy": 1.0
+        },
+        "hindi": {
+          "count": 178,
+          "category_accuracy": 0.5281,
+          "category_macro_f1": 0.3183,
+          "language_id_accuracy": 1.0
+        },
+        "hinglish": {
+          "count": 322,
+          "category_accuracy": 0.5155,
+          "category_macro_f1": 0.4615,
+          "language_id_accuracy": 0.5559
+        }
+      }
+    },
+    "exact_structured_match": {
+      "match_count": 56,
+      "match_rate": 0.0751
+    },
+    "json_validity": {
+      "valid_count": 746,
+      "validity_rate": 1.0,
+      "schema_compliant_rate": 1.0
+    },
+    "escalation_metrics": {
+      "final_policy": {
+        "true_positives": 209,
+        "false_negatives": 0,
+        "false_positives": 537,
+        "true_negatives": 0,
+        "precision": 0.2802,
+        "recall": 1.0,
+        "f1": 0.4377,
+        "escalation_rate": 1.0
+      },
+      "raw_model_requires_human": {
+        "true_positives": 45,
+        "false_negatives": 164,
+        "false_positives": 48,
+        "true_negatives": 489,
+        "precision": 0.4839,
+        "recall": 0.2153,
+        "f1": 0.298,
+        "escalation_rate": 0.1247
+      }
+    },
+    "latency_and_resources": {
+      "p50_latency_ms": 35.02,
+      "p90_latency_ms": 35.03,
+      "p95_latency_ms": 35.04,
+      "p99_latency_ms": 35.05,
+      "mean_latency_ms": 35.02,
+      "throughput_req_per_sec": 44622.83,
+      "peak_rss_memory_mb": 380.91,
+      "total_duration_sec": 0.02
+    }
+  },
+  "frozen_candidate": {
+    "model_version": "qwen25_05b_clean_v2_lora",
+    "inference_mode": "neural_lora",
+    "sample_count": 746,
+    "total_test_samples": 746,
+    "category_metrics": {
+      "accuracy": 0.6917,
+      "correct_count": 516,
+      "raw_model_accuracy": 0.6917,
+      "macro_precision": 0.6534,
+      "macro_recall": 0.6917,
+      "macro_f1": 0.6044,
+      "weighted_precision": 0.7391,
+      "weighted_recall": 0.6917,
+      "weighted_f1": 0.663,
+      "per_class": {
+        "payment_failure": {
+          "precision": 1.0,
+          "recall": 0.4286,
+          "f1": 0.6,
+          "support": 28
+        },
+        "refund_request": {
+          "precision": 0.392,
+          "recall": 1.0,
+          "f1": 0.5632,
+          "support": 78
+        },
+        "account_access": {
+          "precision": 0.5833,
+          "recall": 0.28,
+          "f1": 0.3784,
+          "support": 50
+        },
+        "password_reset": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 64
+        },
+        "order_cancel": {
+          "precision": 1.0,
+          "recall": 0.4091,
+          "f1": 0.5806,
+          "support": 110
+        },
+        "order_tracking": {
+          "precision": 1.0,
+          "recall": 0.8158,
+          "f1": 0.8986,
+          "support": 76
+        },
+        "subscription": {
+          "precision": 0.125,
+          "recall": 1.0,
+          "f1": 0.2222,
+          "support": 2
+        },
+        "billing": {
+          "precision": 1.0,
+          "recall": 0.9855,
+          "f1": 0.9927,
+          "support": 69
+        },
+        "technical_issue": {
+          "precision": 1.0,
+          "recall": 0.7647,
+          "f1": 0.8667,
+          "support": 51
+        },
+        "fraud_report": {
+          "precision": 0.4087,
+          "recall": 1.0,
+          "f1": 0.5802,
+          "support": 47
+        },
+        "delivery_issue": {
+          "precision": 0.6383,
+          "recall": 1.0,
+          "f1": 0.7792,
+          "support": 30
+        },
+        "account_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 55
+        },
+        "product_complaint": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 44
+        },
+        "general_query": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 42
+        }
+      },
+      "confusion_matrix_labels": [
+        "payment_failure",
+        "refund_request",
+        "account_access",
+        "password_reset",
+        "order_cancel",
+        "order_tracking",
+        "subscription",
+        "billing",
+        "technical_issue",
+        "fraud_report",
+        "delivery_issue",
+        "account_closure",
+        "product_complaint",
+        "general_query"
+      ],
+      "confusion_matrix": [
+        [
+          12,
+          16,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          78,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          11,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          25,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          64,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          48,
+          0,
+          0,
+          45,
+          0,
+          0,
+          0,
+          0,
+          0,
+          17,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          14,
+          0,
+          0,
+          0,
+          62,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          68,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          2,
+          10,
+          0,
+          0,
+          0,
+          0,
+          0,
+          39,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          47,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          30,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          55,
+          0,
+          0
+        ],
+        [
+          0,
+          29,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          14,
+          0,
+          0,
+          28,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "priority_metrics": {
+      "accuracy": 0.4786,
+      "macro_precision": 0.2896,
+      "macro_recall": 0.4415,
+      "macro_f1": 0.2842,
+      "per_priority": {
+        "low": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 160
+        },
+        "medium": {
+          "precision": 0.547,
+          "recall": 0.8329,
+          "f1": 0.6604,
+          "support": 377
+        },
+        "high": {
+          "precision": 0.4222,
+          "recall": 0.1056,
+          "f1": 0.1689,
+          "support": 180
+        },
+        "critical": {
+          "precision": 0.189,
+          "recall": 0.8276,
+          "f1": 0.3077,
+          "support": 29
+        }
+      },
+      "confusion_matrix_labels": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "confusion_matrix": [
+        [
+          0,
+          138,
+          6,
+          16
+        ],
+        [
+          0,
+          314,
+          20,
+          43
+        ],
+        [
+          0,
+          117,
+          19,
+          44
+        ],
+        [
+          0,
+          5,
+          0,
+          24
+        ]
+      ]
+    },
+    "language_metrics": {
+      "accuracy": 0.9678,
+      "per_language_breakdown": {
+        "english": {
+          "count": 246,
+          "category_accuracy": 0.939,
+          "category_macro_f1": 0.5591,
+          "language_id_accuracy": 1.0
+        },
+        "hindi": {
+          "count": 178,
+          "category_accuracy": 0.6236,
+          "category_macro_f1": 0.327,
+          "language_id_accuracy": 1.0
+        },
+        "hinglish": {
+          "count": 322,
+          "category_accuracy": 0.5404,
+          "category_macro_f1": 0.5064,
+          "language_id_accuracy": 0.9255
+        }
+      }
+    },
+    "exact_structured_match": {
+      "match_count": 126,
+      "match_rate": 0.1689
+    },
+    "json_validity": {
+      "valid_count": 746,
+      "validity_rate": 1.0,
+      "schema_compliant_rate": 1.0
+    },
+    "escalation_metrics": {
+      "final_policy": {
+        "true_positives": 183,
+        "false_negatives": 26,
+        "false_positives": 367,
+        "true_negatives": 170,
+        "precision": 0.3327,
+        "recall": 0.8756,
+        "f1": 0.4822,
+        "escalation_rate": 0.7373
+      },
+      "raw_model_requires_human": {
+        "true_positives": 87,
+        "false_negatives": 122,
+        "false_positives": 85,
+        "true_negatives": 452,
+        "precision": 0.5058,
+        "recall": 0.4163,
+        "f1": 0.4567,
+        "escalation_rate": 0.2306
+      }
+    },
+    "latency_and_resources": {
+      "p50_latency_ms": 1048.17,
+      "p90_latency_ms": 1348.35,
+      "p95_latency_ms": 1386.15,
+      "p99_latency_ms": 1551.73,
+      "mean_latency_ms": 1069.76,
+      "throughput_req_per_sec": 0.93,
+      "peak_rss_memory_mb": 2671.21,
+      "total_duration_sec": 804.4
+    }
+  },
+  "head_to_head_comparison": {
+    "metric": "category_accuracy",
+    "production_baseline": 0.618,
+    "candidate": 0.6917,
+    "delta_points": 0.0737,
+    "macro_f1_production": 0.5473,
+    "macro_f1_candidate": 0.6044,
+    "delta_macro_f1": 0.0571,
+    "exact_match_production": 0.0751,
+    "exact_match_candidate": 0.1689,
+    "high_risk_false_negatives_production": 0,
+    "high_risk_false_negatives_candidate": 26,
+    "high_risk_recall_candidate": 0.8756
+  }
+}
