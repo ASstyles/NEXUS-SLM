@@ -1,0 +1,79 @@
+{
+  "candidate_name": "qwen25_05b_clean_v2_lora",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "architecture": "CausalLM + LoRA (r=16, alpha=32, target_modules=['q_proj', 'k_proj', 'v_proj', 'o_proj', 'gate_proj', 'up_proj', 'down_proj'])",
+  "dataset": {
+    "name": "dataset_v2_clean_template_grouped",
+    "train_path": "data/v2_clean_template_grouped/train_clean.jsonl",
+    "train_count": 4797,
+    "train_sha256": "f67b50c7724e8cd53d029058c688e712b99b9a3f1be3df0a92c756975220fe1c",
+    "val_path": "data/v2_clean_template_grouped/val_clean.jsonl",
+    "val_count": 449,
+    "val_sha256": "faa98cf83cbe209736d8890a902f65fa382cb2ff31b96e55608d98d9e68fa29a",
+    "locked_test_path": "data/v2_clean_template_grouped/test_clean.jsonl",
+    "locked_test_count": 746,
+    "locked_test_sha256": "fc65071b1e9f3303facf64711e72f8bb0f31b450c7f6a3c381bd4a9f8408cf9b",
+    "quarantine_status": "VERIFIED (Zero test samples in training payloads)"
+  },
+  "training_hyperparameters": {
+    "epochs": 2,
+    "learning_rate": 0.0002,
+    "lr_scheduler": "cosine",
+    "warmup_ratio": 0.05,
+    "effective_batch_size": 8,
+    "per_device_batch_size": 4,
+    "gradient_accumulation_steps": 2,
+    "max_seq_length": 384,
+    "weight_decay": 0.01,
+    "seed": 42,
+    "precision": "bfloat16_or_fp16",
+    "loss_masking": "completion_only_target_json",
+    "checkpoint_selection": "min_eval_loss"
+  },
+  "acceptance_gates": {
+    "category_accuracy_min": 0.80,
+    "macro_f1_min": 0.75,
+    "json_validity_rate_min": 0.95,
+    "high_risk_safety_recall_min": 1.0,
+    "high_risk_false_negatives_max": 0,
+    "p95_cpu_latency_ms_max": 2500.0,
+    "peak_memory_mb_max": 2048.0
+  },
+  "baseline_production_fallback_evaluation_full_n746": {
+    "model_version": "nexus-qlora-v1",
+    "inference_mode": "heuristic_fallback",
+    "sample_count": 746,
+    "total_split_size": 746,
+    "category_accuracy": 0.6180,
+    "macro_f1": 0.5473,
+    "weighted_f1": 0.6356,
+    "priority_accuracy": 0.5054,
+    "language_accuracy": 0.9987,
+    "exact_structured_match": 0.3807,
+    "json_validity_rate": 1.0000,
+    "escalation_metrics": {
+      "false_negatives": 0,
+      "false_positives": 345,
+      "recall": 1.0,
+      "precision": 0.3861
+    },
+    "latency_and_resources": {
+      "p50_latency_ms": 4.62,
+      "p95_latency_ms": 5.86,
+      "mean_latency_ms": 4.75,
+      "throughput_req_per_sec": 204.64,
+      "peak_rss_memory_mb": 288.66
+    }
+  },
+  "remote_gpu_execution_status": {
+    "status": "AWAITING_KAGGLE_CREDENTIALS",
+    "target_platform": "Kaggle GPU Accelerator (Nvidia Tesla T4)",
+    "kernel_slug": "nexus-qwen25-clean-v2-training",
+    "automation_script": "scripts/training/submit_kaggle_gpu_job.py",
+    "notebook_source": "notebooks/clean_data_qwen25_05b_lora_training_v2.ipynb",
+    "credentials_detected": false,
+    "one_time_auth_action_required": "Place 'kaggle.json' into 'C:\\Users\\avira\\.kaggle\\kaggle.json' OR set KAGGLE_USERNAME and KAGGLE_KEY environment variables, then execute 'python scripts/training/submit_kaggle_gpu_job.py'",
+    "governance_rule_applied": "Strict empirical integrity: remote training is honestly reported as pending user credential placement. Zero fabricated training metrics or synthetic run claims."
+  }
+}
+

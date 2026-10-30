@@ -85,3 +85,6 @@ mlflow.db
 *.db
 scratch/
 experiments/tmp_v2_training/
+monitoring/telemetry_eval_archive.jsonl
+monitoring/*.bak
+

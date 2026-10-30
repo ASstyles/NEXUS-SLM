@@ -124,11 +124,28 @@ def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
             import torch
 
             logger.info(f"Loading weights from {adapter_path} for version {version_name}...")
-            tokenizer = AutoTokenizer.from_pretrained(str(adapter_path))
+            tok_dir = adapter_path if (adapter_path / "tokenizer.json").exists() else Path("models/scratch_merged_qwen")
+            tokenizer = AutoTokenizer.from_pretrained(str(tok_dir))
             if tokenizer.pad_token is None:
                 tokenizer.pad_token = tokenizer.eos_token
+
+            base_model_id = "HuggingFaceTB/SmolLM-135M-Instruct"
+            adapter_cfg_file = adapter_path / "adapter_config.json"
+            if adapter_cfg_file.exists():
+                try:
+                    with open(adapter_cfg_file, "r", encoding="utf-8") as f:
+                        cfg_data = json.load(f)
+                    base_model_id = cfg_data.get("base_model_name_or_path", base_model_id)
+                except Exception:
+                    pass
+
+            if "qwen" in base_model_id.lower() and Path("models/scratch_merged_qwen").exists():
+                base_load_target = "models/scratch_merged_qwen"
+            else:
+                base_load_target = base_model_id
+
             base_model = AutoModelForCausalLM.from_pretrained(
-                "HuggingFaceTB/SmolLM-135M-Instruct",
+                base_load_target,
                 torch_dtype=torch.float32,
                 low_cpu_mem_usage=True,
             )
