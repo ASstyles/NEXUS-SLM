@@ -96,8 +96,11 @@ class HumanEscalationPolicy:
         final_priority = priority
 
         # 0. Prompt Injection / Adversarial bypass safeguard
-        is_injection = any(k in t_lower for k in PROMPT_INJECTION_KEYWORDS)
+        from src.utils.security import inspect_prompt_injection
+        injection_check = inspect_prompt_injection(text)
+        is_injection = injection_check.is_injection_attempt or any(k in t_lower for k in PROMPT_INJECTION_KEYWORDS)
         if is_injection:
+            final_priority = "critical"
             return True, "adversarial_prompt_injection_detected", None, final_category, final_priority
 
         # 1. Fraud detection safeguard - always escalate and force critical priority

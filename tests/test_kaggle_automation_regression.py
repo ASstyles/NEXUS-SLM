@@ -213,3 +213,13 @@ def test_evaluation_failure_causes_automation_failure():
                 )
                 assert ok is False, "Expected retrieve_artifacts_and_evaluate to return False on eval failure"
 
+
+def test_get_authenticated_username_detection():
+    """Verify safe retrieval of Kaggle username from access_token or environment."""
+    from scripts.training.submit_kaggle_gpu_job import get_authenticated_username
+
+    with patch.dict(os.environ, {"KAGGLE_USERNAME": "test_env_user", "KAGGLE_KEY": "dummy_secret"}):
+        user = get_authenticated_username()
+        assert user == "test_env_user"
+
+

@@ -21,6 +21,11 @@ import json
 import os
 import sys
 import time
+
+# Ensure evaluation benchmarks are never throttled by production rate limits
+os.environ["EVALUATION_RUN"] = "1"
+os.environ["DISABLE_RATE_LIMIT"] = "1"
+os.environ["DISABLE_CONCURRENCY_LIMIT"] = "1"
 from collections import Counter, defaultdict
 from datetime import datetime
 from pathlib import Path
@@ -79,7 +84,7 @@ def evaluate_model_on_split(
     client = TestClient(app)
 
     health = client.get("/health").json()
-    print(f"Active Inference Mode: {health.get('inference_mode')}")
+    print(f"Active Inference Mode: {health.get('inference_mode')}", flush=True)
 
     results = []
     api_latencies = []
@@ -120,7 +125,7 @@ def evaluate_model_on_split(
 
         if idx % log_interval == 0 or idx == len(samples):
             rate = idx / max(time.perf_counter() - t_start, 0.001)
-            print(f"  [{model_version}] Processed {idx}/{len(samples)} ({rate:.2f} req/s)...")
+            print(f"  [{model_version}] Processed {idx}/{len(samples)} ({rate:.2f} req/s)...", flush=True)
 
     total_duration_sec = time.perf_counter() - t_start
     mem_after_mb = process.memory_info().rss / (1024**2)
@@ -388,7 +393,20 @@ def main():
 
     with open(out_file, "w", encoding="utf-8") as f:
         json.dump(report_data, f, indent=2)
-    print(f"\n[Artifact Saved] Comprehensive Evaluation Report: {out_file}")
+    print(f"\n[Artifact Saved] Comprehensive Evaluation Report: {out_file}", flush=True)
+
+    # Emit dedicated candidate results artifact if candidate was evaluated
+    candidate_keys = [k for k in report_data["models"].keys() if "qwen25_05b_clean_v2_lora" in k]
+    if candidate_keys:
+        cand_out = PROJECT_ROOT / "experiments" / "artifacts" / "qwen25_05b_clean_v2_lora_results.json"
+        cand_payload = {
+            "candidate_name": "qwen25_05b_clean_v2_lora",
+            "evaluated_at": datetime.utcnow().isoformat() + "Z",
+            "metrics": report_data["models"][candidate_keys[0]],
+        }
+        with open(cand_out, "w", encoding="utf-8") as f:
+            json.dump(cand_payload, f, indent=2)
+        print(f"[Artifact Saved] Candidate Results: {cand_out}", flush=True)
 
 
 if __name__ == "__main__":

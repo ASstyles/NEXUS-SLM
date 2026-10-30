@@ -85,27 +85,57 @@ def get_authenticated_username() -> Optional[str]:
 
     Never prints or logs the secret API key.
     """
+    home = Path.home()
+
+    # 0. Check access_token file (~/.kaggle/access_token)
+    token_file = home / ".kaggle" / "access_token"
+    try:
+        if token_file.exists():
+            token_val = token_file.read_text(encoding="utf-8").strip()
+            if token_val:
+                os.environ["KAGGLE_API_TOKEN"] = token_val
+    except Exception:
+        pass
+
     # 1. Check environment variables
     env_user = os.environ.get("KAGGLE_USERNAME")
     env_key = os.environ.get("KAGGLE_KEY")
-    if env_user and env_key:
+    if env_user and (env_key or os.environ.get("KAGGLE_API_TOKEN")):
         return env_user.strip()
 
     # 2. Check ~/.kaggle/kaggle.json
-    home = Path.home()
     kaggle_json = home / ".kaggle" / "kaggle.json"
-    if kaggle_json.exists():
-        try:
+    try:
+        if kaggle_json.exists():
             with open(kaggle_json, "r", encoding="utf-8") as f:
                 data = json.load(f)
             u = data.get("username")
             k = data.get("key")
-            if u and k:
+            if u and (k or os.environ.get("KAGGLE_API_TOKEN")):
                 return u.strip()
+    except Exception:
+        pass
+
+    # 3. Check via Kaggle REST endpoint if KAGGLE_API_TOKEN is available
+    if os.environ.get("KAGGLE_API_TOKEN"):
+        try:
+            import urllib.request
+            req = urllib.request.Request(
+                "https://www.kaggle.com/api/v1/kernels/list?group=profile",
+                headers={"Authorization": f"Bearer {os.environ['KAGGLE_API_TOKEN']}"},
+            )
+            with urllib.request.urlopen(req, timeout=10) as resp:
+                data = json.loads(resp.read().decode())
+                if data and isinstance(data, list) and len(data) > 0:
+                    ref = data[0].get("ref", "")
+                    if "/" in ref:
+                        u = ref.split("/")[0].strip()
+                        os.environ["KAGGLE_USERNAME"] = u
+                        return u
         except Exception:
             pass
 
-    # 3. Check KaggleApi if library installed
+    # 4. Check KaggleApi if library installed
     try:
         from kaggle.api.kaggle_api_extended import KaggleApi
         api = KaggleApi()
@@ -139,7 +169,7 @@ def prepare_kernel_bundle(
 
     meta = {
         "id": f"{username}/{kernel_slug}",
-        "title": "NEXUS-SLM Clean-Data LoRA Training (Qwen2.5-0.5B)",
+        "title": "Nexus Qwen25 Clean V2 Training",
         "code_file": target_nb_name,
         "language": "python",
         "kernel_type": "notebook",
@@ -166,6 +196,17 @@ def run_kaggle_cli(args: list) -> Tuple[int, str]:
 
     Redacts credentials if present in command arguments.
     """
+    # Ensure KAGGLE_API_TOKEN is populated if available in ~/.kaggle/access_token
+    if not os.environ.get("KAGGLE_API_TOKEN"):
+        try:
+            token_file = Path.home() / ".kaggle" / "access_token"
+            if token_file.exists():
+                tok = token_file.read_text(encoding="utf-8").strip()
+                if tok:
+                    os.environ["KAGGLE_API_TOKEN"] = tok
+        except Exception:
+            pass
+
     kaggle_exe = PROJECT_ROOT / ".venv" / "Scripts" / "kaggle.exe"
     cmd = [str(kaggle_exe)] + args if kaggle_exe.exists() else ["kaggle"] + args
 
@@ -184,7 +225,7 @@ def run_kaggle_cli(args: list) -> Tuple[int, str]:
 def monitor_kernel_execution(
     kernel_id: str,
     poll_interval_sec: int = 30,
-    max_wait_sec: int = 2400,
+    max_wait_sec: int = 7200,
     wait_for_transition: bool = False,
 ) -> bool:
     """Monitors kernel execution until completion, error, or timeout."""
@@ -336,6 +377,7 @@ def run_clean_evaluation(adapter_dir: Path, split: str = "test", samples: Option
     cmd = [
         str(py_exe),
         str(eval_script),
+        "--model", CANDIDATE_NAME,
         "--split", split,
     ]
     if samples is not None:
@@ -447,6 +489,7 @@ def main() -> None:
     parser.add_argument("--run-id", type=str, default=None, help="Unique run identifier")
     parser.add_argument("--check-only", action="store_true", help="Only check credentials and kernel status")
     parser.add_argument("--retrieve-only", action="store_true", help="Only retrieve and evaluate completed run")
+    parser.add_argument("--max-wait-sec", type=int, default=7200, help="Maximum seconds to wait for kernel completion")
     parser.add_argument("--eval-split", type=str, default="test", choices=["test", "val"], help="Split for post-training eval")
     parser.add_argument("--eval-samples", type=int, default=None, help="Sample limit for post-training eval (None=full)")
     args = parser.parse_args()
@@ -504,8 +547,8 @@ def main() -> None:
     if "running" in status_out.lower() or "queued" in status_out.lower():
         print(f"Kernel {kernel_id} is already actively running: {status_out}")
     else:
-        print(f"Submitting GPU kernel to Kaggle: {kernel_id} (Accelerator: NvidiaTeslaT4)...")
-        ret, out = run_kaggle_cli(["kernels", "push", "-p", str(bundle_dir), "--accelerator", "NvidiaTeslaT4"])
+        print(f"Submitting GPU kernel to Kaggle: {kernel_id} (Accelerator: NvidiaTeslaT4 via metadata)...")
+        ret, out = run_kaggle_cli(["kernels", "push", "-p", str(bundle_dir)])
         print(out)
         if ret != 0:
             print(f"[FAIL] Kernel push failed: {out}")
@@ -513,11 +556,23 @@ def main() -> None:
         is_new_push = True
 
     # 4. Monitor execution
-    success = monitor_kernel_execution(kernel_id=kernel_id, wait_for_transition=is_new_push)
+    success = monitor_kernel_execution(
+        kernel_id=kernel_id,
+        max_wait_sec=args.max_wait_sec,
+        wait_for_transition=is_new_push,
+    )
     if not success:
         print("\n[FAIL] Remote Kaggle execution did not complete successfully.")
-        ret, logs = run_kaggle_cli(["kernels", "logs", kernel_id])
-        print(f"Execution logs (last 50 lines):\n{logs[-4000:] if len(logs) > 4000 else logs}")
+        import tempfile
+        try:
+            with tempfile.TemporaryDirectory() as td:
+                run_kaggle_cli(["kernels", "output", kernel_id, "-p", td])
+                for log_file in Path(td).glob("*.log"):
+                    content = log_file.read_text(encoding="utf-8", errors="replace")
+                    print(f"Execution logs (last 4000 chars):\n{content[-4000:] if len(content) > 4000 else content}")
+                    break
+        except Exception:
+            pass
         sys.exit(1)
 
     # 5. Retrieve artifacts, verify integrity, and evaluate
