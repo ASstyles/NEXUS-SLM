@@ -430,6 +430,16 @@ async def readiness_check():
     }
 
 
+@app.get("/live", summary="System liveness probe")
+async def liveness_check():
+    """Liveness probe verifying that the API worker process is responsive and event loop is healthy."""
+    return {
+        "status": "alive",
+        "timestamp": datetime.utcnow().isoformat(),
+        "pid": os.getpid(),
+    }
+
+
 @app.get("/model", response_model=ModelInfoResponse, summary="Active model metadata")
 async def get_model_info():
     """Returns active model metadata, cryptographic hash, and deployment parameters."""

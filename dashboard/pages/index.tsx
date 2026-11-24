@@ -69,6 +69,7 @@ export default function Dashboard() {
   const [analysisResult, setAnalysisResult] = useState<TriageResult | null>(null);
   const [analysisError, setAnalysisError] = useState<string | null>(null);
   const [activeModelVersion, setActiveModelVersion] = useState<string>('nexus-qlora-v1');
+  const [inferenceMode, setInferenceMode] = useState<string>('heuristic_fallback');
   const [isRollingBack, setIsRollingBack] = useState<boolean>(false);
   const [rollbackSuccessMsg, setRollbackSuccessMsg] = useState<string | null>(null);
   const [predictionHistory, setPredictionHistory] = useState<HistoryItem[]>([]);
@@ -107,6 +108,9 @@ export default function Dashboard() {
         setHardwareInfo(data.hardware);
         if (data.model_version) {
           setActiveModelVersion(data.model_version);
+        }
+        if (data.inference_mode) {
+          setInferenceMode(data.inference_mode);
         }
       } else {
         setApiConnected(false);
@@ -176,6 +180,9 @@ export default function Dashboard() {
       setAnalysisResult(data);
       if (data.model_version) {
         setActiveModelVersion(data.model_version);
+      }
+      if (data.inference_mode) {
+        setInferenceMode(data.inference_mode);
       }
       const historyItem: HistoryItem = {
         id: data.request_id || Math.random().toString(36).substring(2, 9),
@@ -300,7 +307,9 @@ export default function Dashboard() {
               display: 'inline-block'
             }} />
             <span style={{ fontSize: '0.8rem', fontWeight: 500, color: apiConnected ? '#34d399' : '#f87171' }}>
-              {apiConnected ? 'Inference Engine Online' : 'API Connecting...'}
+              {apiConnected 
+                ? (inferenceMode === 'neural' ? 'Neural SLM Candidate Online' : 'Heuristic V2 Fallback Online')
+                : 'API Connecting...'}
             </span>
           </div>
 
@@ -438,13 +447,24 @@ export default function Dashboard() {
 
               <div className="glass-panel" style={{ padding: '22px' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Active Model
+                  Active Engine
                 </span>
                 <div style={{ fontSize: '1.25rem', fontWeight: 600, marginTop: '8px', fontFamily: 'var(--font-heading)', color: '#c7d2fe' }}>
                   {activeModelVersion}
                 </div>
-                <div style={{ fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: '4px' }}>
-                  {activeModelVersion === 'nexus-qlora-v1' ? 'Production Candidate (Locked)' : 'Alternate / Fallback Engine'}
+                <div style={{ marginTop: '6px' }}>
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '3px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.72rem',
+                    fontWeight: 600,
+                    background: inferenceMode === 'neural' ? 'rgba(99, 102, 241, 0.2)' : 'rgba(16, 185, 129, 0.2)',
+                    color: inferenceMode === 'neural' ? '#a5b4fc' : '#6ee7b7',
+                    border: inferenceMode === 'neural' ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid rgba(16, 185, 129, 0.4)'
+                  }}>
+                    {inferenceMode === 'neural' ? 'Neural Candidate (Experimental)' : 'Production Heuristic Fallback V2'}
+                  </span>
                 </div>
               </div>
             </div>
@@ -746,7 +766,7 @@ export default function Dashboard() {
                     )}
                   </button>
                   <span style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>
-                    Active Engine: <strong style={{ color: '#818cf8' }}>{activeModelVersion}</strong>
+                    Active Runtime: <strong style={{ color: '#818cf8' }}>{activeModelVersion}</strong> ({inferenceMode === 'neural' ? 'Neural Candidate' : 'Production Heuristic V2'})
                   </span>
                 </div>
 

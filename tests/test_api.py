@@ -15,6 +15,22 @@ def test_health_endpoint():
     assert "hardware" in data
 
 
+def test_ready_endpoint():
+    resp = client.get("/ready")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "ready"
+    assert data["ready"] is True
+
+
+def test_live_endpoint():
+    resp = client.get("/live")
+    assert resp.status_code == 200
+    data = resp.json()
+    assert data["status"] == "alive"
+    assert "pid" in data
+
+
 def test_version_endpoint():
     resp = client.get("/version")
     assert resp.status_code == 200

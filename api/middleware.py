@@ -219,7 +219,7 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
         cfg = get_config()
         self.cfg = cfg
         self.limiter = limiter or create_rate_limiter(cfg)
-        self.exempt_paths = {"/health", "/ready", "/metrics", "/docs", "/openapi.json", "/redoc"}
+        self.exempt_paths = {"/health", "/ready", "/live", "/metrics", "/docs", "/openapi.json", "/redoc"}
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         if (
@@ -277,7 +277,7 @@ class ConcurrencyAndTimeoutMiddleware(BaseHTTPMiddleware):
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
         if (
-            request.url.path in {"/health", "/ready", "/metrics"}
+            request.url.path in {"/health", "/ready", "/live", "/metrics"}
             or os.getenv("EVALUATION_RUN") == "1"
             or os.getenv("DISABLE_CONCURRENCY_LIMIT") == "1"
             or self.max_concurrency <= 0

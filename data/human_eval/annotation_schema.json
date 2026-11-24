@@ -1,0 +1,198 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "NEXUS-SLM Human Evaluation Ticket Schema",
+  "description": "Standardized schema for ingesting, redacting, annotating, and adjudicating genuine human-authored support tickets.",
+  "type": "object",
+  "required": [
+    "ticket_id",
+    "intake_timestamp",
+    "raw_text",
+    "redacted_text",
+    "language",
+    "pii_sanitization_status",
+    "provenance",
+    "annotations",
+    "adjudication"
+  ],
+  "properties": {
+    "ticket_id": {
+      "type": "string",
+      "pattern": "^HUMAN-[A-Z0-9]{6,12}$",
+      "description": "Unique pseudonymized identifier for the human evaluation ticket."
+    },
+    "intake_timestamp": {
+      "type": "string",
+      "format": "date-time",
+      "description": "ISO 8601 UTC timestamp of ticket submission or collection."
+    },
+    "raw_text": {
+      "type": "string",
+      "description": "Original submitted ticket text before PII scrubbing (kept only in secure vault, never exported to public repository)."
+    },
+    "redacted_text": {
+      "type": "string",
+      "minLength": 3,
+      "maxLength": 4000,
+      "description": "Anonymized, PII-scrubbed text for evaluation and public benchmarking."
+    },
+    "language": {
+      "type": "string",
+      "enum": [
+        "english",
+        "hindi",
+        "hinglish",
+        "uncertain"
+      ],
+      "description": "Identified customer message language."
+    },
+    "pii_sanitization_status": {
+      "type": "string",
+      "enum": [
+        "pending_review",
+        "auto_scrubbed",
+        "manually_verified",
+        "rejected_pii_leakage"
+      ],
+      "description": "Verification state of PII anonymization."
+    },
+    "provenance": {
+      "type": "object",
+      "required": [
+        "source_channel",
+        "consent_confirmed",
+        "license_or_dpa",
+        "anonymizer_agent"
+      ],
+      "properties": {
+        "source_channel": {
+          "type": "string",
+          "enum": [
+            "support_email",
+            "in_app_chat",
+            "public_forum",
+            "customer_survey",
+            "call_transcript"
+          ],
+          "description": "Intake channel."
+        },
+        "consent_confirmed": {
+          "type": "boolean",
+          "description": "Explicit customer or enterprise consent to use anonymized ticket for AI evaluation."
+        },
+        "license_or_dpa": {
+          "type": "string",
+          "description": "Reference identifier to executed Data Processing Agreement or consent release."
+        },
+        "anonymizer_agent": {
+          "type": "string",
+          "description": "Identifier of the privacy scrubbing system or reviewer."
+        }
+      }
+    },
+    "annotations": {
+      "type": "array",
+      "minItems": 1,
+      "description": "Independent expert annotations (minimum 2 independent reviewers recommended for safety-critical tickets).",
+      "items": {
+        "type": "object",
+        "required": [
+          "annotator_id",
+          "category",
+          "priority",
+          "requires_human",
+          "confidence_level",
+          "timestamp"
+        ],
+        "properties": {
+          "annotator_id": {
+            "type": "string",
+            "description": "Pseudonymized identifier of the annotator."
+          },
+          "category": {
+            "type": "string",
+            "enum": [
+              "order_tracking",
+              "order_cancel",
+              "refund_request",
+              "payment_failure",
+              "password_reset",
+              "account_access",
+              "account_closure",
+              "billing",
+              "technical_issue",
+              "product_complaint",
+              "delivery_issue",
+              "subscription",
+              "fraud_report",
+              "general_query"
+            ]
+          },
+          "priority": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high",
+              "critical"
+            ]
+          },
+          "requires_human": {
+            "type": "boolean"
+          },
+          "confidence_level": {
+            "type": "string",
+            "enum": [
+              "low",
+              "medium",
+              "high"
+            ]
+          },
+          "notes": {
+            "type": "string"
+          },
+          "timestamp": {
+            "type": "string",
+            "format": "date-time"
+          }
+        }
+      }
+    },
+    "adjudication": {
+      "type": "object",
+      "required": [
+        "status"
+      ],
+      "properties": {
+        "status": {
+          "type": "string",
+          "enum": [
+            "PENDING",
+            "CONSENSUS_REACHED",
+            "ADJUDICATED",
+            "DISPUTED",
+            "EXCLUDED"
+          ]
+        },
+        "adjudicator_id": {
+          "type": "string"
+        },
+        "final_category": {
+          "type": "string"
+        },
+        "final_priority": {
+          "type": "string"
+        },
+        "final_requires_human": {
+          "type": "boolean"
+        },
+        "adjudication_notes": {
+          "type": "string"
+        },
+        "timestamp": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    }
+  }
+}
