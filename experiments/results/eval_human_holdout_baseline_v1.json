@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "dataset_key": "human_eval_adjudicated",
+    "file": "data/human_eval/annotation_template.jsonl",
+    "sha256": "e26d4eec99ddd247d3037652466df0024100b0cc85b9ca48e0fa32ed300923d3",
+    "policy_version": "baseline_policy_v1",
+    "engine": "heuristic_fallback_v1_static_priority",
+    "code_commit_sha": "3e5a1ea",
+    "timestamp_utc": "2026-11-24T23:00:00Z",
+    "description": "Baseline Heuristic Fallback with static priority mapping and unconditional fallback escalation"
+  },
+  "sample_count": 184,
+  "category_metrics": {
+    "accuracy": 0.5652,
+    "macro_precision": 0.8222,
+    "macro_recall": 0.5569,
+    "macro_f1": 0.5965,
+    "weighted_f1": 0.5888
+  },
+  "priority_metrics": {
+    "accuracy": 0.5109,
+    "macro_f1": 0.528,
+    "weighted_f1": 0.5134,
+    "per_class_recall": {
+      "low": 0.7083,
+      "medium": 0.4058,
+      "high": 0.5,
+      "critical": 0.4
+    }
+  },
+  "language_metrics": {
+    "overall_accuracy": 0.9728,
+    "breakdown": {
+      "english": {
+        "support": 80,
+        "accuracy": 1.0
+      },
+      "hindi": {
+        "support": 46,
+        "accuracy": 1.0
+      },
+      "hinglish": {
+        "support": 58,
+        "accuracy": 0.9138
+      }
+    }
+  },
+  "escalation_metrics": {
+    "overall_escalation_rate": 1.0,
+    "unnecessary_escalation_rate": 1.0,
+    "high_risk_recall": 1.0,
+    "high_risk_false_negatives": 0
+  },
+  "critical_safety_metrics": {
+    "critical_recall": 1.0,
+    "critical_false_negatives": 0,
+    "safety_violation_count": 0
+  },
+  "composite_metrics": {
+    "exact_4field_match_rate": 0.1359
+  }
+}

@@ -2,7 +2,7 @@
 ### Efficient, Defensible Small Language Model Platform for Multilingual Ticket Triage
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
-[![Tests](https://img.shields.io/badge/tests-215%20passed%2C%201%20skipped-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-221%20passed%2C%201%20skipped-brightgreen.svg)](tests/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](LICENSE)
 [![Production Engine](https://img.shields.io/badge/production%20engine-HEURISTIC%20FALLBACK%20v2-brightgreen.svg)](docs/RESULTS.md)
 [![Neural Candidate](https://img.shields.io/badge/neural%20candidate-QWEN2.5--0.5B%20LoRA%20(HOLD)-yellow.svg)](docs/RESULTS.md)
@@ -83,19 +83,24 @@ Formal evaluation was executed across the entire locked clean test dataset (`dat
 
 | Document | Purpose & Description |
 |---|---|
-| [**Final Excellence Sprint Report**](docs/FINAL_EXCELLENCE_SPRINT_REPORT.md) | Comprehensive engineering sprint report across all 9 priority dimensions |
+| [**10/10 Capstone Acceptance Report**](docs/FINAL_10_OUT_OF_10_ACCEPTANCE_REPORT.md) | Comprehensive capstone evaluation & formal gate sign-off across all 16 sprint parts |
+| [**Baseline Engineering Audit**](docs/BASELINE_ENGINEERING_AUDIT.md) | Immutable baseline engineering snapshot of commit `3e5a1ea` and test suites |
+| [**Evaluation Integrity Audit**](docs/EVALUATION_INTEGRITY_AUDIT.md) | Forensic resolution of human eval, escalation rate, and template count discrepancies |
+| [**Experiment Tracking Standard**](docs/EXPERIMENT_TRACKING_STANDARD.md) | Unified JSON evaluation schema, canonical hashes, and policy versioning standard |
+| [**Human Evaluation Governance**](docs/HUMAN_EVALUATION_GOVERNANCE.md) | Dual annotation workflow, Cohen's Kappa IRR validation, and 6 adjudicated boundary cases |
+| [**Independent Validation Protocol**](docs/INDEPENDENT_VALIDATION_PROTOCOL.md) | Formal scientific separation of exposed development data vs virgin $N \ge 300$ validation |
+| [**Neural Model Error Analysis**](docs/NEURAL_MODEL_ERROR_ANALYSIS.md) | Deep failure mode analysis of Qwen2.5-0.5B LoRA on locked test set ($N=746$) |
+| [**Multilingual Evaluation Report**](docs/MULTILINGUAL_EVALUATION_REPORT.md) | Native Hindi BPE tokenization, Rule 2 safety invariant, and Hinglish word boundaries |
+| [**Safety Taxonomy & Acceptance**](docs/SAFETY_AND_ESCALATION_ACCEPTANCE.md) | 5-tier safety hierarchy, 100% critical recall invariant, and negative control testing |
+| [**Confidence Calibration Report**](docs/CALIBRATION_ACCEPTANCE_REPORT.md) | Multiclass ECE, Brier score, autoregressive token caveats, and calibration invariants |
+| [**Production Backend Acceptance**](docs/PRODUCTION_BACKEND_ACCEPTANCE.md) | Redis Lua atomic rate limiting, in-memory failover, timing-safe auth, and load stability |
+| [**Inference Performance Acceptance**](docs/INFERENCE_PERFORMANCE_ACCEPTANCE.md) | CPU benchmarks for Heuristic V2, GGUF Q4_K_M, and ONNX dynamic INT8 collapse |
+| [**Dataset Generalisation Audit**](docs/DATASET_GENERALISATION_AUDIT.md) | Lexical diversity, template compression, and zero cross-partition leakage |
+| [**Dashboard Verification Report**](docs/DASHBOARD_VERIFICATION_REPORT.md) | Next.js 14 operator UI, real-time triage demo, model registry, and telemetry |
+| [**CI/CD Verification Report**](docs/CI_CD_VERIFICATION_REPORT.md) | Automated GitHub Actions pipeline, Redis service container, and Docker health probes |
 | [**Authoritative Results Report**](docs/RESULTS.md) | Verified empirical metrics, side-by-side comparison, uncertainty intervals, gate decision |
-| [**Human Evaluation Protocol**](docs/HUMAN_EVALUATION_PROTOCOL.md) | Sealed 200-ticket benchmark schema, dual annotation workflow, and IRR Cohen's Kappa |
-| [**Human Evaluation Results**](docs/HUMAN_EVALUATION_RESULTS.md) | Empirical evaluation results on 184 adjudicated human scenarios |
-| [**Priority Classification Research**](docs/PRIORITY_CLASSIFICATION_RESEARCH.md) | 4-tier objective operational impact rubric & empirical accuracy gains |
-| [**Escalation Precision Research**](docs/ESCALATION_PRECISION_RESEARCH.md) | 7-tier escalation hierarchy, collision resolution, physical safety safeguards |
-| [**Dataset Diversity Report**](docs/DATASET_DIVERSITY_REPORT.md) | Lexical redundancy, template compression (10:1), and n-gram containment audit |
-| [**Dataset V3 Specification Protocol**](docs/DATASET_V3_PROTOCOL.md) | Zero-leakage hash partitioning, Levenshtein distance constraints, and DPA compliance |
-| [**Confidence Calibration Report**](docs/CALIBRATION_VALIDATION_REPORT.md) | ECE, Brier score analysis, autoregressive confidence caveats, and routing policy |
-| [**Distributed Backend Verification**](docs/DISTRIBUTED_BACKEND_VERIFICATION.md) | Redis Lua atomic script, failover to memory, concurrency benchmarks, and Kubernetes probes |
-| [**Inference Optimisation Report**](docs/INFERENCE_OPTIMISATION_REPORT.md) | Comparative CPU benchmarks for GGUF Q4_K_M, ONNX INT8, and Heuristic Fallback V2 |
-| [**Security Remediation Report**](docs/SECURITY_REMEDIATION_REPORT.md) | Audit and fixes for admin secrets, auth bypasses, proxy validation, and Redis rate limiting |
-| [**Safety Evaluation Report**](docs/SAFETY_EVALUATION_REPORT.md) | Human escalation policy verification, compound words (`hackathon`), and regex safety rules |
+| [**Final Excellence Sprint Report**](docs/FINAL_EXCELLENCE_SPRINT_REPORT.md) | Comprehensive engineering sprint report across all priority dimensions |
+| [**Human Evaluation Results**](docs/HUMAN_EVALUATION_RESULTS.md) | Side-by-side empirical evaluation of Baseline V1 vs Refined V2 on 184 human scenarios |
 | [**Dataset Card**](docs/dataset_card.md) | Provenance, template redundancy analysis, class support counts, and sparsity flags |
 | [**Model Card**](docs/model_card.md) | Specifications, parameters, SHA-256 hashes, and benchmark results for Qwen2.5-0.5B LoRA |
 | [**Operational Limitations**](docs/limitations.md) | In-depth analysis of CPU generation latency, synthetic bias, and priority ambiguities |
@@ -126,7 +131,7 @@ pip install -r requirements.txt
 pip install -r requirements-ci.txt
 ```
 
-### Step 2: Run Full Automated Test Suite (215 Passing Tests)
+### Step 2: Run Full Automated Test Suite (221 Passing Tests)
 ```powershell
 python -m pytest -v
 ```
