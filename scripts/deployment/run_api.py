@@ -9,8 +9,10 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent.parent))
 
 
 def main():
-    port = int(os.environ.get("API_PORT", 8000))
-    host = os.environ.get("API_HOST", "0.0.0.0")
+    from src.utils.config import get_config
+    cfg = get_config()
+    host = cfg.host
+    port = cfg.port
     print(f"Starting NEXUS-SLM Inference API on http://{host}:{port} ...")
     uvicorn.run("api.main:app", host=host, port=port, reload=False)
 

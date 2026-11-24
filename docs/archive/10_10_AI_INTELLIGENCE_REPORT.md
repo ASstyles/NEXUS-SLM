@@ -1,4 +1,7 @@
-# NEXUS-SLM — 10/10 AI/ML TRIAGE INTELLIGENCE EXCELLENCE REPORT
+> [!NOTE]
+> **HISTORICAL ARCHIVE NOTICE (SUPERSEDED):** This report represents an internal historical milestone assessment. The authoritative system evaluation, metrics, and production readiness decisions are documented in [`RESULTS.md`](../RESULTS.md) and [`REMEDIATION_BASELINE.md`](../REMEDIATION_BASELINE.md).
+
+# NEXUS-SLM — AI/ML TRIAGE INTELLIGENCE HISTORICAL MILESTONE REPORT
 
 **Document Version:** 1.0.0  
 **Status:** COMPLETE & EMPIRICALLY VERIFIED  

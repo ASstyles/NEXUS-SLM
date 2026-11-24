@@ -271,76 +271,7 @@ artifacts_mount_dir.mkdir(parents=True, exist_ok=True)
 app.mount("/artifacts", StaticFiles(directory=str(artifacts_mount_dir)), name="artifacts")
 
 
-def get_fallback_prediction(text: str) -> Dict[str, Any]:
-    """
-    Deterministic rule-based fallback when neural weights are not loaded.
-    Used for instant initialization, testing, and cold-start fallback.
-    """
-    t_lower = text.lower()
-    import re
-    has_devanagari = bool(re.search(r"[\u0900-\u097F]", text))
-    if has_devanagari:
-        lang = "hindi"
-    elif any(k in t_lower for k in ["mera", "hai", "nahi", "nhi", "kat", "gaya", "bhai", "karo", "paise", "kyun"]):
-        lang = "hinglish"
-    else:
-        lang = "english"
-
-    cat = "general_query"
-    prio = "medium"
-    req_human = False
-
-    if any(k in t_lower for k in ["payment", "kat gaya", "debit", "deduct", "upi", "पेमेंट", "पैसे कट"]):
-        cat = "payment_failure"
-        prio = "high"
-        req_human = True
-    elif any(k in t_lower for k in ["refund", "wapas", "रिफंड", "पैसे वापस"]):
-        cat = "refund_request"
-        prio = "medium"
-    if any(k in t_lower for k in ["fraud", "unauthorized", "hacker", "hacked", "hack", "धोखाधड़ी", "हैक"]):
-        cat = "fraud_report"
-        prio = "critical"
-        req_human = True
-    elif any(k in t_lower for k in ["password", "पासवर्ड"]):
-        cat = "password_reset"
-        prio = "medium"
-    elif any(k in t_lower for k in ["login", "otp", "blocked", "सस्पेंडेड", "लॉगिन"]):
-        cat = "account_access"
-        prio = "high"
-        req_human = True
-    elif any(k in t_lower for k in ["cancel", "रद्द", "निरस्त"]):
-        cat = "order_cancel"
-        prio = "high"
-    elif any(k in t_lower for k in ["track", "where", "parcel", "पार्सल", "कहाँ"]):
-        cat = "order_tracking"
-        prio = "medium"
-    elif any(k in t_lower for k in ["delivery", "courier", "डिलीवरी"]):
-        cat = "delivery_issue"
-        prio = "high"
-        req_human = True
-    elif any(k in t_lower for k in ["subscription", "auto-renew", "सब्सक्रिप्शन"]):
-        cat = "subscription"
-        prio = "medium"
-    elif any(k in t_lower for k in ["bill", "invoice", "बिल", "इनवॉइस"]):
-        cat = "billing"
-        prio = "low"
-    elif any(k in t_lower for k in ["crash", "error", "500", "क्रैश", "एरर"]):
-        cat = "technical_issue"
-        prio = "high"
-    elif any(k in t_lower for k in ["delete account", "erase", "अकाउंट डिलीट"]):
-        cat = "account_closure"
-        prio = "medium"
-    elif any(k in t_lower for k in ["fake", "damaged", "broken", "घटिया", "खराब"]):
-        cat = "product_complaint"
-        prio = "high"
-
-    return {
-        "category": cat,
-        "priority": prio,
-        "language": lang,
-        "requires_human": req_human,
-        "confidence": None,
-    }
+from src.inference.rules import get_fallback_prediction
 
 
 @app.post(
@@ -367,7 +298,8 @@ async def predict_ticket(req: PredictRequest, request: Request):
         raw_priority = None
         raw_language = None
         if is_neural:
-            pred = inference_engine.predict(ticket_text)
+            import asyncio
+            pred = await asyncio.to_thread(inference_engine.predict, ticket_text)
             cat_str = pred.category
             prio_str = pred.priority
             lang_str = pred.language

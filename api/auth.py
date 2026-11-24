@@ -3,7 +3,7 @@
 import hmac
 from typing import Optional
 
-from fastapi import Depends, HTTPException, Security, status
+from fastapi import HTTPException, Security, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from src.utils.config import get_config
@@ -17,24 +17,18 @@ security_bearer = HTTPBearer(auto_error=False)
 async def verify_admin_access(
     credentials: Optional[HTTPAuthorizationCredentials] = Security(security_bearer),
 ) -> bool:
-    """Verifies that incoming administrative request has valid secret credentials."""
-    import os
+    """
+    Verifies that incoming administrative request has valid secret credentials.
+    Production authentication logic remains strict and consistent across all environments.
+    No automatic bypasses based on test runner environment variables.
+    """
     cfg = get_config()
 
-    # In test environments or when enforcement is disabled, allow pass-through
-    if cfg.is_test() or not cfg.enforce_admin_auth or os.getenv("PYTEST_CURRENT_TEST"):
-        # If token is provided, still validate format for test coverage
-        if credentials and credentials.credentials:
-            token = credentials.credentials.strip()
-            if token != cfg.admin_api_key.strip():
-                raise HTTPException(
-                    status_code=status.HTTP_403_FORBIDDEN,
-                    detail="Forbidden: Invalid administrative credentials.",
-                )
+    # When administrative authentication is explicitly disabled by configuration
+    if not cfg.enforce_admin_auth:
         return True
 
-    token = credentials.credentials if credentials else None
-    if not token:
+    if not credentials or not credentials.credentials:
         logger.warning("Administrative request rejected: Missing Bearer authorization token.")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
@@ -42,8 +36,11 @@ async def verify_admin_access(
             headers={"WWW-Authenticate": "Bearer"},
         )
 
+    token = credentials.credentials.strip()
+    configured_key = cfg.admin_api_key.strip()
+
     # Constant-time comparison to prevent timing side-channel attacks
-    is_valid = hmac.compare_digest(token.strip(), cfg.admin_api_key.strip())
+    is_valid = hmac.compare_digest(token, configured_key)
     if not is_valid:
         logger.warning("Administrative request rejected: Invalid admin key provided.")
         raise HTTPException(

@@ -10,6 +10,16 @@ jobs:
   lint-and-tests:
     name: Lint, Static Checks, and Automated Test Suite
     runs-on: ubuntu-latest
+    services:
+      redis:
+        image: redis:7-alpine
+        ports:
+          - 6379:6379
+        options: >-
+          --health-cmd "redis-cli ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     strategy:
       matrix:
         python-version: ["3.10"]
@@ -48,6 +58,10 @@ jobs:
         run: |
           python -m pip install --no-cache-dir -r requirements-ci.txt --extra-index-url https://abetlen.github.io/llama-cpp-python/whl/cpu
           python -m pip install --no-cache-dir --no-deps -e .
+
+      - name: Verify Redis Asyncio Import
+        run: |
+          python -c "import redis; import redis.asyncio; print('Redis asyncio dependency verified:', redis.__version__)"
 
       - name: Disk Diagnostics & Environment Audit (Post-Install)
         run: |
@@ -107,49 +121,156 @@ jobs:
           load: true
           tags: nexus-slm:ci-test
 
-      - name: Start Container with Environment Configuration
+      - name: Generate Ephemeral Administrator Secret for CI
+        run: |
+          CI_ADMIN_KEY=$(python3 -c "import secrets; print(secrets.token_urlsafe(32))")
+          echo "::add-mask::$CI_ADMIN_KEY"
+          echo "CI_ADMIN_KEY=$CI_ADMIN_KEY" >> $GITHUB_ENV
+          echo "Generated and masked cryptographically secure 256-bit ephemeral admin key for CI."
+
+      - name: Start Container with Production Environment Configuration
         run: |
           docker run -d \
             --name nexus-ci-container \
             -p 8000:8000 \
+            -e NEXUS_ENV=production \
+            -e NEXUS_ENFORCE_ADMIN_AUTH=true \
+            -e NEXUS_ADMIN_KEY="$CI_ADMIN_KEY" \
             -e ACTIVE_MODEL_VERSION=nexus-qlora-v1 \
             -e API_PORT=8000 \
             -e API_HOST=0.0.0.0 \
             nexus-slm:ci-test
 
-      - name: Verify Container Startup & Health Check
+      - name: Verify Container Startup & Health Check with Diagnostics
         run: |
-          echo "Waiting for container startup and healthcheck..."
-          for i in {1..30}; do
-            if curl -s -f http://localhost:8000/health; then
-              echo "Healthcheck passed!"
+          echo "Verifying container startup and probing health endpoint..."
+          MAX_ATTEMPTS=20
+          CONTAINER_READY=false
+
+          for i in $(seq 1 $MAX_ATTEMPTS); do
+            STATUS=$(docker inspect nexus-ci-container --format='{{.State.Status}}' 2>/dev/null || echo "not_found")
+            if [ "$STATUS" = "exited" ] || [ "$STATUS" = "dead" ]; then
+              EXIT_CODE=$(docker inspect nexus-ci-container --format='{{.State.ExitCode}}' 2>/dev/null || echo "unknown")
+              echo "ERROR: Container exited unexpectedly with exit code: $EXIT_CODE"
+              echo "=== Container Logs (last 200 lines) ==="
+              docker logs --tail 200 nexus-ci-container
+              exit 1
+            fi
+
+            HTTP_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/health || echo "000")
+            if [ "$HTTP_CODE" = "200" ]; then
+              echo "Container is running and healthcheck passed (attempt $i/$MAX_ATTEMPTS, HTTP 200)!"
+              CONTAINER_READY=true
               break
             fi
-            echo "Waiting for API to become ready (attempt $i/30)..."
+
+            echo "Waiting for API to initialize (attempt $i/$MAX_ATTEMPTS, status=$STATUS, http=$HTTP_CODE)..."
             sleep 2
           done
-          HEALTH_JSON=$(curl -s http://localhost:8000/health)
-          echo "Health response: $HEALTH_JSON"
-          echo "$HEALTH_JSON" | grep -q '"status":"healthy"' || exit 1
 
-      - name: Verify Inference API Functionality
+          if [ "$CONTAINER_READY" != "true" ]; then
+            echo "ERROR: Timed out waiting for container health check."
+            EXIT_CODE=$(docker inspect nexus-ci-container --format='{{.State.ExitCode}}' 2>/dev/null || echo "unknown")
+            echo "Container status: $STATUS, exit code: $EXIT_CODE"
+            echo "=== Container Logs (last 200 lines) ==="
+            docker logs --tail 200 nexus-ci-container
+            exit 1
+          fi
+
+          HEALTH_JSON=$(curl -s -f http://localhost:8000/health)
+          echo "Health Response: $HEALTH_JSON"
+          echo "$HEALTH_JSON" | grep -q '"status":"healthy"' || {
+            echo "ERROR: Health check response does not contain '\"status\":\"healthy\"'"
+            exit 1
+          }
+
+          READY_JSON=$(curl -s -f http://localhost:8000/ready)
+          echo "Readiness Response: $READY_JSON"
+          echo "$READY_JSON" | grep -q '"status":"ready"' || {
+            echo "ERROR: Readiness check response does not contain '\"status\":\"ready\"'"
+            exit 1
+          }
+
+      - name: Verify Inference API Functionality & Schema Conformance
         run: |
-          echo "Testing inference on container..."
-          RESP=$(curl -s -X POST http://localhost:8000/predict \
+          echo "Executing real inference request against production container..."
+          RESP=$(curl -s -w "\nHTTP_STATUS:%{http_code}" -X POST http://localhost:8000/predict \
             -H "Content-Type: application/json" \
             -d '{"ticket": "My payment failed and account got debited twice"}')
-          echo "Inference response: $RESP"
-          echo "$RESP" | grep -q '"category":' || exit 1
-          echo "$RESP" | grep -q '"requires_human":' || exit 1
 
-      - name: Verify Graceful Shutdown
+          HTTP_CODE=$(echo "$RESP" | grep "HTTP_STATUS" | cut -d':' -f2)
+          BODY=$(echo "$RESP" | sed '/HTTP_STATUS/d')
+
+          echo "Inference HTTP Status: $HTTP_CODE"
+          echo "Inference Response Body: $BODY"
+
+          if [ "$HTTP_CODE" != "200" ]; then
+            echo "ERROR: Expected HTTP 200 from /predict, got $HTTP_CODE"
+            docker logs --tail 50 nexus-ci-container
+            exit 1
+          fi
+
+          # Verify required schema fields
+          echo "$BODY" | grep -q '"category":' || { echo "ERROR: Missing 'category'"; exit 1; }
+          echo "$BODY" | grep -q '"priority":' || { echo "ERROR: Missing 'priority'"; exit 1; }
+          echo "$BODY" | grep -q '"language":' || { echo "ERROR: Missing 'language'"; exit 1; }
+          echo "$BODY" | grep -q '"requires_human":' || { echo "ERROR: Missing 'requires_human'"; exit 1; }
+          echo "$BODY" | grep -q '"request_id":' || { echo "ERROR: Missing 'request_id'"; exit 1; }
+          echo "$BODY" | grep -q '"inference_mode":' || { echo "ERROR: Missing 'inference_mode'"; exit 1; }
+          echo "Inference contract smoke test passed successfully."
+
+      - name: Verify Administrative Authentication Enforcement on Container
         run: |
-          echo "Issuing SIGTERM via docker stop..."
-          docker stop --time 15 nexus-ci-container
-          STATUS=$(docker inspect nexus-ci-container --format='{{.State.Status}}')
-          echo "Container status after stop: $STATUS"
-          docker logs nexus-ci-container | tail -n 20
-          docker rm nexus-ci-container
+          echo "Verifying administrative endpoint rejects unauthenticated request..."
+          UNAUTH_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "http://localhost:8000/model/rollback?target_version=baseline-smollm-135m")
+          if [ "$UNAUTH_CODE" != "401" ]; then
+            echo "ERROR: Expected HTTP 401 without auth, got $UNAUTH_CODE"
+            exit 1
+          fi
+          echo "Verified: Missing credentials rejected with HTTP 401."
+
+          echo "Verifying administrative endpoint rejects invalid credentials..."
+          INVALID_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "http://localhost:8000/model/rollback?target_version=baseline-smollm-135m" \
+            -H "Authorization: Bearer wrong-admin-key-12345678901234567890")
+          if [ "$INVALID_CODE" != "403" ]; then
+            echo "ERROR: Expected HTTP 403 with invalid auth, got $INVALID_CODE"
+            exit 1
+          fi
+          echo "Verified: Invalid credentials rejected with HTTP 403."
+
+          echo "Verifying administrative endpoint accepts valid generated ephemeral key..."
+          AUTH_CODE=$(curl -s -o /dev/null -w "%{http_code}" -X POST "http://localhost:8000/model/rollback?target_version=nexus-qlora-v1" \
+            -H "Authorization: Bearer $CI_ADMIN_KEY")
+          if [ "$AUTH_CODE" != "200" ]; then
+            echo "ERROR: Expected HTTP 200 with valid admin credentials, got $AUTH_CODE"
+            exit 1
+          fi
+          echo "Verified: Valid administrative credentials accepted with HTTP 200."
+
+      - name: Verify Graceful Shutdown & Inspect Container Logs
+        if: always()
+        run: |
+          echo "Inspecting container state before stop..."
+          STATUS=$(docker inspect nexus-ci-container --format='{{.State.Status}}' 2>/dev/null || echo "not_found")
+          echo "Container status: $STATUS"
+
+          if [ "$STATUS" = "running" ]; then
+            echo "Issuing SIGTERM via docker stop..."
+            docker stop --time 15 nexus-ci-container
+          fi
+
+          echo "=== Container Logs (last 100 lines) ==="
+          docker logs --tail 100 nexus-ci-container 2>/dev/null || echo "No logs available"
+
+          # Verify no secrets appear in logs
+          if docker logs nexus-ci-container 2>&1 | grep -q "$CI_ADMIN_KEY"; then
+            echo "SECURITY FAILURE: Ephemeral admin key leaked into container logs!"
+            docker rm -f nexus-ci-container 2>/dev/null || true
+            exit 1
+          fi
+          echo "Security audit passed: No administrative secrets found in container logs."
+
+          docker rm -f nexus-ci-container 2>/dev/null || true
 
   build-dashboard:
     name: Build Next.js Dashboard

@@ -26,8 +26,11 @@ def test_model_registry_list():
 
 
 def test_rollback_to_registered_version():
+    from src.utils.config import get_config
+    auth_headers = {"Authorization": f"Bearer {get_config().admin_api_key}"}
+
     # 1. Switch to baseline-smollm-135m
-    resp = client.post("/model/rollback?target_version=baseline-smollm-135m")
+    resp = client.post("/model/rollback?target_version=baseline-smollm-135m", headers=auth_headers)
     assert resp.status_code == 200
     data = resp.json()
     assert data["status"] == "SUCCESS"
@@ -44,7 +47,7 @@ def test_rollback_to_registered_version():
     assert pred_resp.json()["model_version"] == "baseline-smollm-135m"
 
     # 4. Switch back to production candidate nexus-qlora-v1
-    resp_back = client.post("/model/rollback?target_version=nexus-qlora-v1")
+    resp_back = client.post("/model/rollback?target_version=nexus-qlora-v1", headers=auth_headers)
     assert resp_back.status_code == 200
     assert resp_back.json()["active_version"] == "nexus-qlora-v1"
 
@@ -54,7 +57,9 @@ def test_rollback_to_registered_version():
 
 
 def test_rollback_nonexistent_version_rejected():
-    resp = client.post("/model/rollback?target_version=nonexistent-v999")
+    from src.utils.config import get_config
+    auth_headers = {"Authorization": f"Bearer {get_config().admin_api_key}"}
+    resp = client.post("/model/rollback?target_version=nonexistent-v999", headers=auth_headers)
     assert resp.status_code == 404
     assert "not registered" in resp.json()["detail"].lower()
 

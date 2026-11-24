@@ -1,95 +1,102 @@
-# NEXUS-SLM Model Card
+# NEXUS-SLM Model Card: Qwen2.5-0.5B LoRA Clean V2
 
 ## 1. Model Details
 
-- **Model Name**: NEXUS-SLM-135M-LoRA-v1
-- **Model Version**: `nexus-qlora-v1`
-- **Candidate Status**: Locked Production Candidate (Manifest: `experiments/final_candidate.json`)
-- **Base Architecture**: `HuggingFaceTB/SmolLM-135M-Instruct` (LlamaForCausalLM, 30 layers, 9 attention heads, hidden dim 576)
-- **Base Parameters**: 135,436,608
-- **Fine-Tuning Method**: Parameter-Efficient Fine-Tuning (PEFT) via LoRA ($r=16, \alpha=32, \text{dropout}=0.05$) targeting `q_proj` and `v_proj`
-- **Trainable Parameters**: 921,600 (0.68% of base model)
-- **Precision**: FP32 on CPU runtime
-- **Tokenizer**: SmolLM-135M Byte-level BPE (Vocab size: 49,152, ChatML format)
-- **Cryptographic Model Hash**: `sha256_643971155ba3fe3a91379005fbe85d5ca95e73af90ec7cd65f871379a838983f`
+- **Model Identifier**: `qwen25_05b_clean_v2_lora`
+- **Model Version**: Clean V2 Candidate (Run ID: `20261030_190017`)
+- **Lifecycle Stage**: **Experimental / Candidate on Hold** (Benchmarked against locked test set; see [RESULTS.md](RESULTS.md))
+- **Base Architecture**: `Qwen/Qwen2.5-0.5B-Instruct` (Qwen2ForCausalLM, 24 layers, 14 attention heads, hidden dim 896)
+- **Base Parameters**: ~494 Million
+- **Fine-Tuning Method**: Parameter-Efficient Fine-Tuning (PEFT) via LoRA ($r=16, \alpha=32, \text{dropout}=0.05$) targeting attention projections (`q_proj`, `v_proj`)
+- **Adapter Checkpoint Path**: `experiments/artifacts/training_runs/qwen25_05b_clean_v2_lora_run_20261030_190017/adapter`
+- **Adapter Weights File**: `adapter_model.safetensors` (35,237,104 bytes)
+  - **Verified SHA-256**: `9B677B8D488CCD402505CCD7293074AA16104236EECF8B370E5FDE15AC4161D2`
+- **Adapter Config File**: `adapter_config.json` (1,159 bytes)
+  - **Verified SHA-256**: `7A236E4CF7521BFC6D64C4C01CB16879C7B4AF272434C7D64B7CAE017247A17C`
+- **Tokenizer**: Qwen2.5 BPE Tokenizer (Vocab size: 151,936, ChatML formatting)
+- **Runtime Environment**: PyTorch 2.6.0 on CPU / CUDA
 
 ---
 
-## 2. Intended Use
+## 2. Intended Use & Boundaries
 
-- **Primary Application**: Automated triage, classification, urgency prioritization, and routing of enterprise customer support tickets.
-- **Target Environments**: Offline, air-gapped, on-premise, or private cloud CPU clusters where privacy regulations (GDPR, HIPAA) prohibit sending raw customer text to commercial cloud LLMs.
-- **Out-of-Scope Applications**: Autonomous resolution of tickets without human oversight; financial transaction approval; general-purpose conversational chat.
-
----
-
-## 3. Supported Inputs & Outputs
-
-### 3.1 Input Modalities
-- **Languages**: English, Hinglish (Hindi-English code-switched), Roman Hindi, and Native Hindi (Devanagari script).
-- **Format**: Plain text customer support tickets (1 to 4,000 characters).
-
-### 3.2 Output Schema
-- **Category**: One of 14 support categories (`payment_failure`, `fraud_report`, `refund_request`, etc.).
-- **Priority**: Urgency level (`low`, `medium`, `high`, `critical`).
-- **Language**: Detected modality (`english`, `hindi`, `hinglish`).
-- **Requires Human**: Boolean escalation flag.
-- **Confidence**: Calibrated confidence score in $[0.0, 1.0]$.
+- **Primary Application**: Automated triage, classification, priority evaluation, and routing of multilingual customer support tickets into structured JSON.
+- **Target Environments**: Enterprise private clouds, on-premise Kubernetes clusters, or edge inference environments handling Indian English, Native Hindi (Devanagari), and Hinglish (Roman Hindi).
+- **Out-of-Scope & Prohibited Applications**:
+  - Autonomous financial disbursements, chargebacks, or refunds without human adjudication.
+  - Autonomous account deletion without compliance verification.
+  - Unmonitored classification of safety-critical fraud reports without deterministic policy oversight.
 
 ---
 
-## 4. Training Methodology
+## 3. Supported Taxonomy & Schema
 
-- **Dataset**: `dataset_v1` (316 training samples, 44 validation samples, 42 locked test samples).
-- **Dataset Hash**: `sha256_11df262072d7243f623bfd829b407a8dbd2c5a3087ed697a836a7152c7688967`.
-- **Training Hyperparameters**:
-  - Epochs: 3
-  - Batch Size: 4 (Effective batch size: 8 with gradient accumulation)
-  - Learning Rate: $5 \times 10^{-4}$ with linear warmup (ratio 0.05) and weight decay 0.01
-  - Max Sequence Length: 280 tokens
-  - Loss Trajectory: Train Loss decreased from 0.98 to 0.2077; Eval Loss reached 0.1439.
-
----
-
-## 5. Measured Evaluation Metrics (Locked Test Benchmark)
-
-Evaluated on the locked 42-sample test benchmark (`sha256_edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4`):
-
-| Evaluation Metric | Baseline Base Model | NEXUS-SLM v1 (Candidate) | NEXUS-SLM v2 |
-|---|---|---|---|
-| **Macro F1** | 0.0000 | **0.4089** | 0.2224 |
-| **Category Accuracy** | 0.0000 | **0.4286** | 0.2381 |
-| **Priority F1** | 0.0000 | **0.2739** | 0.1421 |
-| **Language Accuracy** | 0.0000 | **0.9524** | 0.6190 |
-| **JSON Validity Rate** | 0.0000 | **0.9762** | 0.8333 |
-| **P50 Latency (ms)** | 4888.22 | **1204.46** | 2326.77 |
-| **P95 Latency (ms)** | 5396.91 | **1306.49** | 2551.76 |
-| **RAM Footprint (MB)** | 13196.75 | **982.24** | 985.00 |
-
-*Empirical Selection Rationale*: V1 significantly outperforms V2 on Macro-F1 (+45.6% relative advantage), Category Accuracy (+44.5%), and JSON Validity (+14.6%) while running nearly 2x faster.
+- **Categories (14)**: `account_access`, `account_closure`, `billing`, `delivery_issue`, `fraud_report`, `general_query`, `order_cancel`, `order_tracking`, `password_reset`, `payment_failure`, `product_complaint`, `refund_request`, `subscription`, `technical_issue`.
+- **Priorities (4)**: `low`, `medium`, `high`, `critical`.
+- **Languages (3)**: `english`, `hindi`, `hinglish`.
+- **Output Schema**:
+  ```json
+  {
+    "category": "payment_failure",
+    "priority": "high",
+    "language": "hinglish",
+    "requires_human": true
+  }
+  ```
 
 ---
 
-## 6. Confidence Calibration Profile
+## 4. Training & Validation Provenance
 
-- **Expected Calibration Error (ECE)**: $0.5879$ (58.8%).
-- **Mean Model Confidence**: $0.9689$ vs **Mean Accuracy**: $0.3810$.
-- **Finding**: Raw token probabilities in small causal language models exhibit severe overconfidence.
-- **Production Policy**: Raw confidence is never exposed as an uncalibrated posterior. Calibrated scaling and deterministic confidence thresholds ($< 0.65 \implies \text{escalate}$) are applied.
-
----
-
-## 7. Known Limitations & Failure Modes
-
-1. **Native Devanagari Hindi Weakness**: SmolLM-135M vocabulary lacks dedicated subword tokens for Devanagari script, fragmenting Hindi words into byte fallback tokens and resulting in low classification accuracy (14.3%). Roman Hindi and Hinglish perform substantially better (57.1%).
-2. **Short Ticket Degradation**: Tickets with $\le 3$ words (e.g., "Payment failed") lack syntactic context, degrading classification recall. These tickets are automatically routed to human agents.
-3. **Rare Class Boundary Confusion**: Subtle distinctions between semantically adjacent categories (e.g. `account_closure` vs `account_access`) require deterministic safety gating.
-4. **Parameter Capacity Ceiling**: At 135M parameters, the model cannot perform complex multi-intent reasoning.
-5. **CPU Latency Under High Concurrency**: CPU thread contention increases queue latency at concurrency $> 2$. Concurrency should be capped at 1-2 workers per CPU instance.
+- **Dataset Root**: `data/v2_clean_template_grouped/`
+- **Training Set**: `train_clean.jsonl` ($N=4,797$ samples, 947 masked templates)
+- **Validation Set**: `val_clean.jsonl` ($N=449$ samples, 82 masked templates)
+- **Locked Test Set**: `test_clean.jsonl` ($N=746$ samples, 131 masked templates, SHA-256 `fc65071b1e9f3303facf64711e72f8bb0f31b450c7f6a3c381bd4a9f8408cf9b`)
+- **Training Strategy**: Cloud GPU fine-tuning under strict template-grouped isolation. Zero test set leakage during training.
 
 ---
 
-## 8. Safety & Ethical Considerations
+## 5. Measured Independent Evaluation Benchmark (Locked Test Set, $N=746$)
 
-- The model must **never** be operated as an unmonitored autonomous system.
-- Deterministic safeguards guarantee that fraud reports, account deletions, and legal complaints are always routed to human staff.
+Evaluated on the locked 746-sample clean test benchmark with zero mock dependencies:
+
+| Metric | Measured Clean-Test Value ($N=746$) | Baseline Fallback Comparison |
+|---|---:|---:|
+| **Category Accuracy** | **69.17%** (516/746) | 56.03% (418/746) |
+| **Category Macro Precision** | **65.34%** | 87.59% |
+| **Category Macro Recall** | **69.17%** | 58.32% |
+| **Category Macro-F1** | **0.6044** | 0.6132 |
+| **Category Weighted-F1** | **0.6630** | 0.6175 |
+| **Priority Accuracy** | **47.86%** (357/746) | 47.18% (352/746) |
+| **Priority Macro-F1** | **0.2842** | 0.3980 |
+| **Priority Weighted-F1** | **0.3864** | 0.4497 |
+| **Overall Language Accuracy** | **96.78%** (722/746) | 81.23% (606/746) |
+| - English Language Accuracy | **100.00%** (231/231) | 100.00% (231/231) |
+| - Hindi Language Accuracy | **100.00%** (232/232) | 100.00% (232/232) |
+| - Hinglish Language Accuracy | **92.55%** (262/283) | 49.82% (141/283) |
+| **Structured JSON Validity** | **100.00%** (746/746) | 100.00% (746/746) |
+| **Exact 4-Field Match Rate** | **35.52%** (265/746) | 22.39% (167/746) |
+| **Escalation Recall** | **86.12%** (180/209) | 100.00% (209/209) |
+| **Escalation Precision** | **33.40%** (180/539) | 28.02% (209/746) |
+| **Overall Escalation Rate** | **72.25%** (539/746) | 100.00% (746/746) |
+| **Latency P50 (CPU, Batch 16)** | **1,508.55 ms** | 0.05 ms |
+| **Latency P95 (CPU, Batch 16)** | **2,212.92 ms** | 0.25 ms |
+| **Throughput (CPU)** | **0.62 req/s** | 9,833.58 req/s |
+| **RAM Footprint (LoRA Delta)** | **78.66 MB** | ~5 MB |
+
+---
+
+## 6. Known Failure Modes & Diagnostic Findings
+
+1. **`product_complaint` vs `refund_request` Confusion**: The model achieved 0% recall on `product_complaint` ($N=44$), erroneously mapping damaged/defective product reports to `refund_request` ($29/44$) and `fraud_report` ($15/44$).
+2. **`general_query` Dispersion**: 0% recall on `general_query` ($N=42$), with 28 samples misclassified as `fraud_report` due to inquiry sensitivity.
+3. **Sparse Category Population**: The `subscription` category has only 2 samples in the locked test set. While recall is 100% on paper, precision is 12.5% and the 95% Wilson interval is $[0.3424, 1.0000]$.
+4. **Standalone Safety Gap**: In standalone neural mode without policy enforcement, the model generated 29 escalation false negatives on high-risk tickets. Consequently, **deterministic wrapping by `HumanEscalationPolicy` is strictly mandatory**.
+
+---
+
+## 7. Production Gate Status
+
+- **Status**: **HOLD / EXPERIMENTAL ONLY**
+- **Reason**: Does not meet the $\ge 80.0\%$ category accuracy, $\ge 0.75$ Macro-F1, or standalone safety recall thresholds.
+- **Deployment Topology**: Operates as a shadow or secondary candidate behind the **Heuristic Fallback v2** engine.

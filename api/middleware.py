@@ -1,21 +1,202 @@
 """Production middleware stack for NEXUS-SLM: Request Tracing, Rate Limiting, Timeout, and Concurrency Control."""
 
+import abc
 import asyncio
 import os
 import threading
 import time
 import uuid
 from collections import defaultdict, deque
-from typing import Callable, Dict, Optional, Tuple
+from typing import Callable, Dict, List, Optional, Tuple
 
 from fastapi import Request, Response, status
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 
-from src.utils.config import get_config
+from src.utils.config import AppConfig, get_config
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
+
+
+def resolve_client_ip(request: Request, trusted_proxies: List[str]) -> str:
+    """
+    Securely resolves the client IP address.
+    Only trusts X-Forwarded-For if the direct peer IP is explicitly listed in trusted_proxies.
+    Prevents IP spoofing attacks designed to bypass rate limits or geofencing.
+    """
+    peer_ip = request.client.host if request.client else "127.0.0.1"
+    trusted_set = set(trusted_proxies)
+
+    # Local loopbacks are considered trusted for testing and internal reverse proxies
+    is_trusted = (peer_ip in trusted_set) or (peer_ip in ("127.0.0.1", "::1", "localhost"))
+
+    forwarded = request.headers.get("X-Forwarded-For")
+    if is_trusted and forwarded:
+        # Leftmost entry in X-Forwarded-For represents the original client IP
+        client_ip = forwarded.split(",")[0].strip()
+        if client_ip:
+            return client_ip
+
+    return peer_ip
+
+
+class BaseRateLimiter(abc.ABC):
+    """Abstract interface for rate limiting implementations."""
+
+    @abc.abstractmethod
+    async def check_rate_limit(self, client_id: str) -> Tuple[bool, int, float]:
+        """Returns (is_allowed, remaining_requests, reset_time_seconds)."""
+        pass
+
+    @property
+    @abc.abstractmethod
+    def limit(self) -> int:
+        pass
+
+
+class SlidingWindowRateLimiter(BaseRateLimiter):
+    """
+    Thread-safe sliding-window rate limiter per client ID in local memory.
+    Explicitly designated for local development, testing, and single-replica deployments.
+    """
+
+    def __init__(self, limit_per_minute: int = 120, window_seconds: float = 60.0):
+        self._limit = limit_per_minute
+        self.window = window_seconds
+        self.history: Dict[str, deque] = defaultdict(deque)
+        self.lock = threading.Lock()
+
+    @property
+    def limit(self) -> int:
+        return self._limit
+
+    async def check_rate_limit(self, client_id: str) -> Tuple[bool, int, float]:
+        """Returns (is_allowed, remaining_requests, reset_time_seconds)."""
+        now = time.time()
+        with self.lock:
+            q = self.history[client_id]
+            # Evict timestamps older than sliding window
+            while q and q[0] <= now - self.window:
+                q.popleft()
+
+            if len(q) < self._limit:
+                q.append(now)
+                remaining = self._limit - len(q)
+                reset_in = round(self.window - (now - q[0]), 1) if q else self.window
+                return True, remaining, max(0.1, reset_in)
+
+            # Limit exceeded
+            reset_in = round(self.window - (now - q[0]), 1)
+            return False, 0, max(0.1, reset_in)
+
+
+SLIDING_WINDOW_LUA_SCRIPT = """
+local key = KEYS[1]
+local now = tonumber(ARGV[1])
+local window = tonumber(ARGV[2])
+local limit = tonumber(ARGV[3])
+local member_id = ARGV[4]
+local clear_before = now - window
+
+-- 1. Remove expired timestamps outside sliding window
+redis.call('ZREMRANGEBYSCORE', key, '-inf', clear_before)
+
+-- 2. Count timestamps currently within window
+local current_count = redis.call('ZCARD', key)
+
+-- 3. Atomically check limit and insert if permitted
+if current_count < limit then
+    redis.call('ZADD', key, now, member_id)
+    redis.call('EXPIRE', key, math.ceil(window) + 5)
+    local remaining = limit - (current_count + 1)
+
+    local oldest = redis.call('ZRANGE', key, 0, 0, 'WITHSCORES')
+    local reset_in = window
+    if oldest and #oldest >= 2 then
+        reset_in = math.max(0.1, tonumber(oldest[2]) + window - now)
+    end
+    return {1, remaining, tostring(reset_in)}
+else
+    local oldest = redis.call('ZRANGE', key, 0, 0, 'WITHSCORES')
+    local reset_in = window
+    if oldest and #oldest >= 2 then
+        reset_in = math.max(0.1, tonumber(oldest[2]) + window - now)
+    end
+    return {0, 0, tostring(reset_in)}
+end
+"""
+
+
+class RedisSlidingWindowRateLimiter(BaseRateLimiter):
+    """
+    Distributed sliding-window rate limiter backed by Redis sorted sets (ZSET).
+    Enforces atomic rate limiting across multiple API worker processes and container replicas
+    via single-transaction Redis Lua script execution.
+    """
+
+    def __init__(
+        self,
+        redis_url: str,
+        limit_per_minute: int = 120,
+        window_seconds: float = 60.0,
+        key_prefix: str = "nexus_rl:",
+    ):
+        self._limit = limit_per_minute
+        self.window = window_seconds
+        self.key_prefix = key_prefix
+        self.redis_url = redis_url
+        self._fallback_limiter = SlidingWindowRateLimiter(limit_per_minute, window_seconds)
+
+        import redis.asyncio as aioredis
+        self.redis = aioredis.from_url(redis_url, decode_responses=True)
+        self._redis_available = True
+
+    @property
+    def limit(self) -> int:
+        return self._limit
+
+    async def check_rate_limit(self, client_id: str) -> Tuple[bool, int, float]:
+        now = time.time()
+        key = f"{self.key_prefix}{client_id}"
+        member_id = f"{now}:{uuid.uuid4().hex[:8]}"
+
+        try:
+            # Atomic single-transaction sliding-window evaluation via Redis Lua script
+            res = await self.redis.eval(
+                SLIDING_WINDOW_LUA_SCRIPT,
+                1,
+                key,
+                str(now),
+                str(self.window),
+                str(self._limit),
+                member_id,
+            )
+            # res is [is_allowed_int, remaining_int, reset_in_str]
+            is_allowed = bool(res[0] == 1)
+            remaining = int(res[1])
+            reset_in = round(float(res[2]), 1)
+            return is_allowed, max(0, remaining), max(0.1, reset_in)
+
+        except Exception as exc:
+            logger.warning(
+                f"Redis rate limiter failure on key '{key}': {exc}. Failing open with local in-memory fallback."
+            )
+            return await self._fallback_limiter.check_rate_limit(client_id)
+
+
+def create_rate_limiter(cfg: Optional[AppConfig] = None) -> BaseRateLimiter:
+    """Factory creating appropriate rate limiter based on configuration."""
+    cfg = cfg or get_config()
+    if cfg.rate_limiting_backend == "redis" and cfg.redis_url:
+        try:
+            return RedisSlidingWindowRateLimiter(
+                redis_url=cfg.redis_url,
+                limit_per_minute=cfg.rate_limit_per_minute,
+            )
+        except Exception as e:
+            logger.warning(f"Failed to initialize Redis rate limiter: {e}. Defaulting to in-memory.")
+    return SlidingWindowRateLimiter(limit_per_minute=cfg.rate_limit_per_minute)
 
 
 class RequestTracingMiddleware(BaseHTTPMiddleware):
@@ -30,43 +211,14 @@ class RequestTracingMiddleware(BaseHTTPMiddleware):
         return response
 
 
-class SlidingWindowRateLimiter:
-    """Thread-safe sliding-window rate limiter per client IP."""
-
-    def __init__(self, limit_per_minute: int = 120, window_seconds: float = 60.0):
-        self.limit = limit_per_minute
-        self.window = window_seconds
-        self.history: Dict[str, deque] = defaultdict(deque)
-        self.lock = threading.Lock()
-
-    async def check_rate_limit(self, client_ip: str) -> Tuple[bool, int, float]:
-        """Returns (is_allowed, remaining_requests, reset_time_seconds)."""
-        now = time.time()
-        with self.lock:
-            q = self.history[client_ip]
-            # Evict timestamps older than sliding window
-            while q and q[0] <= now - self.window:
-                q.popleft()
-
-            if len(q) < self.limit:
-                q.append(now)
-                remaining = self.limit - len(q)
-                reset_in = round(self.window - (now - q[0]), 1) if q else self.window
-                return True, remaining, max(0.1, reset_in)
-
-            # Limit exceeded
-            reset_in = round(self.window - (now - q[0]), 1)
-            return False, 0, max(0.1, reset_in)
-
-
 class RateLimitingMiddleware(BaseHTTPMiddleware):
-    """Enforces configurable client rate limits with standard HTTP 429 headers."""
+    """Enforces configurable client rate limits with standard HTTP 429 headers and proxy-aware IP resolution."""
 
-    def __init__(self, app, limiter: Optional[SlidingWindowRateLimiter] = None):
+    def __init__(self, app, limiter: Optional[BaseRateLimiter] = None):
         super().__init__(app)
         cfg = get_config()
-        self.limiter = limiter or SlidingWindowRateLimiter(limit_per_minute=cfg.rate_limit_per_minute)
-        # Paths excluded from rate limiting
+        self.cfg = cfg
+        self.limiter = limiter or create_rate_limiter(cfg)
         self.exempt_paths = {"/health", "/ready", "/metrics", "/docs", "/openapi.json", "/redoc"}
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
@@ -77,20 +229,14 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
         ):
             return await call_next(request)
 
-        # Resolve client IP (support reverse proxies via X-Forwarded-For)
-        forwarded = request.headers.get("X-Forwarded-For")
-        if forwarded:
-            client_ip = forwarded.split(",")[0].strip()
-        elif request.client:
-            client_ip = request.client.host
-        else:
-            client_ip = "127.0.0.1"
+        # Secure proxy-aware client IP resolution
+        client_ip = resolve_client_ip(request, self.cfg.trusted_proxies)
 
         allowed, remaining, reset_in = await self.limiter.check_rate_limit(client_ip)
 
         if not allowed:
             req_id = getattr(request.state, "request_id", str(uuid.uuid4()))
-            logger.warning(f"Rate limit exceeded for IP {client_ip} on {request.url.path} [ID={req_id}]")
+            logger.warning(f"Rate limit exceeded for client {client_ip} on {request.url.path} [ID={req_id}]")
             return JSONResponse(
                 status_code=status.HTTP_429_TOO_MANY_REQUESTS,
                 content={
@@ -130,7 +276,6 @@ class ConcurrencyAndTimeoutMiddleware(BaseHTTPMiddleware):
         return self._semaphore
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
-        # Exempt health, ready, metrics, or evaluation runs
         if (
             request.url.path in {"/health", "/ready", "/metrics"}
             or os.getenv("EVALUATION_RUN") == "1"

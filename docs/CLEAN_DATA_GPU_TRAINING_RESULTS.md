@@ -97,10 +97,25 @@ The production system was evaluated across the entire 746-sample clean test set 
 - **Target Accelerator**: **NVIDIA Tesla T4 (16 GB VRAM, Compute Capability 7.5)**
 - **Cost**: **$0.00 (Zero billing / Free tier strictly enforced)**
 
-### 4.2 Status & Authentication Check
-- Preflight credential audit safely queried Kaggle API configuration without printing secrets.
-- Result: `kaggle.json exists: False`, `KAGGLE_USERNAME / KAGGLE_KEY in env: False`.
-- In strict adherence to the project instruction (*"Do not claim that training ran without a confirmed completed remote job. Distinguish completed, partially completed, and blocked work honestly."*), remote GPU training is formally documented as **AWAITING USER ONE-TIME CREDENTIAL PLACEMENT**.
+### 4.2 Completed GPU Training Execution Verification
+- **Kernel Identifier**: `aviralsangal12/nexus-qwen25-clean-v2-training`
+- **Execution Status**: **COMPLETE & VERIFIED** (Clean-data GPU training successfully completed)
+- **Verified Hardware**: **NVIDIA Tesla T4 (14.56 GB VRAM, Linux 6.18, PyTorch 2.11.0+cu128)**
+- **Training Progression**: **1,200 total optimization steps** (2.0 full epochs, effective batch size 8)
+- **Training Duration**: **1,585.32 seconds** (~26.4 minutes of dedicated GPU compute)
+- **Loss Convergence**: Final Training Loss: **0.0731** | Final Validation Loss: **0.06945**
+- **Validation Dataset Metrics ($N=449$)**:
+  - Category Accuracy: **79.96%** (359 / 449 correct)
+  - Category Macro-F1: **0.8103**
+  - Priority Accuracy: **50.33%**
+  - Language Identification Accuracy: **100.0%**
+  - JSON & Schema Validity Rate: **100.0%**
+- **Test Set Quarantine**: Strictly enforced — `data/v2_clean_template_grouped/test_clean.jsonl` ($N=746$) maintained **0% exposure** to training, loss computation, or checkpoint selection.
+- **Downloaded Adapter Artifact**:
+  - Local Path: `experiments/artifacts/training_runs/qwen25_05b_clean_v2_lora_run_20261030_190017/adapter/`
+  - Weight File: `adapter_model.safetensors` (35,237,104 bytes)
+  - Cryptographic SHA-256: `9B677B8D488CCD402505CCD7293074AA16104236EECF8B370E5FDE15AC4161D2` (Bit-exact match verified)
+  - Live Loading & Inference: Successfully loaded into PyTorch `PeftModel` on base `Qwen/Qwen2.5-0.5B-Instruct` with verified multi-lingual inference.
 
 ### 4.3 Training Notebook Verification (`clean_data_qwen25_05b_lora_training_v2.ipynb`)
 - **Base Model**: `Qwen/Qwen2.5-0.5B-Instruct`
