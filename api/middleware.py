@@ -91,10 +91,48 @@ class SlidingWindowRateLimiter(BaseRateLimiter):
             return False, 0, max(0.1, reset_in)
 
 
+SLIDING_WINDOW_LUA_SCRIPT = """
+local key = KEYS[1]
+local now = tonumber(ARGV[1])
+local window = tonumber(ARGV[2])
+local limit = tonumber(ARGV[3])
+local member_id = ARGV[4]
+local clear_before = now - window
+
+-- 1. Remove expired timestamps outside sliding window
+redis.call('ZREMRANGEBYSCORE', key, '-inf', clear_before)
+
+-- 2. Count timestamps currently within window
+local current_count = redis.call('ZCARD', key)
+
+-- 3. Atomically check limit and insert if permitted
+if current_count < limit then
+    redis.call('ZADD', key, now, member_id)
+    redis.call('EXPIRE', key, math.ceil(window) + 5)
+    local remaining = limit - (current_count + 1)
+
+    local oldest = redis.call('ZRANGE', key, 0, 0, 'WITHSCORES')
+    local reset_in = window
+    if oldest and #oldest >= 2 then
+        reset_in = math.max(0.1, tonumber(oldest[2]) + window - now)
+    end
+    return {1, remaining, tostring(reset_in)}
+else
+    local oldest = redis.call('ZRANGE', key, 0, 0, 'WITHSCORES')
+    local reset_in = window
+    if oldest and #oldest >= 2 then
+        reset_in = math.max(0.1, tonumber(oldest[2]) + window - now)
+    end
+    return {0, 0, tostring(reset_in)}
+end
+"""
+
+
 class RedisSlidingWindowRateLimiter(BaseRateLimiter):
     """
     Distributed sliding-window rate limiter backed by Redis sorted sets (ZSET).
-    Enforces atomic rate limiting across multiple API worker processes and container replicas.
+    Enforces atomic rate limiting across multiple API worker processes and container replicas
+    via single-transaction Redis Lua script execution.
     """
 
     def __init__(
@@ -120,33 +158,25 @@ class RedisSlidingWindowRateLimiter(BaseRateLimiter):
 
     async def check_rate_limit(self, client_id: str) -> Tuple[bool, int, float]:
         now = time.time()
-        window_start = now - self.window
         key = f"{self.key_prefix}{client_id}"
+        member_id = f"{now}:{uuid.uuid4().hex[:8]}"
 
         try:
-            # Atomic sliding-window evaluation using pipeline
-            pipe = self.redis.pipeline(transaction=True)
-            pipe.zremrangebyscore(key, "-inf", window_start)
-            pipe.zcard(key)
-            pipe.zrange(key, 0, 0, withscores=True)
-            pipe.expire(key, int(self.window) + 5)
-            _, current_count, oldest_entry, _ = await pipe.execute()
-
-            if current_count < self._limit:
-                # Add current timestamp
-                member_id = f"{now}:{uuid.uuid4().hex[:8]}"
-                pipe2 = self.redis.pipeline(transaction=True)
-                pipe2.zadd(key, {member_id: now})
-                pipe2.expire(key, int(self.window) + 5)
-                await pipe2.execute()
-
-                remaining = self._limit - (current_count + 1)
-                reset_in = round(self.window - (now - oldest_entry[0][1]), 1) if oldest_entry else self.window
-                return True, max(0, remaining), max(0.1, reset_in)
-
-            # Limit reached
-            reset_in = round(self.window - (now - oldest_entry[0][1]), 1) if oldest_entry else self.window
-            return False, 0, max(0.1, reset_in)
+            # Atomic single-transaction sliding-window evaluation via Redis Lua script
+            res = await self.redis.eval(
+                SLIDING_WINDOW_LUA_SCRIPT,
+                1,
+                key,
+                str(now),
+                str(self.window),
+                str(self._limit),
+                member_id,
+            )
+            # res is [is_allowed_int, remaining_int, reset_in_str]
+            is_allowed = bool(res[0] == 1)
+            remaining = int(res[1])
+            reset_in = round(float(res[2]), 1)
+            return is_allowed, max(0, remaining), max(0.1, reset_in)
 
         except Exception as exc:
             logger.warning(

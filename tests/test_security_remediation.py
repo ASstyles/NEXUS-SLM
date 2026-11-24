@@ -153,3 +153,48 @@ class TestTrustedProxyAndRateLimiting:
         ok, rem, reset_in = await limiter.check_rate_limit("client-failover-test")
         assert ok is True
         assert rem == 4
+
+    @pytest.mark.asyncio
+    async def test_redis_rate_limiter_atomic_concurrency_cannot_exceed_limit(self):
+        """
+        Verifies that concurrent requests cannot exceed the configured limit
+        under atomic sliding-window Redis Lua execution against a real Redis instance.
+        """
+        import asyncio
+        import uuid
+        import redis.asyncio as aioredis
+
+        redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+        client = aioredis.from_url(redis_url, decode_responses=True)
+        try:
+            await client.ping()
+        except Exception:
+            pytest.skip("Real Redis instance not reachable at " + redis_url)
+
+        limit = 10
+        limiter = RedisSlidingWindowRateLimiter(
+            redis_url=redis_url,
+            limit_per_minute=limit,
+            window_seconds=60.0,
+            key_prefix="test_concurrent_rl:",
+        )
+        test_client_id = f"concurrent-client-{uuid.uuid4().hex[:8]}"
+
+        # Clean key prior to test
+        await client.delete(f"test_concurrent_rl:{test_client_id}")
+
+        # Fire 25 concurrent requests simultaneously
+        tasks = [limiter.check_rate_limit(test_client_id) for _ in range(25)]
+        results = await asyncio.gather(*tasks)
+
+        allowed_count = sum(1 for is_allowed, _, _ in results if is_allowed)
+        denied_count = sum(1 for is_allowed, _, _ in results if not is_allowed)
+
+        # Exactly `limit` requests must be allowed, and remaining must be denied
+        assert allowed_count == limit, f"Expected exactly {limit} allowed, got {allowed_count}"
+        assert denied_count == 15, f"Expected exactly 15 denied, got {denied_count}"
+
+        # Clean up
+        await client.delete(f"test_concurrent_rl:{test_client_id}")
+        await client.aclose()
+        await limiter.redis.aclose()
