@@ -102,9 +102,12 @@ def test_all_ten_demo_categories_execute_safely():
 
 
 def test_zero_downtime_rollback_e2e_cycle():
-    """Tests cycling through active models via POST /model/rollback."""
+    """Tests cycling through active models via POST /model/rollback with admin credentials."""
+    from src.utils.config import get_config
+    auth_headers = {"Authorization": f"Bearer {get_config().admin_api_key}"}
+
     # 1. Switch to baseline-smollm-135m
-    resp_base = client.post("/model/rollback?target_version=baseline-smollm-135m")
+    resp_base = client.post("/model/rollback?target_version=baseline-smollm-135m", headers=auth_headers)
     assert resp_base.status_code == 200
     data_base = resp_base.json()
     assert data_base["active_version"] == "baseline-smollm-135m"
@@ -115,7 +118,7 @@ def test_zero_downtime_rollback_e2e_cycle():
     assert pred_base.json()["model_version"] == "baseline-smollm-135m"
 
     # 2. Switch back to production nexus-qlora-v1
-    resp_v1 = client.post("/model/rollback?target_version=nexus-qlora-v1")
+    resp_v1 = client.post("/model/rollback?target_version=nexus-qlora-v1", headers=auth_headers)
     assert resp_v1.status_code == 200
     assert resp_v1.json()["active_version"] == "nexus-qlora-v1"
 

@@ -1,8 +1,9 @@
-"""Deterministic human escalation policy for NEXUS-SLM triage."""
+"""Deterministic, safety-aware human escalation policy for NEXUS-SLM triage."""
 
 import re
 from typing import Any, Dict, List, Optional, Tuple
-from src.utils.constants import CATEGORIES, PRIORITIES, LANGUAGES
+
+from src.utils.constants import CATEGORIES, LANGUAGES, PRIORITIES
 from src.utils.logger import get_logger
 
 logger = get_logger(__name__)
@@ -11,7 +12,8 @@ logger = get_logger(__name__)
 FRAUD_KEYWORDS = [
     "fraud", "unauthorized", "unauthoris", "stolen", "hacked", "hack", "hacker",
     "phishing", "scam", "compromised", "fake transaction", "धोखाधड़ी", "हैक", "चोरी",
-    "skimming", "kisi aur ne", "unrecognized charge", "card debited without otp",
+    "skimming", "kisi aur ne", "unrecognized charge", "unrecognized charges",
+    "unauthorized charge", "unauthorized charges", "card debited without otp",
     "fraudulent", "otp nahi aaya"
 ]
 
@@ -63,14 +65,27 @@ PROMPT_INJECTION_KEYWORDS = [
 # Unicode range covering Devanagari script (Hindi)
 DEVANAGARI_REGEX = re.compile(r"[\u0900-\u097F\uA8E0-\uA8FF]")
 
+# Non-fraud compounds containing substrings like 'hack'
+NON_FRAUD_COMPOUND_REGEX = re.compile(
+    r"\b(hackathon|hack-a-thon|hackathons|hack-a-thons|hacker\s*rank|life\s*hack|growth\s*hack)\b",
+    re.IGNORECASE,
+)
+
+PROMPT_INJECTION_KEYWORDS = [
+    "system instruction", "system override", "ignore all previous", "ignore previous instructions",
+    "ignore the instructions", "system prompt", "</user", "<system", "<instruction>",
+    "admin override", "jailbreak", "override:"
+]
+
 
 class HumanEscalationPolicy:
     """
     Enforces deterministic safety rules for human escalation routing.
-    Protects against model hallucination, overconfidence, and safety-critical oversights.
+    Protects against model hallucination, overconfidence, and safety-critical oversights,
+    while minimizing unnecessary human queue overload.
     """
 
-    CONFIDENCE_THRESHOLD = 0.85  # Raw heuristic confidence threshold for escalation
+    CONFIDENCE_THRESHOLD = 0.85
 
     @classmethod
     def evaluate_escalation(
@@ -89,7 +104,8 @@ class HumanEscalationPolicy:
         (requires_human: bool, escalation_reason: str, calibrated_confidence: Optional[float],
          category: str, priority: str)
         """
-        t_lower = text.strip().lower()
+        t = text.strip()
+        t_lower = t.lower()
         word_count = len(t_lower.split())
 
         final_category = category
@@ -103,17 +119,19 @@ class HumanEscalationPolicy:
             final_priority = "critical"
             return True, "adversarial_prompt_injection_detected", None, final_category, final_priority
 
-        # 1. Fraud detection safeguard - always escalate and force critical priority
-        is_fraud = (category == "fraud_report") or any(k in t_lower for k in FRAUD_KEYWORDS)
+        # 1. Context-aware Fraud detection safeguard
+        # Disregard harmless compounds like 'hack-a-thon' or 'hackathon'
+        is_non_fraud_compound = bool(NON_FRAUD_COMPOUND_REGEX.search(t_lower))
+        is_fraud = False
+        if not is_non_fraud_compound:
+            is_fraud = (category == "fraud_report") or any(k in t_lower for k in FRAUD_KEYWORDS)
+
         if is_fraud:
             final_category = "fraud_report"
             final_priority = "critical"
             return True, "safety_critical_fraud_detection", None, final_category, final_priority
 
         # 2. Native Devanagari Hindi / Mixed-script fallback
-        # SmolLM-135M has severe byte-fallback subword fragmentation on Devanagari script (14.3% accuracy).
-        # Any ticket containing Devanagari script (pure Hindi or mixed script) is deterministically
-        # routed to human review. Confident model predictions or parse errors cannot bypass this.
         has_devanagari = bool(DEVANAGARI_REGEX.search(text))
         if has_devanagari:
             return True, "native_hindi_devanagari_unreliable_tokenization", None, final_category, final_priority
@@ -139,14 +157,14 @@ class HumanEscalationPolicy:
         # 7. Ambiguous or conflicting multi-intent tickets
         is_ambiguous = any(ind in t_lower for ind in AMBIGUOUS_INDICATORS)
         conflicting_intents = (
-            ("refund" in t_lower and "cancel" in t_lower)
+            ("refund" in t_lower and "cancel" in t_lower and "subscription" not in t_lower)
             or ("delete" in t_lower and "login" in t_lower)
             or ("bill" in t_lower and "crash" in t_lower)
         )
         if is_ambiguous or conflicting_intents:
             return True, "ambiguous_ticket_requires_human_clarification", None, final_category, final_priority
 
-        # 8. Financial dispute & unexpected debit safeguard
+        # 8. High-impact financial dispute & unexpected double debits
         is_financial_dispute = any(k in t_lower for k in FINANCIAL_DISPUTE_KEYWORDS)
         if is_financial_dispute:
             return True, "high_impact_financial_dispute", None, final_category, final_priority
@@ -167,22 +185,12 @@ class HumanEscalationPolicy:
                 return True, "heuristic_mode_high_impact_rule", None, final_category, final_priority
 
         # 12. Low / Uncertain / Unavailable Confidence Check
-        # Notice: Raw model probabilities are an uncalibrated heuristic.
-        # Constant multiplier scaling (e.g. 0.75x) does NOT constitute valid calibration.
-        # Given validation sample size (N=44 across 14 classes), calibration parameters
-        # cannot be reliably estimated. Therefore, confidence is designated as uncalibrated_heuristic.
-        # When confidence is unavailable (e.g. logits_all=False or fallback), the system
-        # routes conservatively to human review; unavailable confidence cannot silently
-        # be interpreted as high confidence.
         if raw_confidence is None:
             return True, "confidence_unavailable_conservative_escalation", None, final_category, final_priority
         if raw_confidence < cls.CONFIDENCE_THRESHOLD:
             return True, "unreliable_confidence_below_threshold", None, final_category, final_priority
 
         # 13. Model-requested escalation
-        # If deterministic safeguards allow automation, but the neural model specifically predicted
-        # requires_human=True, honor the model's caution without allowing the model to ever weaken
-        # a deterministic safety escalation decision.
         if model_requires_human is True:
             return True, "model_predicted_human_escalation", None, final_category, final_priority
 

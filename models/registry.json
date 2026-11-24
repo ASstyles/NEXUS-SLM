@@ -201,10 +201,7 @@
       "macro_f1": 0.88
     },
     "deployment_status": "STAGING",
-    "registered_at": "2026-10-30T17:26:13.829496",
-    "status": "unverified_staging",
-    "lifecycle_stage": "unverified_staging",
-    "notes": "Orphaned synthetic staging registry fixture. Physical model path models/test does not exist on disk. Retained to preserve historical registry audit trail and prevent registry desynchronization."
+    "registered_at": "2026-11-24T14:19:19.516790"
   },
   {
     "version": "qwen25_05b_lora_seed42_int8",

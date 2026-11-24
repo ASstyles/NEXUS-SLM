@@ -1,4 +1,7 @@
-# NEXUS-SLM — 10/10 PRODUCTION READINESS & GOVERNANCE REPORT
+> [!NOTE]
+> **HISTORICAL ARCHIVE NOTICE (SUPERSEDED):** This report represents an internal historical milestone assessment. The authoritative system evaluation, metrics, and production readiness decisions are documented in [`RESULTS.md`](../RESULTS.md) and [`REMEDIATION_BASELINE.md`](../REMEDIATION_BASELINE.md).
+
+# NEXUS-SLM — PRODUCTION READINESS & GOVERNANCE HISTORICAL REPORT
 
 **Document Version:** 1.0.0  
 **Status:** PRODUCTION READY — ACTIVE MODEL FROZEN  

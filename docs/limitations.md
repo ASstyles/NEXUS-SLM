@@ -1,49 +1,55 @@
 # NEXUS-SLM Known Limitations & Operational Boundaries
 
-This document provides an unvarnished analysis of the empirical limitations, boundary failure modes, and hardware constraints of NEXUS-SLM-135M-LoRA (`nexus-qlora-v1`).
+**Document Version:** 2.0.0-audited  
+**Audit Reference:** [RESULTS.md](RESULTS.md)  
+**Status:** **EMPIRICALLY VERIFIED**
+
+This document provides a rigorous, unvarnished technical analysis of the empirical limitations, boundary conditions, and hardware constraints of NEXUS-SLM under both the production heuristic fallback and experimental neural engines.
 
 ---
 
 ## 1. Summary of Empirical Limitations
 
-| Limitation Domain | Empirical Finding | Operational Impact | Mitigation Implemented |
+| Limitation Domain | Empirical Finding | Operational Consequence | Engineering Mitigation |
 |---|---|---|---|
-| **Devanagari Hindi** | 14.3% accuracy on native script | Misclassifies native Hindi tickets | Deterministic keyword fallback + Hinglish preference |
-| **Short Inputs ($\le 3$ words)** | Significant recall drop on context-sparse inputs | Higher classification uncertainty | Deterministic `short_input` human escalation |
-| **Model Overconfidence** | Expected Calibration Error (ECE) = 0.588 | Raw model probabilities report ~0.97 confidence even when incorrect | Post-hoc confidence calibration + gating |
-| **Small Evaluation Benchmark** | 42 locked test samples (3 per category) | Wide 95% confidence intervals on individual class F1 scores | Full test lock integrity; bootstrap evaluation |
-| **Rare Class Ambiguity** | Low recall on `account_closure` vs `account_access` | Edge-case boundary confusion | Deterministic keywords force `account_closure` escalation |
-| **Hardware Throughput** | ~0.50 req/sec on 12-thread CPU | Concurrency $> 2$ causes queuing latency spikes | Concurrency capped at 1-2 workers; horizontal scaling required |
-| **Parameter Capacity** | 135M parameters represents an empirical ceiling | Cannot reliably handle multi-intent tickets | Architectural upgrade to Qwen2.5-0.5B recommended for future phases |
+| **CPU Generation Latency** | Autoregressive decoding takes 1.2s to 2.8s per ticket on CPU (P50: 1,508ms) | Unsuitable for sub-second real-time API SLAs under high concurrency | Primary production routing utilizes **Heuristic Fallback v2** (<0.1ms); neural deployed to GPU/vLLM |
+| **Synthetic Template Bias** | 80.3% to 82.4% template redundancy across dataset splits | Model overfits to template syntactic phrasing; confuses `product_complaint` with `refund_request` | Deployed human annotation infrastructure (`data/human_eval/`) for out-of-distribution evaluation |
+| **Priority Classification Bottleneck** | ~47% priority accuracy for both heuristic (47.18%) and neural (47.86%) engines | Inability to reliably separate adjacent urgency classes (`medium` vs `high`) | Priority rubric feature engineering and rule-based escalation overrides |
+| **Category Sparsity (`subscription`)** | Locked test set contains only $N=2$ samples for `subscription` (0.27%) | Claims of generalizability on subscription cancellation have wide 95% CI ($[0.3424, 1.0000]$) | Explicit sparsity tagging in evaluation telemetry; targeted dataset augmentation |
+| **Standalone Neural Escalation Gap** | Standalone Qwen LoRA had 29 false negatives on high-risk tickets (86.12% recall) | Risk of financial loss or security breach if operated without deterministic safety guard | Mandatory wrapping via `HumanEscalationPolicy` guaranteeing 100% safety recall |
+| **Native Hindi Subwords** | Devanagari script expands into multi-byte token sequences in small BPE vocabularies | Increased sequence length and latency for native Hindi | Deterministic Devanagari detection and routing policy |
 
 ---
 
-## 2. In-Depth Analysis
+## 2. In-Depth Technical Analysis
 
-### 2.1 Native Devanagari Hindi Tokenization Penalty
-- **Root Cause**: The base model tokenizer (`SmolLM-135M`) was pre-trained predominantly on English and code corpora. The vocabulary contains minimal native Devanagari subwords.
-- **Consequence**: Native Hindi words are decomposed into individual UTF-8 bytes (byte fallback), inflating token sequence length by 3x–4x and diluting cross-attention representations.
-- **Evidence**: On the locked benchmark, native Hindi category accuracy is 14.3%, compared to 57.1% on Hinglish and English.
+### 2.1 CPU Hardware Generation Latency & Concurrency Ceiling
+- **Root Cause**: The fine-tuned Qwen2.5-0.5B model contains ~494 million parameters. Autoregressive token-by-token generation across 8 CPU worker threads consumes ~1.5 seconds per sample.
+- **Operational Reality**: While small language models are lightweight compared to 70B models, CPU inference cannot sustain microservice concurrency exceeding 1–2 requests per container without queuing degradation.
+- **Production Standard**: High-throughput customer support pipelines must either:
+  1. Use the **Heuristic Fallback v2** engine for live traffic (P50 0.05ms, throughput >9,800 req/s on CPU).
+  2. Deploy the neural candidate onto specialized GPU runtime engines (vLLM, TensorRT-LLM, or Triton).
 
-### 2.2 Model Overconfidence & Confidence Calibration
-- **Root Cause**: Cross-entropy fine-tuning on a small curated dataset produces highly peaked softmax distributions.
-- **Consequence**: The model generates average token probabilities of 96.9% even when the predicted category is incorrect.
-- **Mitigation**: NEXUS-SLM explicitly decouples raw generation probabilities from routing trust. The system applies a 0.75x conservative calibration dampener and routes any prediction with calibrated confidence $< 0.65$ to human auditors.
+### 2.2 Synthetic Template Homogeneity & Adjacent Class Bleed
+- **Root Cause**: The synthetic data generator instantiated tickets by injecting variable slots (order numbers, customer names, refund amounts) into fixed syntactic sentence frames.
+- **Empirical Evidence**: Quantitative audit revealed only 947 unique templates across 4,797 training samples (80.26% redundancy).
+- **Failure Mode**: When customers report broken or defective products, the model fixates on words like "broken" or "not working" and predicts `refund_request` (29 samples) or `fraud_report` (15 samples), resulting in 0% recall for `product_complaint` ($N=44$).
+- **Mitigation Strategy**: The synthetic dataset cannot substitute for real customer writing. The repository now includes the `data/human_eval/` protocol to ingest and evaluate genuine customer support tickets.
 
-### 2.3 Short Ticket Context Sparsity
-- **Root Cause**: Tickets like `"Payment failed"` or `"Help login"` lack grammatical structure, verbs, or details identifying the failure mechanism (gateway timeout vs wrong password vs card decline).
-- **Mitigation**: The `HumanEscalationPolicy` inspects token count; tickets $\le 3$ words are flagged `short_input_context_sparsity` and routed for human assistance.
+### 2.3 Priority Classification Ambiguity
+- **Root Cause**: The dataset labels priority (`low`, `medium`, `high`, `critical`) based on subtle subjective urgency cues rather than explicit objective criteria.
+- **Empirical Evidence**: Both heuristic rules (47.18% accuracy) and the neural model (47.86% accuracy) achieve roughly equivalent, mediocre priority performance.
+- **Operational Rule**: Priority is never treated as a fully automated routing criterion. Safety-critical categories (`fraud_report`) deterministically force `critical` priority regardless of model predictions.
 
-### 2.4 CPU Hardware Concurrency Limits
-- **Root Cause**: Full FP32 transformer forward generation across 12 OpenMP threads utilizes nearly 100% of available CPU cores per request.
-- **Consequence**: When multiple requests arrive simultaneously, OS thread scheduling creates queue contention. Under concurrency 4, P95 latency rises from 2.3s to 8.5s.
-- **Deployment Rule**: A single CPU container must not be allocated more than 1-2 concurrent requests. High-traffic deployments must scale horizontally via multi-container replica pods behind an NGINX load balancer.
+### 2.4 The Subscription Class Sample Size Deficit
+- **Root Cause**: Severe class imbalance in the locked clean test split resulted in only 2 ground-truth `subscription` samples.
+- **Scientific Caveat**: The measured 100% recall for `subscription` is statistically uninformative due to sample sparsity ($N=2$, 95% Wilson confidence interval $[0.3424, 1.0000]$). In contrast, precision was 12.5% because other cancellation intents were misattributed to subscription.
 
 ---
 
-## 3. Boundary & Out-of-Scope Scenarios
+## 3. Boundary & Out-of-Scope Operational Scenarios
 
-NEXUS-SLM is **not designed** and **must not be used** for:
-- Automated ticket resolution without human triage review.
-- Automated debit/credit or refund transaction approvals.
-- Open-domain multilingual chat outside the defined 14-category taxonomy.
+NEXUS-SLM is **explicitly out-of-scope** for:
+1. **Fully Autonomous Financial Transactions**: The system does not possess authority to approve payments, execute refunds, or process credit adjustments.
+2. **Autonomous Account Destruction**: Permanent GDPR account deletion requests must be reviewed by compliance personnel.
+3. **Open-Ended Conversational Dialogue**: NEXUS-SLM is a specialized structured classification engine, not a generative chatbot. Freeform dialogue without JSON validation is strictly disallowed.

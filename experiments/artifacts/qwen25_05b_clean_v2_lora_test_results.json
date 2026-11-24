@@ -1,0 +1,498 @@
+{
+  "evaluation_name": "clean_v2_test_benchmark_qwen25_05b_lora",
+  "timestamp": "2026-11-24T14:10:53Z",
+  "test_dataset": "data/v2_clean_template_grouped/test_clean.jsonl",
+  "sample_count": 746,
+  "engine": "qwen25_05b_clean_v2_lora",
+  "inference_mode": "neural",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "adapter_path": "experiments/artifacts/training_runs/qwen25_05b_clean_v2_lora_run_20261030_190017/adapter",
+  "adapter_model_sha256": "9B677B8D488CCD402505CCD7293074AA16104236EECF8B370E5FDE15AC4161D2",
+  "metrics": {
+    "category": {
+      "accuracy": 0.6917,
+      "macro_precision": 0.6534,
+      "macro_recall": 0.6917,
+      "macro_f1": 0.6044,
+      "weighted_f1": 0.663,
+      "per_category": {
+        "account_access": {
+          "precision": 0.5833,
+          "recall": 0.28,
+          "f1": 0.3784,
+          "support": 50.0,
+          "accuracy_ci_95": [
+            0.1747,
+            0.4167
+          ],
+          "is_sparse_sample": false
+        },
+        "account_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 55.0,
+          "accuracy_ci_95": [
+            0.9347,
+            1.0
+          ],
+          "is_sparse_sample": false
+        },
+        "billing": {
+          "precision": 1.0,
+          "recall": 0.9855,
+          "f1": 0.9927,
+          "support": 69.0,
+          "accuracy_ci_95": [
+            0.9224,
+            0.9974
+          ],
+          "is_sparse_sample": false
+        },
+        "delivery_issue": {
+          "precision": 0.6383,
+          "recall": 1.0,
+          "f1": 0.7792,
+          "support": 30.0,
+          "accuracy_ci_95": [
+            0.8865,
+            1.0
+          ],
+          "is_sparse_sample": false
+        },
+        "fraud_report": {
+          "precision": 0.4087,
+          "recall": 1.0,
+          "f1": 0.5802,
+          "support": 47.0,
+          "accuracy_ci_95": [
+            0.9244,
+            1.0
+          ],
+          "is_sparse_sample": false
+        },
+        "general_query": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 42.0,
+          "accuracy_ci_95": [
+            0.0,
+            0.0838
+          ],
+          "is_sparse_sample": false
+        },
+        "order_cancel": {
+          "precision": 1.0,
+          "recall": 0.4091,
+          "f1": 0.5806,
+          "support": 110.0,
+          "accuracy_ci_95": [
+            0.3218,
+            0.5025
+          ],
+          "is_sparse_sample": false
+        },
+        "order_tracking": {
+          "precision": 1.0,
+          "recall": 0.8158,
+          "f1": 0.8986,
+          "support": 76.0,
+          "accuracy_ci_95": [
+            0.7142,
+            0.887
+          ],
+          "is_sparse_sample": false
+        },
+        "password_reset": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 64.0,
+          "accuracy_ci_95": [
+            0.9434,
+            1.0
+          ],
+          "is_sparse_sample": false
+        },
+        "payment_failure": {
+          "precision": 1.0,
+          "recall": 0.4286,
+          "f1": 0.6,
+          "support": 28.0,
+          "accuracy_ci_95": [
+            0.2651,
+            0.6093
+          ],
+          "is_sparse_sample": false
+        },
+        "product_complaint": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 44.0,
+          "accuracy_ci_95": [
+            0.0,
+            0.0803
+          ],
+          "is_sparse_sample": false
+        },
+        "refund_request": {
+          "precision": 0.392,
+          "recall": 1.0,
+          "f1": 0.5632,
+          "support": 78.0,
+          "accuracy_ci_95": [
+            0.9531,
+            1.0
+          ],
+          "is_sparse_sample": false
+        },
+        "subscription": {
+          "precision": 0.125,
+          "recall": 1.0,
+          "f1": 0.2222,
+          "support": 2.0,
+          "accuracy_ci_95": [
+            0.3424,
+            1.0
+          ],
+          "is_sparse_sample": true
+        },
+        "technical_issue": {
+          "precision": 1.0,
+          "recall": 0.7647,
+          "f1": 0.8667,
+          "support": 51.0,
+          "accuracy_ci_95": [
+            0.6324,
+            0.86
+          ],
+          "is_sparse_sample": false
+        }
+      },
+      "confusion_matrix": {
+        "labels": [
+          "account_access",
+          "account_closure",
+          "billing",
+          "delivery_issue",
+          "fraud_report",
+          "general_query",
+          "order_cancel",
+          "order_tracking",
+          "password_reset",
+          "payment_failure",
+          "product_complaint",
+          "refund_request",
+          "subscription",
+          "technical_issue"
+        ],
+        "matrix": [
+          [
+            14,
+            0,
+            0,
+            0,
+            25,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            11,
+            0,
+            0
+          ],
+          [
+            0,
+            55,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            68,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            1,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            30,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            47,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            28,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            14,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            17,
+            0,
+            0,
+            45,
+            0,
+            0,
+            0,
+            0,
+            48,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            62,
+            0,
+            0,
+            0,
+            14,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            64,
+            0,
+            0,
+            0,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            12,
+            0,
+            16,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            15,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            29,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            78,
+            0,
+            0
+          ],
+          [
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0
+          ],
+          [
+            10,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            0,
+            2,
+            0,
+            39
+          ]
+        ]
+      }
+    },
+    "priority": {
+      "accuracy": 0.4786,
+      "macro_f1": 0.2842,
+      "weighted_f1": 0.3864,
+      "per_priority": {
+        "low": 0.0,
+        "medium": 0.8329,
+        "high": 0.1056,
+        "critical": 0.8276
+      },
+      "confusion_matrix": {
+        "labels": [
+          "low",
+          "medium",
+          "high",
+          "critical"
+        ],
+        "matrix": [
+          [
+            0,
+            138,
+            6,
+            16
+          ],
+          [
+            0,
+            314,
+            20,
+            43
+          ],
+          [
+            0,
+            117,
+            19,
+            44
+          ],
+          [
+            0,
+            5,
+            0,
+            24
+          ]
+        ]
+      }
+    },
+    "language": {
+      "overall_accuracy": 0.9678,
+      "english_accuracy": 1.0,
+      "hindi_accuracy": 1.0,
+      "hinglish_accuracy": 0.9255
+    },
+    "structured_output": {
+      "valid_json_rate": 1.0,
+      "schema_validity_rate": 1.0,
+      "exact_field_match_rate": 0.3552,
+      "parsing_failures_count": 0
+    },
+    "safety": {
+      "true_positives": 180,
+      "false_positives": 359,
+      "true_negatives": 178,
+      "false_negatives": 29,
+      "escalation_recall": 0.8612,
+      "escalation_precision": 0.334,
+      "overall_escalation_rate": 0.7225,
+      "unnecessary_escalation_rate": 0.6685,
+      "false_negative_count": 29
+    },
+    "performance": {
+      "cold_start_time_ms": 1130.56,
+      "model_ram_footprint_mb": 78.66,
+      "latency_p50_ms": 1508.55,
+      "latency_p90_ms": 2012.38,
+      "latency_p95_ms": 2212.92,
+      "latency_p99_ms": 2828.71,
+      "throughput_req_per_sec": 0.62,
+      "total_evaluation_time_sec": 1200.47
+    }
+  }
+}
