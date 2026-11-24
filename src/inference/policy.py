@@ -10,11 +10,13 @@ logger = get_logger(__name__)
 
 # Keywords that warrant mandatory deterministic human review
 FRAUD_KEYWORDS = [
-    "fraud", "unauthorized", "unauthoris", "stolen", "hacked", "hack", "hacker",
+    "fraud", "unauthorized", "unauthoris", "unauthorised", "stolen", "hacked", "hack", "hacker",
     "phishing", "scam", "compromised", "fake transaction", "धोखाधड़ी", "हैक", "चोरी",
     "skimming", "kisi aur ne", "unrecognized charge", "unrecognized charges",
     "unauthorized charge", "unauthorized charges", "card debited without otp",
-    "fraudulent", "otp nahi aaya"
+    "fraudulent", "otp nahi aaya", "without consent", "without my consent",
+    "without authorisation", "without authorization",
+    "someone placed", "bina otp", "अनधिकृत"
 ]
 
 FINANCIAL_DISPUTE_KEYWORDS = [
@@ -24,8 +26,8 @@ FINANCIAL_DISPUTE_KEYWORDS = [
     "debited twice", "deducted from", "money deducted", "paise kat", "paisa kat",
     "wrongly debited", "gateway timeout", "amount debited", "money got deducted",
     "cvv", "atm debit", "पैसे कट", "कट गया", "पैसे कटने", "kat gaye par", "kat gaya par",
-    "auto-renewal", "auto-renew", "billed", "discrepancy in billing", "tax-exempt",
-    "endpoint throws", "payment submission"
+    "billed twice", "wrongly billed", "incorrectly billed",
+    "discrepancy in billing", "tax-exempt"
 ]
 
 ACCOUNT_SECURITY_KEYWORDS = [
@@ -131,6 +133,11 @@ class HumanEscalationPolicy:
             final_priority = "critical"
             return True, "safety_critical_fraud_detection", None, final_category, final_priority
 
+        # 1.1 Physical safety hazard safeguard (smoking, sparking, fire)
+        if re.search(r"\b(sparking|smoking|fire|electric\s*shock|explosion|flames|overheated|धुआं|आग)\b", t_lower):
+            final_priority = "critical"
+            return True, "physical_safety_hazard_detected", None, final_category, final_priority
+
         # 2. Native Devanagari Hindi / Mixed-script fallback
         has_devanagari = bool(DEVANAGARI_REGEX.search(text))
         if has_devanagari:
@@ -165,7 +172,10 @@ class HumanEscalationPolicy:
             return True, "ambiguous_ticket_requires_human_clarification", None, final_category, final_priority
 
         # 8. High-impact financial dispute & unexpected double debits
-        is_financial_dispute = any(k in t_lower for k in FINANCIAL_DISPUTE_KEYWORDS)
+        is_routine_invoice = bool(
+            re.search(r"\b(?:tax\s+invoice|gst\s+invoice|monthly\s+invoice|invoice\s+copy|receipt\s+for\s+reimbursement|annual\s+statement)\b", t_lower)
+        ) and not any(k in t_lower for k in ["wrongly", "unauthorized", "debited", "stolen", "double"])
+        is_financial_dispute = (not is_routine_invoice) and any(k in t_lower for k in FINANCIAL_DISPUTE_KEYWORDS)
         if is_financial_dispute:
             return True, "high_impact_financial_dispute", None, final_category, final_priority
 
@@ -183,8 +193,10 @@ class HumanEscalationPolicy:
         if inference_mode != "neural":
             if priority in ["high", "critical"] or category in ["payment_failure", "delivery_issue"]:
                 return True, "heuristic_mode_high_impact_rule", None, final_category, final_priority
+            # Unambiguous routine tickets in heuristic mode can route safely without forced fallback escalation
+            return False, "automated_routing_permitted", None, final_category, final_priority
 
-        # 12. Low / Uncertain / Unavailable Confidence Check
+        # 12. Low / Uncertain / Unavailable Confidence Check (Neural inference)
         if raw_confidence is None:
             return True, "confidence_unavailable_conservative_escalation", None, final_category, final_priority
         if raw_confidence < cls.CONFIDENCE_THRESHOLD:

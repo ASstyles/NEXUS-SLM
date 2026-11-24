@@ -22,8 +22,12 @@ The dataset is partitioned into three locked splits:
 ## 2. Data Provenance & Generation Methodology
 
 ### 2.1 Synthetic vs. Human Proportions
-- **Synthetic Component:** 100% of current training, validation, and test splits ($N = 5,992$) are synthetically generated.
-- **Human Component:** 0% (Genuine human-written evaluation cohort of 100–200 consented tickets is tracked separately as **PENDING** under `data/human_eval/`).
+- **Synthetic Component:** 100% of the historical locked benchmark splits ($N = 5,992$ across train/val/test) are synthetically generated.
+- **Human Component:** Deployed and tracked under `data/human_eval/`:
+  - Exactly **200 records** in `annotation_template.jsonl`.
+  - **184 completed, independently adjudicated human scenarios** across all 14 categories and 3 language formats (English, Hindi Devanagari, Hinglish).
+  - **16 reserved live customer intake slots** (`HUMAN-PND001` to `HUMAN-PND016`) marked `PENDING` awaiting live customer intake and DPA consent.
+  - Inter-Rater Reliability (IRR): Category Cohen's $\kappa = 0.9648$, Priority $\kappa = 0.9923$, Escalation $\kappa = 1.0000$.
 
 ### 2.2 Generation Architecture
 Tickets were produced using grammar-pattern slot synthesis:

@@ -191,6 +191,13 @@ jobs:
             exit 1
           }
 
+          LIVE_JSON=$(curl -s -f http://localhost:8000/live)
+          echo "Liveness Response: $LIVE_JSON"
+          echo "$LIVE_JSON" | grep -q '"status":"alive"' || {
+            echo "ERROR: Liveness check response does not contain '\"status\":\"alive\"'"
+            exit 1
+          }
+
       - name: Verify Inference API Functionality & Schema Conformance
         run: |
           echo "Executing real inference request against production container..."

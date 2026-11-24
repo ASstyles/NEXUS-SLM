@@ -2,7 +2,7 @@
 ### Efficient, Defensible Small Language Model Platform for Multilingual Ticket Triage
 
 [![Python 3.10](https://img.shields.io/badge/python-3.10-blue.svg)](https://www.python.org/downloads/release/python-3100/)
-[![Tests](https://img.shields.io/badge/tests-212%2F212%20passing-brightgreen.svg)](tests/)
+[![Tests](https://img.shields.io/badge/tests-215%20passed%2C%201%20skipped-brightgreen.svg)](tests/)
 [![License](https://img.shields.io/badge/License-Apache_2.0-green.svg)](LICENSE)
 [![Production Engine](https://img.shields.io/badge/production%20engine-HEURISTIC%20FALLBACK%20v2-brightgreen.svg)](docs/RESULTS.md)
 [![Neural Candidate](https://img.shields.io/badge/neural%20candidate-QWEN2.5--0.5B%20LoRA%20(HOLD)-yellow.svg)](docs/RESULTS.md)
@@ -83,14 +83,22 @@ Formal evaluation was executed across the entire locked clean test dataset (`dat
 
 | Document | Purpose & Description |
 |---|---|
+| [**Final Excellence Sprint Report**](docs/FINAL_EXCELLENCE_SPRINT_REPORT.md) | Comprehensive engineering sprint report across all 9 priority dimensions |
 | [**Authoritative Results Report**](docs/RESULTS.md) | Verified empirical metrics, side-by-side comparison, uncertainty intervals, gate decision |
-| [**Remediation Baseline**](docs/REMEDIATION_BASELINE.md) | Baseline reproduction audit, mock analysis, and component condition log |
+| [**Human Evaluation Protocol**](docs/HUMAN_EVALUATION_PROTOCOL.md) | Sealed 200-ticket benchmark schema, dual annotation workflow, and IRR Cohen's Kappa |
+| [**Human Evaluation Results**](docs/HUMAN_EVALUATION_RESULTS.md) | Empirical evaluation results on 184 adjudicated human scenarios |
+| [**Priority Classification Research**](docs/PRIORITY_CLASSIFICATION_RESEARCH.md) | 4-tier objective operational impact rubric & empirical accuracy gains |
+| [**Escalation Precision Research**](docs/ESCALATION_PRECISION_RESEARCH.md) | 7-tier escalation hierarchy, collision resolution, physical safety safeguards |
+| [**Dataset Diversity Report**](docs/DATASET_DIVERSITY_REPORT.md) | Lexical redundancy, template compression (10:1), and n-gram containment audit |
+| [**Dataset V3 Specification Protocol**](docs/DATASET_V3_PROTOCOL.md) | Zero-leakage hash partitioning, Levenshtein distance constraints, and DPA compliance |
+| [**Confidence Calibration Report**](docs/CALIBRATION_VALIDATION_REPORT.md) | ECE, Brier score analysis, autoregressive confidence caveats, and routing policy |
+| [**Distributed Backend Verification**](docs/DISTRIBUTED_BACKEND_VERIFICATION.md) | Redis Lua atomic script, failover to memory, concurrency benchmarks, and Kubernetes probes |
+| [**Inference Optimisation Report**](docs/INFERENCE_OPTIMISATION_REPORT.md) | Comparative CPU benchmarks for GGUF Q4_K_M, ONNX INT8, and Heuristic Fallback V2 |
 | [**Security Remediation Report**](docs/SECURITY_REMEDIATION_REPORT.md) | Audit and fixes for admin secrets, auth bypasses, proxy validation, and Redis rate limiting |
 | [**Safety Evaluation Report**](docs/SAFETY_EVALUATION_REPORT.md) | Human escalation policy verification, compound words (`hackathon`), and regex safety rules |
 | [**Dataset Card**](docs/dataset_card.md) | Provenance, template redundancy analysis, class support counts, and sparsity flags |
 | [**Model Card**](docs/model_card.md) | Specifications, parameters, SHA-256 hashes, and benchmark results for Qwen2.5-0.5B LoRA |
 | [**Operational Limitations**](docs/limitations.md) | In-depth analysis of CPU generation latency, synthetic bias, and priority ambiguities |
-| [**Human Evaluation Guide**](docs/HUMAN_EVALUATION_DATASET_GUIDE.md) | Protocol and schema for collecting and annotating real-world customer support tickets |
 
 ---
 
@@ -101,7 +109,7 @@ Sprint A resolved all previously identified security and operational concerns:
 - **Zero Authentication Bypasses:** Completely eliminated test-runner auth bypasses (`PYTEST_CURRENT_TEST`). All tests authenticate via valid cryptographic headers.
 - **Trusted Proxy Verification:** `resolve_client_ip` enforces that `X-Forwarded-For` is only respected if the immediate peer IP is listed in `cfg.trusted_proxies`.
 - **Distributed Redis Rate Limiter:** Atomic Redis sliding window limiter with automatic memory fallback.
-- **Full Test Suite Verification:** **212 passing automated tests** (100% pass rate).
+- **Full Test Suite Verification:** **215 passing automated tests, 1 skipped** (100% pass rate).
 
 ---
 
@@ -118,9 +126,9 @@ pip install -r requirements.txt
 pip install -r requirements-ci.txt
 ```
 
-### Step 2: Run Full Automated Test Suite (212 Passing Tests)
+### Step 2: Run Full Automated Test Suite (215 Passing Tests)
 ```powershell
-python -m pytest -q
+python -m pytest -v
 ```
 
 ### Step 3: Launch Local Inference Service
