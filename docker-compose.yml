@@ -9,6 +9,8 @@ services:
     ports:
       - "8000:8000"
     environment:
+      - NEXUS_ENV=production
+      - NEXUS_ADMIN_KEY=${NEXUS_ADMIN_KEY}
       - API_PORT=8000
       - API_HOST=0.0.0.0
       - MLFLOW_TRACKING_URI=http://mlflow-server:5000

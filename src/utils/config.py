@@ -71,7 +71,9 @@ class AppConfig:
     adapter_path_override: Optional[str] = field(default_factory=lambda: os.getenv("NEXUS_ADAPTER_PATH"))
 
     # API & Networking
-    host: str = field(default_factory=lambda: os.getenv("NEXUS_HOST", "0.0.0.0"))
+    host: str = field(
+        default_factory=lambda: os.getenv("NEXUS_HOST", os.getenv("API_HOST", "0.0.0.0"))
+    )
     port: int = field(
         default_factory=lambda: int(os.getenv("NEXUS_PORT", os.getenv("API_PORT", "8000")))
     )
@@ -131,7 +133,12 @@ class AppConfig:
 
     def validate(self) -> None:
         """Enforces strict production security constraints."""
-        if self.is_production() and self.enforce_admin_auth:
+        if self.is_production():
+            if not self.enforce_admin_auth:
+                raise ValueError(
+                    "Security configuration error: Administrator authentication cannot be disabled "
+                    "in production mode (NEXUS_ENFORCE_ADMIN_AUTH must be true)."
+                )
             if not self.admin_api_key or not self.admin_api_key.strip():
                 raise ValueError(
                     "Security configuration error: Mandatory administrative secret (NEXUS_ADMIN_KEY) "

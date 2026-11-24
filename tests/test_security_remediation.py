@@ -19,6 +19,16 @@ class TestAdminKeySecurity:
         with pytest.raises(ValueError, match="Mandatory administrative secret .* is missing in production"):
             AppConfig(env="production", admin_api_key="", enforce_admin_auth=True)
 
+    def test_production_without_admin_key_does_not_silently_disable_auth(self):
+        """Production configuration must never silently disable admin authentication when key is missing."""
+        # 1. Missing key in production fails
+        with pytest.raises(ValueError, match="Mandatory administrative secret .* is missing in production"):
+            AppConfig(env="production", admin_api_key="", enforce_admin_auth=True)
+
+        # 2. Attempting to disable admin auth in production is explicitly rejected
+        with pytest.raises(ValueError, match="Administrator authentication cannot be disabled in production"):
+            AppConfig(env="production", admin_api_key="", enforce_admin_auth=False)
+
     @pytest.mark.parametrize("bad_key", list(KNOWN_INSECURE_KEYS))
     def test_production_fails_on_known_insecure_defaults(self, bad_key):
         """Production startup must abort if NEXUS_ADMIN_KEY matches known defaults."""
@@ -43,6 +53,23 @@ class TestAdminKeySecurity:
         k2 = generate_secure_admin_key()
         assert k1 != k2
         assert len(k1) >= 40  # 32 bytes base64-urlsafe gives 43 chars
+
+    def test_production_docker_smoke_configuration_validation(self):
+        """Simulates production Docker container startup with ephemeral admin key."""
+        ephemeral_key = generate_secure_admin_key()
+        with patch.dict(os.environ, {
+            "NEXUS_ENV": "production",
+            "NEXUS_ENFORCE_ADMIN_AUTH": "true",
+            "NEXUS_ADMIN_KEY": ephemeral_key,
+            "API_PORT": "8000",
+            "API_HOST": "0.0.0.0",
+        }):
+            cfg = AppConfig()
+            assert cfg.env == "production"
+            assert cfg.enforce_admin_auth is True
+            assert cfg.admin_api_key == ephemeral_key
+            assert cfg.port == 8000
+            assert cfg.host == "0.0.0.0"
 
 
 class TestAuthenticationEnforcement:
