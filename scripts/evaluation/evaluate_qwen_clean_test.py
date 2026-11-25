@@ -44,11 +44,13 @@ def wilson_interval(successes: int, total: int, z: float = 1.96) -> Tuple[float,
 def main():
     test_file = ROOT / "data/v2_clean_template_grouped/test_clean.jsonl"
     adapter_path = ROOT / "experiments/artifacts/training_runs/qwen25_05b_clean_v2_lora_run_20261030_190017/adapter"
-    base_target = ROOT / "models/scratch_merged_qwen"
+    hf_snaps = sorted(
+        (Path.home() / ".cache" / "huggingface" / "hub" / "models--Qwen--Qwen2.5-0.5B-Instruct" / "snapshots").glob("*")
+    )
+    base_target = str(hf_snaps[-1]) if hf_snaps else "Qwen/Qwen2.5-0.5B-Instruct"
 
     assert test_file.exists(), f"Test set missing at {test_file}"
     assert adapter_path.exists(), f"Adapter missing at {adapter_path}"
-    assert base_target.exists(), f"Base model missing at {base_target}"
 
     records = []
     with open(test_file, "r", encoding="utf-8") as f:
@@ -171,13 +173,13 @@ def main():
             lang = "english"
             model_req_human = True
 
-        # Human Escalation Policy
+        # Human Escalation Policy (do not fabricate confidence when true class posteriors are unavailable)
         req_human, esc_reason, _, final_cat, final_prio = HumanEscalationPolicy.evaluate_escalation(
             text=rec["text"],
             category=cat,
             priority=prio,
             language=lang,
-            raw_confidence=0.90 if is_valid else None,  # Model confidence estimate
+            raw_confidence=None,
             is_parse_error=(not is_valid),
             inference_mode="neural",
             model_requires_human=model_req_human,

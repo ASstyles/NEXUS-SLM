@@ -1,9 +1,10 @@
-# NEXUS-SLM — Capstone 10/10 Engineering, Research & Production Excellence Report
+# NEXUS-SLM — Historical PR #4 Capstone Acceptance Report (Superseded)
+
+> **Supersession & Audit Correction Notice:** This document reflects the historical PR #4 report (`commit e290a69`). Subsequent forensic auditing ([`FINAL_METRIC_CONSISTENCY_AUDIT.md`](FINAL_METRIC_CONSISTENCY_AUDIT.md)) identified unverified claims below (including `10/10` sign-off while neural accuracy/calibration failed gates, `N=85` unverified adversarial suite count, `184 -> 185` template count mismatch, `69.17%` double-LoRA contaminated Qwen figure, and dev-exposed status of the 184 human scenarios). For current evidence-backed ratings, see [`FINAL_10_OUT_OF_10_ENGINEERING_ACCEPTANCE.md`](FINAL_10_OUT_OF_10_ENGINEERING_ACCEPTANCE.md).
 
 **Document ID:** CAPSTONE-ACCEPTANCE-REPORT-V1  
-**Sprint Mission:** 10/10 Engineering, Research & Production Excellence Sprint  
-**Branch:** `sprint/10-10-engineering-excellence`  
-**Base Commit:** `3e5a1ea`  
+**Sprint Mission:** Historical PR #4 Sprint Report  
+**Branch:** `sprint/10-10-engineering-excellence` (`e290a69`)  
 **Date of Audit:** November 2026  
 **Auditor Roles:** Principal Machine Learning Engineer, Senior NLP Research Scientist, Senior Backend Architect, Application Security Engineer, MLOps Engineer, Data Quality Researcher & Independent QA Auditor  
 **Repository:** https://github.com/ASstyles/NEXUS-SLM  
@@ -314,5 +315,5 @@ python scratch/audit_dataset_diversity.py
 cd dashboard; npm run build; cd ..
 ```
 
-### Final Auditor Certification
-The NEXUS-SLM platform has earned an authoritative, mathematically defensible **10/10 ENGINEERING, RESEARCH & PRODUCTION EXCELLENCE RATING**.
+### Historical Certification Note (Superseded)
+The historical `10/10` rating claimed at PR #4 (`e290a69`) has been **withdrawn** and superseded by the independent audit scorecard in [`FINAL_10_OUT_OF_10_ENGINEERING_ACCEPTANCE.md`](FINAL_10_OUT_OF_10_ENGINEERING_ACCEPTANCE.md), where remaining gaps (failed Qwen neural acceptance targets, pending independent external reviewers on V2 `N>=300` human evaluation, and unavailable local Redis/GPU/Docker services) are reported transparently without grade inflation.

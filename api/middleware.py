@@ -41,6 +41,10 @@ def resolve_client_ip(request: Request, trusted_proxies: List[str]) -> str:
     return peer_ip
 
 
+class RateLimiterUnavailableError(RuntimeError):
+    """Raised when distributed Redis rate limiter fails under strict_reject policy."""
+
+
 class BaseRateLimiter(abc.ABC):
     """Abstract interface for rate limiting implementations."""
 
@@ -53,6 +57,16 @@ class BaseRateLimiter(abc.ABC):
     @abc.abstractmethod
     def limit(self) -> int:
         pass
+
+    def get_status(self) -> Dict[str, object]:
+        """Returns operational backend mode and health diagnostics."""
+        return {
+            "backend": "memory",
+            "mode": "memory_local",
+            "last_request_mode": "memory_local",
+            "healthy": True,
+            "degraded": False,
+        }
 
 
 class SlidingWindowRateLimiter(BaseRateLimiter):
@@ -132,7 +146,8 @@ class RedisSlidingWindowRateLimiter(BaseRateLimiter):
     """
     Distributed sliding-window rate limiter backed by Redis sorted sets (ZSET).
     Enforces atomic rate limiting across multiple API worker processes and container replicas
-    via single-transaction Redis Lua script execution.
+    via single-transaction Redis Lua script execution, with explicit operational failure
+    modes ('degraded_local' or 'strict_reject') and automatic recovery probing.
     """
 
     def __init__(
@@ -141,27 +156,71 @@ class RedisSlidingWindowRateLimiter(BaseRateLimiter):
         limit_per_minute: int = 120,
         window_seconds: float = 60.0,
         key_prefix: str = "nexus_rl:",
+        failure_mode: str = "degraded_local",
+        recovery_cooldown_seconds: float = 5.0,
     ):
         self._limit = limit_per_minute
         self.window = window_seconds
         self.key_prefix = key_prefix
         self.redis_url = redis_url
+        self.failure_mode = failure_mode if failure_mode in ("degraded_local", "strict_reject") else "degraded_local"
+        self.recovery_cooldown_seconds = recovery_cooldown_seconds
         self._fallback_limiter = SlidingWindowRateLimiter(limit_per_minute, window_seconds)
 
         import redis.asyncio as aioredis
         self.redis = aioredis.from_url(redis_url, decode_responses=True)
-        self._redis_available = True
+        self.mode: str = "redis_distributed"
+        self._last_request_mode: str = "redis_distributed"
+        self._degraded: bool = False
+        self.degraded_since: Optional[float] = None
+        self.last_error: Optional[str] = None
+        self._last_probe_ts: float = 0.0
+        self.recovery_attempts: int = 0
+        self.recovery_successes: int = 0
+        self.fallback_requests_served: int = 0
+        self.strict_rejections: int = 0
 
     @property
     def limit(self) -> int:
         return self._limit
+
+    def get_status(self) -> Dict[str, object]:
+        return {
+            "backend": "redis",
+            "mode": self.mode,
+            "last_request_mode": self._last_request_mode,
+            "failure_policy": self.failure_mode,
+            "healthy": not self._degraded,
+            "degraded": self._degraded,
+            "degraded_since_epoch": self.degraded_since,
+            "last_error": self.last_error,
+            "recovery_attempts": self.recovery_attempts,
+            "recovery_successes": self.recovery_successes,
+            "fallback_requests_served": self.fallback_requests_served,
+            "strict_rejections": self.strict_rejections,
+        }
 
     async def check_rate_limit(self, client_id: str) -> Tuple[bool, int, float]:
         now = time.time()
         key = f"{self.key_prefix}{client_id}"
         member_id = f"{now}:{uuid.uuid4().hex[:8]}"
 
+        # Under degraded_local, avoid blocking every request on dead sockets during cooldown
+        if (
+            self._degraded
+            and self.failure_mode == "degraded_local"
+            and (now - self._last_probe_ts) < self.recovery_cooldown_seconds
+        ):
+            self.mode = "degraded_local"
+            self._last_request_mode = "degraded_local"
+            self.fallback_requests_served += 1
+            return await self._fallback_limiter.check_rate_limit(client_id)
+
         try:
+            if self._degraded:
+                self.recovery_attempts += 1
+                self._last_probe_ts = now
+
             # Atomic single-transaction sliding-window evaluation via Redis Lua script
             res = await self.redis.eval(
                 SLIDING_WINDOW_LUA_SCRIPT,
@@ -172,6 +231,17 @@ class RedisSlidingWindowRateLimiter(BaseRateLimiter):
                 str(self._limit),
                 member_id,
             )
+            if self._degraded:
+                logger.info(
+                    f"Redis rate limiter recovered from {self.mode} to redis_distributed (key prefix '{self.key_prefix}')."
+                )
+                self._degraded = False
+                self.degraded_since = None
+                self.last_error = None
+                self.recovery_successes += 1
+
+            self.mode = "redis_distributed"
+            self._last_request_mode = "redis_distributed"
             # res is [is_allowed_int, remaining_int, reset_in_str]
             is_allowed = bool(res[0] == 1)
             remaining = int(res[1])
@@ -179,24 +249,62 @@ class RedisSlidingWindowRateLimiter(BaseRateLimiter):
             return is_allowed, max(0, remaining), max(0.1, reset_in)
 
         except Exception as exc:
+            self.last_error = str(exc)
+            self._last_probe_ts = now
+            if not self._degraded:
+                self._degraded = True
+                self.degraded_since = now
+
+            if self.failure_mode == "strict_reject":
+                self.mode = "strict_reject"
+                self._last_request_mode = "strict_reject"
+                self.strict_rejections += 1
+                logger.error(
+                    f"Redis rate limiter failure on key '{key}': {exc}. Failing closed under strict_reject policy."
+                )
+                raise RateLimiterUnavailableError(
+                    f"Distributed rate limiting store unavailable: {exc}"
+                ) from exc
+
+            self.mode = "degraded_local"
+            self._last_request_mode = "degraded_local"
+            self.fallback_requests_served += 1
             logger.warning(
-                f"Redis rate limiter failure on key '{key}': {exc}. Failing open with local in-memory fallback."
+                f"Redis rate limiter failure on key '{key}': {exc}. Operating in degraded_local mode."
             )
             return await self._fallback_limiter.check_rate_limit(client_id)
 
 
+_active_rate_limiter_instance: Optional[BaseRateLimiter] = None
+
+
+def get_active_rate_limiter_status() -> Dict[str, object]:
+    """Returns current operational status of active API rate limiter."""
+    if _active_rate_limiter_instance is None:
+        return {"backend": "uninitialized", "mode": "unknown", "healthy": True, "degraded": False}
+    return _active_rate_limiter_instance.get_status()
+
+
 def create_rate_limiter(cfg: Optional[AppConfig] = None) -> BaseRateLimiter:
     """Factory creating appropriate rate limiter based on configuration."""
+    global _active_rate_limiter_instance
     cfg = cfg or get_config()
+    limiter: BaseRateLimiter
     if cfg.rate_limiting_backend == "redis" and cfg.redis_url:
         try:
-            return RedisSlidingWindowRateLimiter(
+            limiter = RedisSlidingWindowRateLimiter(
                 redis_url=cfg.redis_url,
                 limit_per_minute=cfg.rate_limit_per_minute,
+                failure_mode=cfg.rate_limit_failure_mode,
+                recovery_cooldown_seconds=cfg.redis_recovery_cooldown_seconds,
             )
+            _active_rate_limiter_instance = limiter
+            return limiter
         except Exception as e:
             logger.warning(f"Failed to initialize Redis rate limiter: {e}. Defaulting to in-memory.")
-    return SlidingWindowRateLimiter(limit_per_minute=cfg.rate_limit_per_minute)
+    limiter = SlidingWindowRateLimiter(limit_per_minute=cfg.rate_limit_per_minute)
+    _active_rate_limiter_instance = limiter
+    return limiter
 
 
 class RequestTracingMiddleware(BaseHTTPMiddleware):
@@ -212,13 +320,15 @@ class RequestTracingMiddleware(BaseHTTPMiddleware):
 
 
 class RateLimitingMiddleware(BaseHTTPMiddleware):
-    """Enforces configurable client rate limits with standard HTTP 429 headers and proxy-aware IP resolution."""
+    """Enforces configurable client rate limits with standard HTTP 429/503 headers and proxy-aware IP resolution."""
 
     def __init__(self, app, limiter: Optional[BaseRateLimiter] = None):
         super().__init__(app)
+        global _active_rate_limiter_instance
         cfg = get_config()
         self.cfg = cfg
         self.limiter = limiter or create_rate_limiter(cfg)
+        _active_rate_limiter_instance = self.limiter
         self.exempt_paths = {"/health", "/ready", "/live", "/metrics", "/docs", "/openapi.json", "/redoc"}
 
     async def dispatch(self, request: Request, call_next: Callable) -> Response:
@@ -232,7 +342,31 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
         # Secure proxy-aware client IP resolution
         client_ip = resolve_client_ip(request, self.cfg.trusted_proxies)
 
-        allowed, remaining, reset_in = await self.limiter.check_rate_limit(client_ip)
+        try:
+            allowed, remaining, reset_in = await self.limiter.check_rate_limit(client_ip)
+        except RateLimiterUnavailableError as exc:
+            req_id = getattr(request.state, "request_id", str(uuid.uuid4()))
+            return JSONResponse(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                content={
+                    "error": "Rate limiting service unavailable",
+                    "error_code": "RATE_LIMITER_UNAVAILABLE",
+                    "detail": "Distributed rate limiter unreachable under strict_reject failure policy.",
+                    "request_id": req_id,
+                    "retry_after_seconds": 5,
+                },
+                headers={
+                    "Retry-After": "5",
+                    "X-RateLimit-Mode": "strict_reject",
+                    "X-RateLimit-Degraded": "true",
+                },
+            )
+
+        rl_status = self.limiter.get_status()
+        rl_mode = str(rl_status.get("last_request_mode", rl_status.get("mode", "memory_local")))
+        extra_headers = {"X-RateLimit-Mode": rl_mode}
+        if rl_status.get("degraded"):
+            extra_headers["X-RateLimit-Degraded"] = "true"
 
         if not allowed:
             req_id = getattr(request.state, "request_id", str(uuid.uuid4()))
@@ -251,6 +385,7 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
                     "X-RateLimit-Limit": str(self.limiter.limit),
                     "X-RateLimit-Remaining": "0",
                     "X-RateLimit-Reset": str(int(reset_in)),
+                    **extra_headers,
                 },
             )
 
@@ -258,6 +393,8 @@ class RateLimitingMiddleware(BaseHTTPMiddleware):
         response.headers["X-RateLimit-Limit"] = str(self.limiter.limit)
         response.headers["X-RateLimit-Remaining"] = str(remaining)
         response.headers["X-RateLimit-Reset"] = str(int(reset_in))
+        for hk, hv in extra_headers.items():
+            response.headers[hk] = hv
         return response
 
 

@@ -1,0 +1,177 @@
+{
+  "dataset_version": "v3_diverse",
+  "source_disclosure": "synthetic_v3_diverse \u2014 curated syntactically diverse synthetic data, NOT real customer data",
+  "created_at_utc": "2026-11-25T10:00:14.697350+00:00",
+  "quarantine_leakage_check": {
+    "against_files": [
+      "data/v2_clean_template_grouped/test_clean.jsonl",
+      "data/v2_clean_template_grouped/val_clean.jsonl",
+      "data/human_eval/annotation_template.jsonl",
+      "data/evaluation/high_risk_challenge_set.jsonl",
+      "data/test/test.jsonl"
+    ],
+    "exact_overlaps_post_sanitization": 0,
+    "internal_cross_split_overlaps": {
+      "train_vs_val": 0,
+      "train_vs_cal": 0,
+      "train_vs_audit": 0,
+      "val_vs_cal": 0,
+      "val_vs_audit": 0,
+      "cal_vs_audit": 0
+    }
+  },
+  "splits": {
+    "train": {
+      "file": "data/v3_diverse/train_v3.jsonl",
+      "count": 680,
+      "unique_denumbered_texts": 680,
+      "uniqueness_ratio": 1.0,
+      "sha256": "d72cba8975c1bb0160704643c567b420b34b7fd1a60897fdecc5e43465d10c04",
+      "category_counts": {
+        "account_access": 44,
+        "account_closure": 44,
+        "billing": 44,
+        "delivery_issue": 48,
+        "fraud_report": 44,
+        "general_query": 56,
+        "order_cancel": 44,
+        "order_tracking": 44,
+        "password_reset": 44,
+        "payment_failure": 64,
+        "product_complaint": 56,
+        "refund_request": 52,
+        "subscription": 48,
+        "technical_issue": 48
+      },
+      "priority_counts": {
+        "low": 80,
+        "high": 240,
+        "medium": 300,
+        "critical": 60
+      },
+      "language_counts": {
+        "english": 224,
+        "hindi": 228,
+        "hinglish": 228
+      },
+      "requires_human_counts": {
+        "False": 384,
+        "True": 296
+      }
+    },
+    "val": {
+      "file": "data/v3_diverse/val_v3.jsonl",
+      "count": 252,
+      "unique_denumbered_texts": 252,
+      "uniqueness_ratio": 1.0,
+      "sha256": "51cf413c9e2e1d9948802a485af5f34a52017dd8f0ca4ae55819b8459555442a",
+      "category_counts": {
+        "account_access": 18,
+        "account_closure": 18,
+        "billing": 18,
+        "delivery_issue": 18,
+        "fraud_report": 18,
+        "general_query": 18,
+        "order_cancel": 18,
+        "order_tracking": 18,
+        "password_reset": 18,
+        "payment_failure": 18,
+        "product_complaint": 18,
+        "refund_request": 18,
+        "subscription": 18,
+        "technical_issue": 18
+      },
+      "priority_counts": {
+        "high": 99,
+        "medium": 108,
+        "low": 27,
+        "critical": 18
+      },
+      "language_counts": {
+        "english": 84,
+        "hinglish": 84,
+        "hindi": 84
+      },
+      "requires_human_counts": {
+        "True": 117,
+        "False": 135
+      }
+    },
+    "cal": {
+      "file": "data/v3_diverse/cal_v3.jsonl",
+      "count": 84,
+      "unique_denumbered_texts": 84,
+      "uniqueness_ratio": 1.0,
+      "sha256": "af638a6e21c671f32d666f49a817a9c5074dd9868d5be501c31e26b58beb1b94",
+      "category_counts": {
+        "account_access": 6,
+        "account_closure": 6,
+        "billing": 6,
+        "delivery_issue": 6,
+        "fraud_report": 6,
+        "general_query": 6,
+        "order_cancel": 6,
+        "order_tracking": 6,
+        "password_reset": 6,
+        "payment_failure": 6,
+        "product_complaint": 6,
+        "refund_request": 6,
+        "subscription": 6,
+        "technical_issue": 6
+      },
+      "priority_counts": {
+        "high": 28,
+        "medium": 42,
+        "critical": 6,
+        "low": 8
+      },
+      "language_counts": {
+        "hindi": 28,
+        "hinglish": 28,
+        "english": 28
+      },
+      "requires_human_counts": {
+        "True": 34,
+        "False": 50
+      }
+    },
+    "audit": {
+      "file": "data/v3_diverse/dev_audit_v3.jsonl",
+      "count": 84,
+      "unique_denumbered_texts": 84,
+      "uniqueness_ratio": 1.0,
+      "sha256": "0a28299713712c99689fd1f7bfb825d3174b16ac23d175c1fb66d9abf71dfab4",
+      "category_counts": {
+        "account_access": 6,
+        "account_closure": 6,
+        "billing": 6,
+        "delivery_issue": 6,
+        "fraud_report": 6,
+        "general_query": 6,
+        "order_cancel": 6,
+        "order_tracking": 6,
+        "password_reset": 6,
+        "payment_failure": 6,
+        "product_complaint": 6,
+        "refund_request": 6,
+        "subscription": 6,
+        "technical_issue": 6
+      },
+      "priority_counts": {
+        "critical": 6,
+        "high": 42,
+        "medium": 28,
+        "low": 8
+      },
+      "language_counts": {
+        "english": 28,
+        "hinglish": 28,
+        "hindi": 28
+      },
+      "requires_human_counts": {
+        "True": 46,
+        "False": 38
+      }
+    }
+  }
+}

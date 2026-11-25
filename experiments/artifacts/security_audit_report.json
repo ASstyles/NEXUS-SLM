@@ -1,11 +1,29 @@
 {
-  "timestamp": "2026-10-09T21:45:00Z",
+  "timestamp_utc": "2026-11-25T10:40:50.823706+00:00",
   "overall_security_status": "PASS",
   "audits": {
     "secrets_scan": {
       "status": "PASS",
       "findings_count": 0,
-      "findings": []
+      "findings": [],
+      "allowlisted_test_fixture_hits_count": 3,
+      "allowlisted_test_fixture_hits": [
+        {
+          "file": "src\\utils\\config.py",
+          "pattern_type": "High-entropy API Key / Secret",
+          "reason": "explicit_non_prod_test_fixture"
+        },
+        {
+          "file": "src\\utils\\config.py",
+          "pattern_type": "High-entropy API Key / Secret",
+          "reason": "explicit_non_prod_test_fixture"
+        },
+        {
+          "file": "tests\\test_security_remediation.py",
+          "pattern_type": "High-entropy API Key / Secret",
+          "reason": "explicit_non_prod_test_fixture"
+        }
+      ]
     },
     "environment_and_gitignore": {
       "is_env_in_gitignore": true,
@@ -13,21 +31,26 @@
       "env_example_has_zero_secrets": true,
       "status": "PASS"
     },
+    "pii_and_config_guards": {
+      "pii_scrubbing_verified": true,
+      "prod_rejects_weak_admin_key": true,
+      "prod_rejects_disabled_auth": true,
+      "status": "PASS"
+    },
     "api_security_controls": {
       "oversized_rejected_422": true,
       "empty_rejected_422": true,
       "malformed_rejected_422": true,
+      "admin_auth_401_403_enforced": true,
       "error_messages_sanitized": true,
       "health_endpoint_safe": true,
+      "untrusted_xff_spoof_blocked": true,
+      "trusted_proxy_xff_honored": true,
       "status": "PASS"
     }
   },
-  "findings": [
-    "Zero credentials or active private keys detected in repository files.",
-    ".env and .env.local are explicitly ignored by .gitignore.",
-    ".env.example contains only non-sensitive template placeholders.",
-    "API strictly enforces 4000 character payload maximum with deterministic HTTP 422 rejections.",
-    "Error messages are structured and do not expose internal tracebacks to clients.",
-    "Telemetry log preserves user privacy by omitting ticket text content by default."
+  "residual_risks": [
+    "Default ALLOWED_ORIGINS='*' for local development dashboard convenience; production deployments should set explicit ALLOWED_ORIGINS origins.",
+    "HTTP 429 rate limiting resets across replicas unless NEXUS_RATE_LIMITING_BACKEND=redis and external Redis 7+ service is configured."
   ]
 }

@@ -1,0 +1,1013 @@
+{
+  "evaluation_id": "eval_qwen_clean_v2_true_base",
+  "timestamp_utc": "2026-11-25T09:51:46.299857+00:00",
+  "model_version": "qwen25_05b_clean_v2_lora_on_true_hf_base",
+  "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+  "base_model_sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe",
+  "adapter_path": "experiments/artifacts/training_runs/qwen25_05b_clean_v2_lora_run_20261030_190017/adapter",
+  "adapter_sha256": "9b677b8d488ccd402505ccd7293074aa16104236eecf8b370e5fde15ac4161d2",
+  "note": "Evaluated directly on uncontaminated HF Qwen2.5-0.5B-Instruct (NOT scratch_merged_qwen).",
+  "dataset": "data/v2_clean_template_grouped/test_clean.jsonl",
+  "dataset_sha256": "fc65071b1e9f3303facf64711e72f8bb0f31b450c7f6a3c381bd4a9f8408cf9b",
+  "sample_count": 746,
+  "json_validity_rate": 1.0,
+  "load_time_sec": 0.0,
+  "raw_model_metrics": {
+    "category": {
+      "accuracy": 0.5389,
+      "macro_precision": 0.7074,
+      "macro_recall": 0.5939,
+      "macro_f1": 0.5375,
+      "weighted_f1": 0.5268,
+      "per_class": {
+        "payment_failure": {
+          "precision": 0.1124,
+          "recall": 1.0,
+          "f1": 0.2022,
+          "support": 28
+        },
+        "refund_request": {
+          "precision": 0.4079,
+          "recall": 0.7949,
+          "f1": 0.5391,
+          "support": 78
+        },
+        "account_access": {
+          "precision": 1.0,
+          "recall": 0.24,
+          "f1": 0.3871,
+          "support": 50
+        },
+        "password_reset": {
+          "precision": 1.0,
+          "recall": 0.6094,
+          "f1": 0.7573,
+          "support": 64
+        },
+        "order_cancel": {
+          "precision": 1.0,
+          "recall": 0.2182,
+          "f1": 0.3582,
+          "support": 110
+        },
+        "order_tracking": {
+          "precision": 1.0,
+          "recall": 0.4474,
+          "f1": 0.6182,
+          "support": 76
+        },
+        "subscription": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 2
+        },
+        "billing": {
+          "precision": 1.0,
+          "recall": 0.9855,
+          "f1": 0.9927,
+          "support": 69
+        },
+        "technical_issue": {
+          "precision": 1.0,
+          "recall": 0.0196,
+          "f1": 0.0385,
+          "support": 51
+        },
+        "fraud_report": {
+          "precision": 0.7581,
+          "recall": 1.0,
+          "f1": 0.8624,
+          "support": 47
+        },
+        "delivery_issue": {
+          "precision": 0.625,
+          "recall": 1.0,
+          "f1": 0.7692,
+          "support": 30
+        },
+        "account_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 55
+        },
+        "product_complaint": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 44
+        },
+        "general_query": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 42
+        }
+      },
+      "labels": [
+        "payment_failure",
+        "refund_request",
+        "account_access",
+        "password_reset",
+        "order_cancel",
+        "order_tracking",
+        "subscription",
+        "billing",
+        "technical_issue",
+        "fraud_report",
+        "delivery_issue",
+        "account_closure",
+        "product_complaint",
+        "general_query"
+      ],
+      "confusion_matrix": [
+        [
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          16,
+          62,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          38,
+          0,
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          24,
+          1,
+          0,
+          39,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          27,
+          42,
+          0,
+          0,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          17,
+          0,
+          0,
+          0
+        ],
+        [
+          25,
+          16,
+          0,
+          0,
+          0,
+          34,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          68,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          50,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          47,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          30,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          55,
+          0,
+          0
+        ],
+        [
+          12,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          28,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "priority": {
+      "accuracy": 0.4424,
+      "macro_precision": 0.2242,
+      "macro_recall": 0.3081,
+      "macro_f1": 0.2491,
+      "weighted_f1": 0.3896,
+      "per_class": {
+        "low": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 160
+        },
+        "medium": {
+          "precision": 0.5815,
+          "recall": 0.5491,
+          "f1": 0.5648,
+          "support": 377
+        },
+        "high": {
+          "precision": 0.3154,
+          "recall": 0.6833,
+          "f1": 0.4316,
+          "support": 180
+        },
+        "critical": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 29
+        }
+      },
+      "labels": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "confusion_matrix": [
+        [
+          0,
+          92,
+          68,
+          0
+        ],
+        [
+          0,
+          207,
+          170,
+          0
+        ],
+        [
+          0,
+          57,
+          123,
+          0
+        ],
+        [
+          0,
+          0,
+          29,
+          0
+        ]
+      ]
+    },
+    "language": {
+      "accuracy": 0.8458,
+      "macro_precision": 0.8692,
+      "macro_recall": 0.856,
+      "macro_f1": 0.8355,
+      "weighted_f1": 0.8533,
+      "per_class": {
+        "english": {
+          "precision": 1.0,
+          "recall": 0.6829,
+          "f1": 0.8116,
+          "support": 246
+        },
+        "hindi": {
+          "precision": 0.6075,
+          "recall": 1.0,
+          "f1": 0.7558,
+          "support": 178
+        },
+        "hinglish": {
+          "precision": 1.0,
+          "recall": 0.8851,
+          "f1": 0.939,
+          "support": 322
+        }
+      },
+      "labels": [
+        "english",
+        "hindi",
+        "hinglish"
+      ],
+      "confusion_matrix": [
+        [
+          168,
+          78,
+          0
+        ],
+        [
+          0,
+          178,
+          0
+        ],
+        [
+          0,
+          37,
+          285
+        ]
+      ]
+    },
+    "escalation": {
+      "true_positives": 158,
+      "false_negatives": 51,
+      "false_positives": 263,
+      "true_negatives": 274,
+      "precision": 0.3753,
+      "high_risk_recall": 0.756,
+      "f1": 0.5016,
+      "overall_escalation_rate": 0.5643,
+      "unnecessary_escalation_rate": 0.4898,
+      "critical_total": 29,
+      "critical_recall": 1.0,
+      "critical_false_negatives": 0
+    }
+  },
+  "policy_applied_metrics": {
+    "category": {
+      "accuracy": 0.5389,
+      "macro_precision": 0.7074,
+      "macro_recall": 0.5939,
+      "macro_f1": 0.5375,
+      "weighted_f1": 0.5268,
+      "per_class": {
+        "payment_failure": {
+          "precision": 0.1124,
+          "recall": 1.0,
+          "f1": 0.2022,
+          "support": 28
+        },
+        "refund_request": {
+          "precision": 0.4079,
+          "recall": 0.7949,
+          "f1": 0.5391,
+          "support": 78
+        },
+        "account_access": {
+          "precision": 1.0,
+          "recall": 0.24,
+          "f1": 0.3871,
+          "support": 50
+        },
+        "password_reset": {
+          "precision": 1.0,
+          "recall": 0.6094,
+          "f1": 0.7573,
+          "support": 64
+        },
+        "order_cancel": {
+          "precision": 1.0,
+          "recall": 0.2182,
+          "f1": 0.3582,
+          "support": 110
+        },
+        "order_tracking": {
+          "precision": 1.0,
+          "recall": 0.4474,
+          "f1": 0.6182,
+          "support": 76
+        },
+        "subscription": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 2
+        },
+        "billing": {
+          "precision": 1.0,
+          "recall": 0.9855,
+          "f1": 0.9927,
+          "support": 69
+        },
+        "technical_issue": {
+          "precision": 1.0,
+          "recall": 0.0196,
+          "f1": 0.0385,
+          "support": 51
+        },
+        "fraud_report": {
+          "precision": 0.7581,
+          "recall": 1.0,
+          "f1": 0.8624,
+          "support": 47
+        },
+        "delivery_issue": {
+          "precision": 0.625,
+          "recall": 1.0,
+          "f1": 0.7692,
+          "support": 30
+        },
+        "account_closure": {
+          "precision": 1.0,
+          "recall": 1.0,
+          "f1": 1.0,
+          "support": 55
+        },
+        "product_complaint": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 44
+        },
+        "general_query": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 42
+        }
+      },
+      "labels": [
+        "payment_failure",
+        "refund_request",
+        "account_access",
+        "password_reset",
+        "order_cancel",
+        "order_tracking",
+        "subscription",
+        "billing",
+        "technical_issue",
+        "fraud_report",
+        "delivery_issue",
+        "account_closure",
+        "product_complaint",
+        "general_query"
+      ],
+      "confusion_matrix": [
+        [
+          28,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          16,
+          62,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          38,
+          0,
+          12,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          24,
+          1,
+          0,
+          39,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          27,
+          42,
+          0,
+          0,
+          24,
+          0,
+          0,
+          0,
+          0,
+          0,
+          17,
+          0,
+          0,
+          0
+        ],
+        [
+          25,
+          16,
+          0,
+          0,
+          0,
+          34,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          2,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          1,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          68,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          50,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          1,
+          0,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          47,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          30,
+          0,
+          0,
+          0
+        ],
+        [
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          55,
+          0,
+          0
+        ],
+        [
+          12,
+          17,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          15,
+          0,
+          0,
+          0,
+          0
+        ],
+        [
+          28,
+          14,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0,
+          0
+        ]
+      ]
+    },
+    "priority": {
+      "accuracy": 0.433,
+      "macro_precision": 0.3025,
+      "macro_recall": 0.4502,
+      "macro_f1": 0.3501,
+      "weighted_f1": 0.3936,
+      "per_class": {
+        "low": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "support": 160
+        },
+        "medium": {
+          "precision": 0.5815,
+          "recall": 0.5491,
+          "f1": 0.5648,
+          "support": 377
+        },
+        "high": {
+          "precision": 0.2896,
+          "recall": 0.5278,
+          "f1": 0.374,
+          "support": 180
+        },
+        "critical": {
+          "precision": 0.3387,
+          "recall": 0.7241,
+          "f1": 0.4615,
+          "support": 29
+        }
+      },
+      "labels": [
+        "low",
+        "medium",
+        "high",
+        "critical"
+      ],
+      "confusion_matrix": [
+        [
+          0,
+          92,
+          64,
+          4
+        ],
+        [
+          0,
+          207,
+          161,
+          9
+        ],
+        [
+          0,
+          57,
+          95,
+          28
+        ],
+        [
+          0,
+          0,
+          8,
+          21
+        ]
+      ]
+    },
+    "language": {
+      "accuracy": 0.8458,
+      "macro_precision": 0.8692,
+      "macro_recall": 0.856,
+      "macro_f1": 0.8355,
+      "weighted_f1": 0.8533,
+      "per_class": {
+        "english": {
+          "precision": 1.0,
+          "recall": 0.6829,
+          "f1": 0.8116,
+          "support": 246
+        },
+        "hindi": {
+          "precision": 0.6075,
+          "recall": 1.0,
+          "f1": 0.7558,
+          "support": 178
+        },
+        "hinglish": {
+          "precision": 1.0,
+          "recall": 0.8851,
+          "f1": 0.939,
+          "support": 322
+        }
+      },
+      "labels": [
+        "english",
+        "hindi",
+        "hinglish"
+      ],
+      "confusion_matrix": [
+        [
+          168,
+          78,
+          0
+        ],
+        [
+          0,
+          178,
+          0
+        ],
+        [
+          0,
+          37,
+          285
+        ]
+      ]
+    },
+    "escalation": {
+      "true_positives": 209,
+      "false_negatives": 0,
+      "false_positives": 537,
+      "true_negatives": 0,
+      "precision": 0.2802,
+      "high_risk_recall": 1.0,
+      "f1": 0.4377,
+      "overall_escalation_rate": 1.0,
+      "unnecessary_escalation_rate": 1.0,
+      "critical_total": 29,
+      "critical_recall": 1.0,
+      "critical_false_negatives": 0
+    }
+  },
+  "language_breakdown": {
+    "english": {
+      "count": 246,
+      "raw_category_accuracy": 0.939,
+      "raw_category_macro_f1": 0.5591,
+      "raw_priority_accuracy": 0.5772,
+      "raw_priority_macro_f1": 0.3234,
+      "policy_category_accuracy": 0.939,
+      "policy_escalation_metrics": {
+        "true_positives": 77,
+        "false_negatives": 0,
+        "false_positives": 169,
+        "true_negatives": 0,
+        "precision": 0.313,
+        "high_risk_recall": 1.0,
+        "f1": 0.4768,
+        "overall_escalation_rate": 1.0,
+        "unnecessary_escalation_rate": 1.0,
+        "critical_total": 13,
+        "critical_recall": 1.0,
+        "critical_false_negatives": 0
+      }
+    },
+    "hindi": {
+      "count": 178,
+      "raw_category_accuracy": 0.2079,
+      "raw_category_macro_f1": 0.0833,
+      "raw_priority_accuracy": 0.3427,
+      "raw_priority_macro_f1": 0.1941,
+      "policy_category_accuracy": 0.2079,
+      "policy_escalation_metrics": {
+        "true_positives": 48,
+        "false_negatives": 0,
+        "false_positives": 130,
+        "true_negatives": 0,
+        "precision": 0.2697,
+        "high_risk_recall": 1.0,
+        "f1": 0.4248,
+        "overall_escalation_rate": 1.0,
+        "unnecessary_escalation_rate": 1.0,
+        "critical_total": 5,
+        "critical_recall": 1.0,
+        "critical_false_negatives": 0
+      }
+    },
+    "hinglish": {
+      "count": 322,
+      "raw_category_accuracy": 0.4161,
+      "raw_category_macro_f1": 0.4942,
+      "raw_priority_accuracy": 0.3944,
+      "raw_priority_macro_f1": 0.2247,
+      "policy_category_accuracy": 0.4161,
+      "policy_escalation_metrics": {
+        "true_positives": 84,
+        "false_negatives": 0,
+        "false_positives": 238,
+        "true_negatives": 0,
+        "precision": 0.2609,
+        "high_risk_recall": 1.0,
+        "f1": 0.4138,
+        "overall_escalation_rate": 1.0,
+        "unnecessary_escalation_rate": 1.0,
+        "critical_total": 11,
+        "critical_recall": 1.0,
+        "critical_false_negatives": 0
+      }
+    }
+  }
+}

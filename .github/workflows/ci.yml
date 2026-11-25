@@ -2,7 +2,7 @@ name: NEXUS-SLM CI/CD Pipeline
 
 on:
   push:
-    branches: [ "main", "develop" ]
+    branches: [ "main", "develop", "sprint/final-independent-validation" ]
   pull_request:
     branches: [ "main" ]
 
@@ -84,6 +84,12 @@ jobs:
       - name: Run Full Automated Test Suite
         run: |
           pytest -v tests/
+
+      - name: Verify Governance, Documentation Consistency & Provenance Manifests
+        run: |
+          python scripts/evaluation/check_documentation_consistency.py
+          python scripts/deployment/generate_artifact_manifests.py --verify
+          python scripts/data/human_eval_v2_manager.py validate
 
       - name: Verify Security & Secret Exclusion
         run: |
@@ -225,6 +231,16 @@ jobs:
           echo "$BODY" | grep -q '"request_id":' || { echo "ERROR: Missing 'request_id'"; exit 1; }
           echo "$BODY" | grep -q '"inference_mode":' || { echo "ERROR: Missing 'inference_mode'"; exit 1; }
           echo "Inference contract smoke test passed successfully."
+
+          echo "Verifying Prometheus metrics & evaluation summary endpoints..."
+          PROM_OUT=$(curl -s -f "http://localhost:8000/metrics?format=prometheus")
+          echo "$PROM_OUT" | grep -q "nexus_requests_total" || { echo "ERROR: Missing Prometheus metric"; exit 1; }
+          SUMMARY_CODE=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:8000/evaluation/summary)
+          if [ "$SUMMARY_CODE" != "200" ]; then
+            echo "ERROR: Expected HTTP 200 from /evaluation/summary, got $SUMMARY_CODE"
+            exit 1
+          fi
+          echo "Prometheus metrics and /evaluation/summary verified."
 
       - name: Verify Administrative Authentication Enforcement on Container
         run: |

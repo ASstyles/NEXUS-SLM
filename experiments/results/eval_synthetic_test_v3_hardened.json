@@ -1,0 +1,152 @@
+{
+  "metadata": {
+    "dataset_key": "v2_clean_template_grouped_test",
+    "file": "data/v2_clean_template_grouped/test_clean.jsonl",
+    "sha256": "fc65071b1e9f3303facf64711e72f8bb0f31b450c7f6a3c381bd4a9f8408cf9b",
+    "policy_version": "hardened_policy_v3",
+    "engine": "heuristic_fallback_v3_multilingual_hardened",
+    "timestamp_utc": "2026-11-25T10:29:29.121553+00:00",
+    "description": "Hardened Policy V3 evaluated on locked synthetic test set (N=746)"
+  },
+  "sample_count": 746,
+  "category_metrics": {
+    "accuracy": 0.6957,
+    "macro_precision": 0.9146,
+    "macro_recall": 0.715,
+    "macro_f1": 0.7365,
+    "weighted_f1": 0.7446,
+    "per_class": {
+      "payment_failure": {
+        "precision": 1.0,
+        "recall": 0.4286,
+        "f1": 0.6,
+        "support": 28
+      },
+      "refund_request": {
+        "precision": 1.0,
+        "recall": 0.7949,
+        "f1": 0.8857,
+        "support": 78
+      },
+      "account_access": {
+        "precision": 1.0,
+        "recall": 0.46,
+        "f1": 0.6301,
+        "support": 50
+      },
+      "password_reset": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 64
+      },
+      "order_cancel": {
+        "precision": 1.0,
+        "recall": 0.6636,
+        "f1": 0.7978,
+        "support": 110
+      },
+      "order_tracking": {
+        "precision": 1.0,
+        "recall": 0.4474,
+        "f1": 0.6182,
+        "support": 76
+      },
+      "subscription": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 2
+      },
+      "billing": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 69
+      },
+      "technical_issue": {
+        "precision": 1.0,
+        "recall": 0.5294,
+        "f1": 0.6923,
+        "support": 51
+      },
+      "fraud_report": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 47
+      },
+      "delivery_issue": {
+        "precision": 0.6383,
+        "recall": 1.0,
+        "f1": 0.7792,
+        "support": 30
+      },
+      "account_closure": {
+        "precision": 1.0,
+        "recall": 0.3455,
+        "f1": 0.5135,
+        "support": 55
+      },
+      "product_complaint": {
+        "precision": 1.0,
+        "recall": 0.3409,
+        "f1": 0.5085,
+        "support": 44
+      },
+      "general_query": {
+        "precision": 0.1667,
+        "recall": 1.0,
+        "f1": 0.2857,
+        "support": 42
+      }
+    }
+  },
+  "priority_metrics": {
+    "accuracy": 0.3914,
+    "macro_f1": 0.4125,
+    "weighted_f1": 0.3994,
+    "per_class_recall": {
+      "low": 0.4813,
+      "medium": 0.3899,
+      "high": 0.2611,
+      "critical": 0.7241
+    }
+  },
+  "language_metrics": {
+    "overall_accuracy": 0.8579,
+    "breakdown": {
+      "english": {
+        "support": 246,
+        "accuracy": 1.0
+      },
+      "hindi": {
+        "support": 178,
+        "accuracy": 1.0
+      },
+      "hinglish": {
+        "support": 322,
+        "accuracy": 0.6708
+      }
+    }
+  },
+  "escalation_metrics": {
+    "overall_escalation_rate": 0.7507,
+    "unnecessary_escalation_rate": 0.6909,
+    "high_risk_recall": 0.9043,
+    "high_risk_false_negatives": 20
+  },
+  "critical_safety_metrics": {
+    "critical_recall": 1.0,
+    "critical_false_negatives": 0,
+    "safety_violation_count": 0
+  },
+  "composite_metrics": {
+    "exact_4field_match_rate": 0.1716
+  },
+  "latency_ms": {
+    "p50": 0.0669,
+    "p95": 0.2231,
+    "p99": 0.3558
+  }
+}

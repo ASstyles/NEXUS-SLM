@@ -1,0 +1,100 @@
+{
+  "audit_timestamp_utc": "2026-11-25T10:35:27.359308+00:00",
+  "redis_distributed_and_failover": {
+    "execution_mode": "in_process_multiworker_simulated_shared_redis_store",
+    "live_redis_daemon_local": false,
+    "ci_live_redis_service_covered": true,
+    "phase1_two_worker_global_limit_20": {
+      "total_requests": 30,
+      "allowed": 20,
+      "rate_limited_429": 10,
+      "strict_limit_respected": true
+    },
+    "phase2_outage_degraded_local": {
+      "served_under_fallback": true,
+      "mode": "degraded_local",
+      "degraded_flag": true,
+      "fallback_requests_served": 1
+    },
+    "phase3_automatic_recovery": {
+      "recovered_ok": true,
+      "mode_after_recovery": "redis_distributed",
+      "degraded_after_recovery": false,
+      "recovery_successes": 1
+    },
+    "phase4_strict_reject_during_outage": {
+      "raised_503_unavailable": true,
+      "mode": "strict_reject"
+    }
+  },
+  "live_uvicorn_http_audit": {
+    "port": 63197,
+    "security_and_contract_checks": {
+      "health_200": true,
+      "ready_200": true,
+      "rate_limit_mode_header_present": true,
+      "rollback_no_key_401": true,
+      "rollback_bad_key_403": true,
+      "oversize_payload_422": true,
+      "inference_mode_header": "heuristic_fallback",
+      "rate_limit_mode_header": "memory_local",
+      "request_id_header_present": true,
+      "prometheus_200": true,
+      "prometheus_text": "# HELP nexus_requests_total Total triage inference requests processed\n# TYPE nexus_requests_total counter\nnexus_requests_total 453\n# HELP nexus_error_rate Ratio of failed requests\n# TYPE nexus_error_rate gauge\nnexus_error_rate 0.0022\n# HELP nexus_latency_p50_ms 50th percentile inference latency\n# TYPE nexus_latency_p50_ms gauge\nnexus_latency_p50_ms 0.12\n# HELP nexus_latency_p95_ms 95th percentile inference latency\n# TYPE nexus_latency_p95_ms gauge\nnexus_latency_p95_ms 0.25\n# HELP nexus_escalation_rate Ratio of tickets routed to human review\n# TYPE nexus_escalation_rate gauge\nnexus_escalation_rate 0.7461\n"
+    },
+    "live_http_concurrency_benchmarks": [
+      {
+        "concurrency": 1,
+        "requests": 150,
+        "duration_sec": 0.632,
+        "throughput_req_per_sec": 237.37,
+        "status_counts": {
+          "200": 150
+        },
+        "latency_p50_ms": 3.7,
+        "latency_p95_ms": 5.46,
+        "latency_p99_ms": 7.16,
+        "server_rss_mb": 4.21
+      },
+      {
+        "concurrency": 10,
+        "requests": 150,
+        "duration_sec": 0.575,
+        "throughput_req_per_sec": 260.68,
+        "status_counts": {
+          "200": 150
+        },
+        "latency_p50_ms": 36.13,
+        "latency_p95_ms": 45.21,
+        "latency_p99_ms": 47.4,
+        "server_rss_mb": 4.21
+      },
+      {
+        "concurrency": 25,
+        "requests": 150,
+        "duration_sec": 0.566,
+        "throughput_req_per_sec": 265.07,
+        "status_counts": {
+          "200": 150
+        },
+        "latency_p50_ms": 86.53,
+        "latency_p95_ms": 98.65,
+        "latency_p99_ms": 102.7,
+        "server_rss_mb": 4.21
+      }
+    ]
+  },
+  "live_burst_429_verification": {
+    "limit_configured": 10,
+    "requests_sent": 15,
+    "http_200_count": 10,
+    "http_429_count": 5,
+    "enforced_429_cleanly": true,
+    "sample_429_headers": {
+      "retry-after": "59",
+      "x-ratelimit-limit": "10",
+      "x-ratelimit-remaining": "0",
+      "x-ratelimit-mode": "memory_local"
+    }
+  }
+}

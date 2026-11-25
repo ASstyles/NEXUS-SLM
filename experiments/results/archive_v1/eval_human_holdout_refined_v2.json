@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "dataset_key": "human_eval_adjudicated",
+    "file": "data/human_eval/annotation_template.jsonl",
+    "sha256": "e26d4eec99ddd247d3037652466df0024100b0cc85b9ca48e0fa32ed300923d3",
+    "policy_version": "refined_policy_v2",
+    "engine": "heuristic_fallback_v2_contextual_priority",
+    "code_commit_sha": "3e5a1ea",
+    "timestamp_utc": "2026-11-24T23:00:00Z",
+    "description": "Production Heuristic Fallback with contextual priority rubric and 7-tier escalation"
+  },
+  "sample_count": 184,
+  "category_metrics": {
+    "accuracy": 0.6033,
+    "macro_precision": 0.8364,
+    "macro_recall": 0.5863,
+    "macro_f1": 0.6278,
+    "weighted_f1": 0.6268
+  },
+  "priority_metrics": {
+    "accuracy": 0.5978,
+    "macro_f1": 0.6519,
+    "weighted_f1": 0.5837,
+    "per_class_recall": {
+      "low": 0.8542,
+      "medium": 0.3913,
+      "high": 0.5192,
+      "critical": 1.0
+    }
+  },
+  "language_metrics": {
+    "overall_accuracy": 0.9728,
+    "breakdown": {
+      "english": {
+        "support": 80,
+        "accuracy": 1.0
+      },
+      "hindi": {
+        "support": 46,
+        "accuracy": 1.0
+      },
+      "hinglish": {
+        "support": 58,
+        "accuracy": 0.9138
+      }
+    }
+  },
+  "escalation_metrics": {
+    "overall_escalation_rate": 0.587,
+    "unnecessary_escalation_rate": 0.4463,
+    "high_risk_recall": 0.8571,
+    "high_risk_false_negatives": 9
+  },
+  "critical_safety_metrics": {
+    "critical_recall": 1.0,
+    "critical_false_negatives": 0,
+    "safety_violation_count": 0
+  },
+  "composite_metrics": {
+    "exact_4field_match_rate": 0.3587
+  }
+}

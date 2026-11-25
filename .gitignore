@@ -50,6 +50,7 @@ mlruns/
 checkpoints/
 models/exported/
 *.pt
+*.joblib
 *.bin
 *.safetensors
 *.pth
@@ -86,6 +87,7 @@ mlflow.db
 scratch/
 experiments/tmp_v2_training/
 experiments/artifacts/training_runs/
+experiments/artifacts/v2_models/
 notebooks/kaggle_clean_v2_bundle/
 monitoring/telemetry_eval_archive.jsonl
 monitoring/*.bak

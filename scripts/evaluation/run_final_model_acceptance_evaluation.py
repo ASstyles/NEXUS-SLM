@@ -72,7 +72,7 @@ def evaluate_production_fallback(test_samples: List[Dict[str, Any]]) -> Dict[str
             inference_mode="heuristic_fallback",
             model_requires_human=fb.get("requires_human"),
         )
-        elapsed_ms = (time.perf_counter() - t0) * 1000.0 + 35.0  # Heuristic overhead simulation
+        elapsed_ms = (time.perf_counter() - t0) * 1000.0  # Exact measured latency
         latencies.append(elapsed_ms)
 
         results.append({
@@ -109,8 +109,10 @@ def evaluate_candidate_neural(test_samples: List[Dict[str, Any]], batch_size: in
     print("=" * 80)
 
     adapter_path = PROJECT_ROOT / "experiments" / "artifacts" / "training_runs" / "qwen25_05b_clean_v2_lora_run_20261030_190017" / "adapter"
-    base_model_path = PROJECT_ROOT / "models" / "scratch_merged_qwen"
-    base_target = str(base_model_path) if base_model_path.exists() else "Qwen/Qwen2.5-0.5B-Instruct"
+    hf_snaps = sorted(
+        (Path.home() / ".cache" / "huggingface" / "hub" / "models--Qwen--Qwen2.5-0.5B-Instruct" / "snapshots").glob("*")
+    )
+    base_target = str(hf_snaps[-1]) if hf_snaps else "Qwen/Qwen2.5-0.5B-Instruct"
 
     print(f"Loading tokenizer from: {adapter_path}")
     tokenizer = AutoTokenizer.from_pretrained(str(adapter_path))

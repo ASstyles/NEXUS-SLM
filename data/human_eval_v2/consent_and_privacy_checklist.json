@@ -1,0 +1,33 @@
+{
+  "programme": "NEXUS-SLM Live Customer Intake & Independent Human Evaluation Governance",
+  "version": "2.0.0",
+  "status": "PENDING_LEGAL_AND_DPA_SIGNOFF",
+  "mandatory_prerequisites_before_real_customer_collection": [
+    {
+      "id": "DPA-01",
+      "requirement": "Executed Data Processing Agreement (DPA) / Customer Consent Notice covering support-ticket quality auditing",
+      "completed": false
+    },
+    {
+      "id": "PII-02",
+      "requirement": "Automated + manual PII scrubbing (full names, phone numbers, card PANs, bank account numbers, government IDs, exact addresses)",
+      "completed": false
+    },
+    {
+      "id": "LAW-03",
+      "requirement": "Documented lawful basis under applicable privacy framework (e.g., GDPR Art. 6 / DPDP Act India)",
+      "completed": false
+    },
+    {
+      "id": "RET-04",
+      "requirement": "Defined data retention & erasure SLA and access audit logging",
+      "completed": false
+    },
+    {
+      "id": "OPT-05",
+      "requirement": "Verified customer opt-out mechanism and zero retention of raw unredacted secrets in Git",
+      "completed": false
+    }
+  ],
+  "prohibition": "Synthetic or developer-written scenarios must NEVER be labeled as real customer production tickets."
+}

@@ -15,12 +15,12 @@ This report investigates tokenizer dynamics, cross-lingual generalization, and t
 
 ### 2.1 Language Detection Accuracy
 
-| Linguistic Modality | Synthetic Test ($N=746$) Support | Synthetic Accuracy | Human Holdout ($N=184$) Support | Human Accuracy | Operational Reliability |
+| Linguistic Modality | Synthetic Test ($N=746$) Exact Support | Heuristic V2 Detection Acc | Dev Human ($N=184$) Support | Heuristic V2 Detection Acc | Operational Reliability |
 |---|---:|---:|---:|---:|:---:|
-| **English** | 248 | 89.92% | 80 | **100.00%** | Near-Perfect |
-| **Native Hindi (Devanagari)** | 250 | 98.40% | 46 | **100.00%** | Deterministic Unicode Anchor |
-| **Romanized Hinglish** | 248 | 55.24% (Substrings) | 58 | **91.38%** (Word-Anchored) | Production-Grade |
-| **Overall Corpus** | 746 | 81.23% | 184 | **97.28%** | Highly Reliable |
+| **English** | **246** | **100.00%** (246/246) | 80 | **100.00%** | Exact ASCII baseline |
+| **Native Hindi (Devanagari)** | **178** | **100.00%** (178/178) | 46 | **100.00%** | Deterministic Unicode Anchor |
+| **Romanized Hinglish** | **322** | **56.52%** (182/322) | 58 | **91.38%** (53/58) | Requires expanded Hinglish lexicon |
+| **Overall Corpus** | **746** | **81.23%** (606/746) | **184** | **97.28%** (179/184) | Word-boundary safe for EN |
 
 ### 2.2 The Hinglish Word-Boundary Advancement
 - **Historical Defect:** Naive substring matching caused false-positive Hinglish classifications on standard English words containing transliterated substrings (e.g. *"camera"* containing *"mera"*, *"chair"* containing *"hai"*, or *"folder"* containing *"der"*).

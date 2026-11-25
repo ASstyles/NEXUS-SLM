@@ -113,6 +113,6 @@ Every evaluation artifact MUST specify `policy_version` explicitly:
 |---|---|---|---|
 | `synthetic_locked_test` | `data/v2_clean_template_grouped/test_clean.jsonl` | 746 | `fc65071b1e9f3303facf64711e72f8bb0f31b450c7f6a3c381bd4a9f8408cf9b` |
 | `human_eval_adjudicated` | `data/human_eval/annotation_template.jsonl` | 184 | `e26d4eec99ddd247d3037652466df0024100b0cc85b9ca48e0fa32ed300923d3` |
-| `synthetic_val_clean` | `data/v2_clean_template_grouped/val_clean.jsonl` | 744 | `88c3e8ec9ab5ee2a7fe018260a92548480a875a59334fe8923a4b7fcf7164cf3` |
+| `synthetic_val_clean` | `data/v2_clean_template_grouped/val_clean.jsonl` | 449 | `faa98cf83cbe209736d8890a902f65fa382cb2ff31b96e55608d98d9e68fa29a` |
 
 Modifying `test_clean.jsonl` is strictly prohibited under project data governance policies.

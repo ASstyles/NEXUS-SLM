@@ -1,0 +1,123 @@
+{
+  "schema_version": "nexus_dataset_manifest_v1",
+  "generated_at_utc": "2026-11-25T10:46:16.888475+00:00",
+  "datasets": [
+    {
+      "key": "v1_train",
+      "path": "data/train/train.jsonl",
+      "description": "Historical V1 training split (template-overlapping)",
+      "size_bytes": 100859,
+      "record_count": 316,
+      "sha256": "11df262072d7243f623bfd829b407a8dbd2c5a3087ed697a836a7152c7688967",
+      "sha256_canonical_lf": "c272775e0e576eba7ed58b6a1c3e3b527069f705b5696913448ee208357f1f25"
+    },
+    {
+      "key": "v1_test",
+      "path": "data/test/test.jsonl",
+      "description": "Historical V1 locked test split",
+      "size_bytes": 12620,
+      "record_count": 42,
+      "sha256": "edf3fa5cd949a149ad5d759d81553d9704467491877d0f3c8b7cc5a887a9eda4",
+      "sha256_canonical_lf": "cfbb38d81dd816d119ad334f554857005194e37dbadcd05ff8d23be935dc6b1a"
+    },
+    {
+      "key": "v2_clean_train",
+      "path": "data/v2_clean_template_grouped/train_clean.jsonl",
+      "description": "V2 clean template-grouped training split",
+      "size_bytes": 2225544,
+      "record_count": 4797,
+      "sha256": "f67b50c7724e8cd53d029058c688e712b99b9a3f1be3df0a92c756975220fe1c",
+      "sha256_canonical_lf": "8e042d18120ec5e7f87d023856b141bbfd8c3b62cdc0319f7b9b8df18040f3e0"
+    },
+    {
+      "key": "v2_clean_val",
+      "path": "data/v2_clean_template_grouped/val_clean.jsonl",
+      "description": "V2 clean template-grouped validation split",
+      "size_bytes": 197583,
+      "record_count": 449,
+      "sha256": "faa98cf83cbe209736d8890a902f65fa382cb2ff31b96e55608d98d9e68fa29a",
+      "sha256_canonical_lf": "1bfd056bb5b7e57edf6509c91a5cf08f745f5216386416fcbdbfdf6642eed279"
+    },
+    {
+      "key": "v2_clean_test",
+      "path": "data/v2_clean_template_grouped/test_clean.jsonl",
+      "description": "V2 locked clean test split (N=746)",
+      "size_bytes": 334597,
+      "record_count": 746,
+      "sha256": "fc65071b1e9f3303facf64711e72f8bb0f31b450c7f6a3c381bd4a9f8408cf9b",
+      "sha256_canonical_lf": "7e32c5111284db5091caf7186f73ce09876980fddfc83aa540e142f1e1b6acd1"
+    },
+    {
+      "key": "human_eval_v1_exposed",
+      "path": "data/human_eval/annotation_template.jsonl",
+      "description": "Development-exposed V1 human scenarios (N=184 active + 16 pending)",
+      "size_bytes": 238681,
+      "record_count": 200,
+      "sha256": "e26d4eec99ddd247d3037652466df0024100b0cc85b9ca48e0fa32ed300923d3",
+      "sha256_canonical_lf": "c27374cbbc185e5b950dc2a1db15841affb290c8499f1eaa7af70ae68dafebfd"
+    },
+    {
+      "key": "high_risk_challenge_70",
+      "path": "data/evaluation/high_risk_challenge_set.jsonl",
+      "description": "High-risk adversarial/safety challenge set (N=70)",
+      "size_bytes": 21998,
+      "record_count": 70,
+      "sha256": "70b43711fd2f515bdd27d6daa8e604698a109f6093cdaea7f85bd584339dbc5b",
+      "sha256_canonical_lf": "80a4080973d197ee14d0daf4738541cb2fb4770e7e129cf01ee0fa667e312871"
+    },
+    {
+      "key": "v3_diverse_train",
+      "path": "data/v3_diverse/train_v3.jsonl",
+      "description": "V3 syntactically diverse synthetic training split",
+      "size_bytes": 276730,
+      "record_count": 680,
+      "sha256": "d72cba8975c1bb0160704643c567b420b34b7fd1a60897fdecc5e43465d10c04",
+      "sha256_canonical_lf": "0d49ae99b1d255b87a10b333876122ee09660a3072fbf125a823374ca6e2f87e"
+    },
+    {
+      "key": "v3_diverse_val",
+      "path": "data/v3_diverse/val_v3.jsonl",
+      "description": "V3 syntactically diverse validation split",
+      "size_bytes": 96334,
+      "record_count": 252,
+      "sha256": "51cf413c9e2e1d9948802a485af5f34a52017dd8f0ca4ae55819b8459555442a",
+      "sha256_canonical_lf": "f2dd45ae84272bc341efd9ed197e7cac96e32f8414d928a9d2a285570186b308"
+    },
+    {
+      "key": "v3_diverse_cal",
+      "path": "data/v3_diverse/cal_v3.jsonl",
+      "description": "V3 calibration holdout split",
+      "size_bytes": 30970,
+      "record_count": 84,
+      "sha256": "af638a6e21c671f32d666f49a817a9c5074dd9868d5be501c31e26b58beb1b94",
+      "sha256_canonical_lf": "ca820e5f281c326c9a9d4dd9d750a87961770bea14f73a797c2319f4ef0a9dfa"
+    },
+    {
+      "key": "v3_diverse_audit",
+      "path": "data/v3_diverse/dev_audit_v3.jsonl",
+      "description": "V3 unseen dev audit benchmark split",
+      "size_bytes": 32232,
+      "record_count": 84,
+      "sha256": "0a28299713712c99689fd1f7bfb825d3174b16ac23d175c1fb66d9abf71dfab4",
+      "sha256_canonical_lf": "cbc78e3ce52f8d0d39bd0e83beb445a93127f00b61932d4ce189801c85973803"
+    },
+    {
+      "key": "human_eval_v2_plan",
+      "path": "data/human_eval_v2/allocation_plan_v2.json",
+      "description": "V2 independent human eval cohort scaffold (PENDING external reviewers)",
+      "size_bytes": 1985,
+      "record_count": null,
+      "sha256": "40751158539cfc2b98c05d5ef9b8bebdaf71097c086cc42a94b5d3c9815d304e",
+      "sha256_canonical_lf": "4a93cd0f001cbf04e82f6060a1893239a4ef3e9c2952778226a53bcfd4a7f3eb"
+    },
+    {
+      "key": "human_eval_v2_intake",
+      "path": "data/human_eval_v2/intake_collection_template.jsonl",
+      "description": "V2 400-slot intake template (320 sealed + 80 dev reserved)",
+      "size_bytes": 208235,
+      "record_count": 400,
+      "sha256": "73526aa7d29f7101a0ca9ee7e19e0ecbff7370b39cb902c4920876d487d55f9e",
+      "sha256_canonical_lf": "b5598f23ae17663a953531429ca1b2c854d3c4d0b27188819c89c4ea16ee54a2"
+    }
+  ]
+}

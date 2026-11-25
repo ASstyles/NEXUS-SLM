@@ -1,0 +1,61 @@
+{
+  "guideline_version": "2.0.0",
+  "effective_date_utc": "2026-11-25T09:40:53.301190+00:00",
+  "taxonomy": {
+    "categories": [
+      "payment_failure",
+      "refund_request",
+      "account_access",
+      "password_reset",
+      "order_cancel",
+      "order_tracking",
+      "subscription",
+      "billing",
+      "technical_issue",
+      "fraud_report",
+      "delivery_issue",
+      "account_closure",
+      "product_complaint",
+      "general_query"
+    ],
+    "priorities": [
+      "low",
+      "medium",
+      "high",
+      "critical"
+    ],
+    "languages": [
+      "english",
+      "hindi",
+      "hinglish",
+      "mixed_language"
+    ],
+    "language_mapping_note": "During final model scoring against the 3 production language enums (english, hindi, hinglish), 'mixed_language' packets track explicit Devanagari+Romanized code-switching separately in human governance and map to 'hinglish' only when evaluating legacy 3-class model outputs, while retaining mixed_language breakdowns."
+  },
+  "priority_rubric": {
+    "critical": "Active fraud/unauthorized account takeover, physical safety hazard/fire/injury/shock, or immediate regulatory threat.",
+    "high": "Money debited without order confirmation, account locked out completely, missing/tampered package after delivered scan, defective product safety issue.",
+    "medium": "Standard order tracking delay, refund timeline inquiry, password reset friction, billing invoice discrepancy.",
+    "low": "General inquiry, feature question, positive feedback, address/email preference update."
+  },
+  "escalation_rubric": {
+    "requires_human_true": [
+      "Financial loss / double debit / failed transaction awaiting reconciliation",
+      "Unauthorized account access / fraud / phishing / identity theft",
+      "Physical safety hazard (burn, shock, smoke, allergic reaction, child hazard)",
+      "Package tampered/empty box or false delivered status",
+      "Legal threat / regulatory complaint / GDPR privacy demand",
+      "Genunely ambiguous multi-intent dispute requiring account action"
+    ],
+    "requires_human_false_negative_controls": [
+      "Negative control tickets mentioning high-risk keywords safely (e.g., 'Can I change my password later?', 'How do fraud alerts work in general?')",
+      "Routine low-stakes queries solvable via self-service FAQ"
+    ]
+  },
+  "multi_intent_rule": "Assign primary category to the highest-risk or financially/legally blocking intent; record secondary intents in metadata.",
+  "blind_protocol_rules": [
+    "No model predictions, heuristic outputs, or target hints may appear in annotator blind packets.",
+    "Annotator A and Annotator B must be distinct verified human reviewers.",
+    "Every disagreement on category, priority, language, or requires_human enters adjudication_queue.jsonl for third-party resolution."
+  ]
+}

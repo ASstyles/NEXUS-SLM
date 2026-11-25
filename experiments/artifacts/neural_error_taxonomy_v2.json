@@ -1,0 +1,1132 @@
+{
+  "generated_at_utc": "2026-11-25T09:52:25.591834+00:00",
+  "dataset": "data/v2_clean_template_grouped/test_clean.jsonl",
+  "sample_count": 746,
+  "true_base_overall": {
+    "category_accuracy": 0.5389,
+    "category_macro_f1": 0.5375,
+    "priority_accuracy": 0.4424,
+    "priority_macro_f1": 0.2491,
+    "language_accuracy": 0.8458,
+    "json_validity_rate": 1.0
+  },
+  "stacked_scratch_overall": {
+    "category_accuracy": 0.6917,
+    "category_macro_f1": 0.6044,
+    "priority_accuracy": 0.4786,
+    "priority_macro_f1": 0.2842,
+    "language_accuracy": 0.9678
+  },
+  "focus_class_comparison": {
+    "general_query": {
+      "true_base_qwen": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 42
+      },
+      "stacked_scratch_qwen": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 42
+      },
+      "true_base_predicted_distribution": {
+        "payment_failure": 28,
+        "refund_request": 14
+      }
+    },
+    "product_complaint": {
+      "true_base_qwen": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 44
+      },
+      "stacked_scratch_qwen": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "support": 44
+      },
+      "true_base_predicted_distribution": {
+        "refund_request": 17,
+        "fraud_report": 15,
+        "payment_failure": 12
+      }
+    },
+    "refund_request": {
+      "true_base_qwen": {
+        "precision": 0.4079,
+        "recall": 0.7949,
+        "f1": 0.5391,
+        "support": 78
+      },
+      "stacked_scratch_qwen": {
+        "precision": 0.392,
+        "recall": 1.0,
+        "f1": 0.5632,
+        "support": 78
+      },
+      "true_base_predicted_distribution": {
+        "refund_request": 62,
+        "payment_failure": 16
+      }
+    },
+    "account_access": {
+      "true_base_qwen": {
+        "precision": 1.0,
+        "recall": 0.24,
+        "f1": 0.3871,
+        "support": 50
+      },
+      "stacked_scratch_qwen": {
+        "precision": 0.5833,
+        "recall": 0.28,
+        "f1": 0.3784,
+        "support": 50
+      },
+      "true_base_predicted_distribution": {
+        "payment_failure": 38,
+        "account_access": 12
+      }
+    },
+    "payment_failure": {
+      "true_base_qwen": {
+        "precision": 0.1124,
+        "recall": 1.0,
+        "f1": 0.2022,
+        "support": 28
+      },
+      "stacked_scratch_qwen": {
+        "precision": 1.0,
+        "recall": 0.4286,
+        "f1": 0.6,
+        "support": 28
+      },
+      "true_base_predicted_distribution": {
+        "payment_failure": 28
+      }
+    },
+    "subscription": {
+      "true_base_qwen": {
+        "precision": 1.0,
+        "recall": 1.0,
+        "f1": 1.0,
+        "support": 2
+      },
+      "stacked_scratch_qwen": {
+        "precision": 0.125,
+        "recall": 1.0,
+        "f1": 0.2222,
+        "support": 2
+      },
+      "true_base_predicted_distribution": {
+        "subscription": 2
+      }
+    },
+    "fraud_report": {
+      "true_base_qwen": {
+        "precision": 0.7581,
+        "recall": 1.0,
+        "f1": 0.8624,
+        "support": 47
+      },
+      "stacked_scratch_qwen": {
+        "precision": 0.4087,
+        "recall": 1.0,
+        "f1": 0.5802,
+        "support": 47
+      },
+      "true_base_predicted_distribution": {
+        "fraud_report": 47
+      }
+    },
+    "order_cancel": {
+      "true_base_qwen": {
+        "precision": 1.0,
+        "recall": 0.2182,
+        "f1": 0.3582,
+        "support": 110
+      },
+      "stacked_scratch_qwen": {
+        "precision": 1.0,
+        "recall": 0.4091,
+        "f1": 0.5806,
+        "support": 110
+      },
+      "true_base_predicted_distribution": {
+        "refund_request": 42,
+        "payment_failure": 27,
+        "order_cancel": 24,
+        "delivery_issue": 17
+      }
+    }
+  },
+  "true_base_per_class_all_14": {
+    "payment_failure": {
+      "precision": 0.1124,
+      "recall": 1.0,
+      "f1": 0.2022,
+      "support": 28
+    },
+    "refund_request": {
+      "precision": 0.4079,
+      "recall": 0.7949,
+      "f1": 0.5391,
+      "support": 78
+    },
+    "account_access": {
+      "precision": 1.0,
+      "recall": 0.24,
+      "f1": 0.3871,
+      "support": 50
+    },
+    "password_reset": {
+      "precision": 1.0,
+      "recall": 0.6094,
+      "f1": 0.7573,
+      "support": 64
+    },
+    "order_cancel": {
+      "precision": 1.0,
+      "recall": 0.2182,
+      "f1": 0.3582,
+      "support": 110
+    },
+    "order_tracking": {
+      "precision": 1.0,
+      "recall": 0.4474,
+      "f1": 0.6182,
+      "support": 76
+    },
+    "subscription": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 2
+    },
+    "billing": {
+      "precision": 1.0,
+      "recall": 0.9855,
+      "f1": 0.9927,
+      "support": 69
+    },
+    "technical_issue": {
+      "precision": 1.0,
+      "recall": 0.0196,
+      "f1": 0.0385,
+      "support": 51
+    },
+    "fraud_report": {
+      "precision": 0.7581,
+      "recall": 1.0,
+      "f1": 0.8624,
+      "support": 47
+    },
+    "delivery_issue": {
+      "precision": 0.625,
+      "recall": 1.0,
+      "f1": 0.7692,
+      "support": 30
+    },
+    "account_closure": {
+      "precision": 1.0,
+      "recall": 1.0,
+      "f1": 1.0,
+      "support": 55
+    },
+    "product_complaint": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 44
+    },
+    "general_query": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 42
+    }
+  },
+  "true_base_priority_per_class": {
+    "low": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 160
+    },
+    "medium": {
+      "precision": 0.5815,
+      "recall": 0.5491,
+      "f1": 0.5648,
+      "support": 377
+    },
+    "high": {
+      "precision": 0.3154,
+      "recall": 0.6833,
+      "f1": 0.4316,
+      "support": 180
+    },
+    "critical": {
+      "precision": 0.0,
+      "recall": 0.0,
+      "f1": 0.0,
+      "support": 29
+    }
+  },
+  "true_base_language_breakdown": {
+    "english": {
+      "count": 246,
+      "raw_category_accuracy": 0.939,
+      "raw_category_macro_f1": 0.5591,
+      "raw_priority_accuracy": 0.5772,
+      "raw_priority_macro_f1": 0.3234,
+      "policy_category_accuracy": 0.939,
+      "policy_escalation_metrics": {
+        "true_positives": 77,
+        "false_negatives": 0,
+        "false_positives": 169,
+        "true_negatives": 0,
+        "precision": 0.313,
+        "high_risk_recall": 1.0,
+        "f1": 0.4768,
+        "overall_escalation_rate": 1.0,
+        "unnecessary_escalation_rate": 1.0,
+        "critical_total": 13,
+        "critical_recall": 1.0,
+        "critical_false_negatives": 0
+      }
+    },
+    "hindi": {
+      "count": 178,
+      "raw_category_accuracy": 0.2079,
+      "raw_category_macro_f1": 0.0833,
+      "raw_priority_accuracy": 0.3427,
+      "raw_priority_macro_f1": 0.1941,
+      "policy_category_accuracy": 0.2079,
+      "policy_escalation_metrics": {
+        "true_positives": 48,
+        "false_negatives": 0,
+        "false_positives": 130,
+        "true_negatives": 0,
+        "precision": 0.2697,
+        "high_risk_recall": 1.0,
+        "f1": 0.4248,
+        "overall_escalation_rate": 1.0,
+        "unnecessary_escalation_rate": 1.0,
+        "critical_total": 5,
+        "critical_recall": 1.0,
+        "critical_false_negatives": 0
+      }
+    },
+    "hinglish": {
+      "count": 322,
+      "raw_category_accuracy": 0.4161,
+      "raw_category_macro_f1": 0.4942,
+      "raw_priority_accuracy": 0.3944,
+      "raw_priority_macro_f1": 0.2247,
+      "policy_category_accuracy": 0.4161,
+      "policy_escalation_metrics": {
+        "true_positives": 84,
+        "false_negatives": 0,
+        "false_positives": 238,
+        "true_negatives": 0,
+        "precision": 0.2609,
+        "high_risk_recall": 1.0,
+        "f1": 0.4138,
+        "overall_escalation_rate": 1.0,
+        "unnecessary_escalation_rate": 1.0,
+        "critical_total": 11,
+        "critical_recall": 1.0,
+        "critical_false_negatives": 0
+      }
+    }
+  },
+  "top_category_confusions": [
+    {
+      "gt_category": "technical_issue",
+      "pred_category": "payment_failure",
+      "count": 50,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "technical_issue",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Sir please App kholte hi band ho ja raha hai, takneeki samasya hai.",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "technical_issue",
+          "pred_category": "payment_failure",
+          "gt_priority": "low",
+          "pred_priority": "high",
+          "text": "Sir please App kholte hi band ho ja raha hai, takneeki samasya hai.",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "technical_issue",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "मोबाइल एप्लिकेशन पर चेकआउट करते समय बार-बार सर्वर त्रुटि प्रदर्शित हो रही है। कृपया इस तकनीकी खराबी को ठीक करें।",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_category": "order_cancel",
+      "pred_category": "refund_request",
+      "count": 42,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_cancel",
+          "pred_category": "refund_request",
+          "gt_priority": "high",
+          "pred_priority": "medium",
+          "text": "Arrey bhai Order cancel please",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_cancel",
+          "pred_category": "refund_request",
+          "gt_priority": "medium",
+          "pred_priority": "medium",
+          "text": "Arrey bhai Aadesh radd karo",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_cancel",
+          "pred_category": "refund_request",
+          "gt_priority": "high",
+          "pred_priority": "medium",
+          "text": "Sir please App me cancel ka option nahi aa raha, order ORD-755017 cancel kar do turant.",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        }
+      ]
+    },
+    {
+      "gt_category": "account_access",
+      "pred_category": "payment_failure",
+      "count": 38,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "account_access",
+          "pred_category": "payment_failure",
+          "gt_priority": "high",
+          "pred_priority": "high",
+          "text": "OTP nahi aa raha",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "account_access",
+          "pred_category": "payment_failure",
+          "gt_priority": "high",
+          "pred_priority": "high",
+          "text": "OTP nahi aa raha",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "account_access",
+          "pred_category": "payment_failure",
+          "gt_priority": "low",
+          "pred_priority": "high",
+          "text": "OTP nahi aa raha??!!",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_category": "general_query",
+      "pred_category": "payment_failure",
+      "count": 28,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "general_query",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Hello team, Sahayata number chahiye",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "general_query",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Sampark soochana",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "general_query",
+          "pred_category": "payment_failure",
+          "gt_priority": "high",
+          "pred_priority": "high",
+          "text": "Sampark soochana",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_category": "order_cancel",
+      "pred_category": "payment_failure",
+      "count": 27,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_cancel",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Kripya aadesh sankhya ORD-513959 ko radd kar dein kyunki mujhe ab is utpad ki avashyakta nahi hai.",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_cancel",
+          "pred_category": "payment_failure",
+          "gt_priority": "high",
+          "pred_priority": "high",
+          "text": "Kripya aadesh sankhya ORD-645316 ko radd kar dein kyunki mujhe ab is utpad ki avashyakta nahi hai.",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_cancel",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Kripya aadesh sankhya ORD-783357 ko radd kar dein kyunki mujhe ab is utpad ki avashyakta nahi hai.",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_category": "order_tracking",
+      "pred_category": "payment_failure",
+      "count": 25,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_tracking",
+          "pred_category": "payment_failure",
+          "gt_priority": "low",
+          "pred_priority": "high",
+          "text": "Arrey bhai Order ORD-513893 kab tak deliver hoga Hyderabad me?",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_tracking",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Yaar Aadesh ORD-771231 kab tak mere pate par pahunchega?",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_tracking",
+          "pred_category": "payment_failure",
+          "gt_priority": "high",
+          "pred_priority": "high",
+          "text": "Order kahan hai?",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_category": "password_reset",
+      "pred_category": "payment_failure",
+      "count": 24,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "password_reset",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "पासवर्ड भूल गया",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "password_reset",
+          "pred_category": "payment_failure",
+          "gt_priority": "high",
+          "pred_priority": "high",
+          "text": "पासवर्ड भूल गया",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "password_reset",
+          "pred_category": "payment_failure",
+          "gt_priority": "low",
+          "pred_priority": "high",
+          "text": "पासवर्ड भूल गया",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_category": "product_complaint",
+      "pred_category": "refund_request",
+      "count": 17,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "product_complaint",
+          "pred_category": "refund_request",
+          "gt_priority": "high",
+          "pred_priority": "medium",
+          "text": "Aadesh ORD-355210 ke antargat jo utpad bheja gaya hai wo catalog ke vivaran se bilkul mel nahi khata. Kripya badlav ya wapsi karein.",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "product_complaint",
+          "pred_category": "refund_request",
+          "gt_priority": "medium",
+          "pred_priority": "medium",
+          "text": "Aadesh ORD-943648 ke antargat jo utpad bheja gaya hai wo catalog ke vivaran se bilkul mel nahi khata. Kripya badlav ya wapsi karein.",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "product_complaint",
+          "pred_category": "refund_request",
+          "gt_priority": "medium",
+          "pred_priority": "medium",
+          "text": "Aadesh ORD-503100 ke antargat jo utpad bheja gaya hai wo catalog ke vivaran se bilkul mel nahi khata. Kripya badlav ya wapsi karein.",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        }
+      ]
+    },
+    {
+      "gt_category": "order_cancel",
+      "pred_category": "delivery_issue",
+      "count": 17,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "order_cancel",
+          "pred_category": "delivery_issue",
+          "gt_priority": "medium",
+          "pred_priority": "medium",
+          "text": "डिलीवरी में बहुत देर हो रही है, मुझे यह ऑर्डर अब नहीं चाहिए।",
+          "raw_output": "{\"category\": \"delivery_issue\", \"priority\": \"medium\", \"language\": \"hindi\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "order_cancel",
+          "pred_category": "delivery_issue",
+          "gt_priority": "low",
+          "pred_priority": "medium",
+          "text": "डिलीवरी में बहुत देर हो रही है, मुझे यह ऑर्डर अब नहीं चाहिए।",
+          "raw_output": "{\"category\": \"delivery_issue\", \"priority\": \"medium\", \"language\": \"hindi\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "order_cancel",
+          "pred_category": "delivery_issue",
+          "gt_priority": "low",
+          "pred_priority": "medium",
+          "text": "डिलीवरी में बहुत देर हो रही है, मुझे यह ऑर्डर अब नहीं चाहिए।",
+          "raw_output": "{\"category\": \"delivery_issue\", \"priority\": \"medium\", \"language\": \"hindi\", \"requires_human\": false}"
+        }
+      ]
+    },
+    {
+      "gt_category": "refund_request",
+      "pred_category": "payment_failure",
+      "count": 16,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "refund_request",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Mera paisa wapas kab tak aayega?",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "refund_request",
+          "pred_category": "payment_failure",
+          "gt_priority": "low",
+          "pred_priority": "high",
+          "text": "Mera paisa wapas kab tak aayega?",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "refund_request",
+          "pred_category": "payment_failure",
+          "gt_priority": "low",
+          "pred_priority": "high",
+          "text": "Mera paisa wapas kab tak aayega?",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_category": "order_tracking",
+      "pred_category": "refund_request",
+      "count": 16,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "order_tracking",
+          "pred_category": "refund_request",
+          "gt_priority": "medium",
+          "pred_priority": "medium",
+          "text": "पार्सल कब पहुंचेगा?",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hindi\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "order_tracking",
+          "pred_category": "refund_request",
+          "gt_priority": "high",
+          "pred_priority": "medium",
+          "text": "पार्सल कब पहुंचेगा?",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hindi\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "gt_category": "order_tracking",
+          "pred_category": "refund_request",
+          "gt_priority": "low",
+          "pred_priority": "medium",
+          "text": "पार्सल कब पहुंचेगा?",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hindi\", \"requires_human\": false}"
+        }
+      ]
+    },
+    {
+      "gt_category": "product_complaint",
+      "pred_category": "fraud_report",
+      "count": 15,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "english",
+          "gt_category": "product_complaint",
+          "pred_category": "fraud_report",
+          "gt_priority": "low",
+          "pred_priority": "high",
+          "text": "Counterfeit fake item",
+          "raw_output": "{\"category\": \"fraud_report\", \"priority\": \"high\", \"language\": \"english\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "english",
+          "gt_category": "product_complaint",
+          "pred_category": "fraud_report",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Counterfeit fake item",
+          "raw_output": "{\"category\": \"fraud_report\", \"priority\": \"high\", \"language\": \"english\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "english",
+          "gt_category": "product_complaint",
+          "pred_category": "fraud_report",
+          "gt_priority": "high",
+          "pred_priority": "high",
+          "text": "Counterfeit fake item",
+          "raw_output": "{\"category\": \"fraud_report\", \"priority\": \"high\", \"language\": \"english\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_category": "general_query",
+      "pred_category": "refund_request",
+      "count": 14,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "general_query",
+          "pred_category": "refund_request",
+          "gt_priority": "medium",
+          "pred_priority": "medium",
+          "text": "Discount coupon apply karne ka procedure kya hai checkout pe?",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "general_query",
+          "pred_category": "refund_request",
+          "gt_priority": "medium",
+          "pred_priority": "medium",
+          "text": "Discount coupon apply karne ka procedure kya hai checkout pe?",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "general_query",
+          "pred_category": "refund_request",
+          "gt_priority": "low",
+          "pred_priority": "medium",
+          "text": "Discount coupon apply karne ka procedure kya hai checkout pe?",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        }
+      ]
+    },
+    {
+      "gt_category": "product_complaint",
+      "pred_category": "payment_failure",
+      "count": 12,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "product_complaint",
+          "pred_category": "payment_failure",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Product kharab nikla",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "product_complaint",
+          "pred_category": "payment_failure",
+          "gt_priority": "high",
+          "pred_priority": "high",
+          "text": "Product kharab nikla",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "product_complaint",
+          "pred_category": "payment_failure",
+          "gt_priority": "high",
+          "pred_priority": "high",
+          "text": "Product kharab nikla",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_category": "order_tracking",
+      "pred_category": "delivery_issue",
+      "count": 1,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "gt_category": "order_tracking",
+          "pred_category": "delivery_issue",
+          "gt_priority": "medium",
+          "pred_priority": "medium",
+          "text": "Order ORD-743851 kab tak deliver hoga Jaipur me?",
+          "raw_output": "{\"category\": \"delivery_issue\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        }
+      ]
+    }
+  ],
+  "top_priority_confusions": [
+    {
+      "gt_priority": "medium",
+      "pred_priority": "high",
+      "count": 170,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "category": "billing",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Arrey bhai Bill me galati",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "category": "general_query",
+          "gt_priority": "medium",
+          "pred_priority": "high",
+          "text": "Hello team, Sahayata number chahiye",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_priority": "low",
+      "pred_priority": "medium",
+      "count": 92,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "category": "subscription",
+          "gt_priority": "low",
+          "pred_priority": "medium",
+          "text": "Maine subscription cancel kiya tha fir bhi acount se auto-debit ho gaya.",
+          "raw_output": "{\"category\": \"subscription\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "english",
+          "category": "order_tracking",
+          "gt_priority": "low",
+          "pred_priority": "medium",
+          "text": "When will order ORD-122733 reach my location in Ahmedabad?",
+          "raw_output": "{\"category\": \"order_tracking\", \"priority\": \"medium\", \"language\": \"english\", \"requires_human\": false}"
+        }
+      ]
+    },
+    {
+      "gt_priority": "low",
+      "pred_priority": "high",
+      "count": 68,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "category": "order_tracking",
+          "gt_priority": "low",
+          "pred_priority": "high",
+          "text": "Arrey bhai Order ORD-513893 kab tak deliver hoga Hyderabad me?",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "category": "technical_issue",
+          "gt_priority": "low",
+          "pred_priority": "high",
+          "text": "Sir please App kholte hi band ho ja raha hai, takneeki samasya hai.",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+        }
+      ]
+    },
+    {
+      "gt_priority": "high",
+      "pred_priority": "medium",
+      "count": 57,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "category": "order_cancel",
+          "gt_priority": "high",
+          "pred_priority": "medium",
+          "text": "Arrey bhai Order cancel please",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hinglish",
+          "category": "order_cancel",
+          "gt_priority": "high",
+          "pred_priority": "medium",
+          "text": "Sir please App me cancel ka option nahi aa raha, order ORD-755017 cancel kar do turant.",
+          "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+        }
+      ]
+    },
+    {
+      "gt_priority": "critical",
+      "pred_priority": "high",
+      "count": 29,
+      "examples": [
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "category": "payment_failure",
+          "gt_priority": "critical",
+          "pred_priority": "high",
+          "text": "भुगतान गेटवे त्रुटि के कारण राशि अटक गई है।",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+        },
+        {
+          "ticket_id": null,
+          "language": "hindi",
+          "category": "payment_failure",
+          "gt_priority": "critical",
+          "pred_priority": "high",
+          "text": "भुगतान गेटवे त्रुटि के कारण राशि अटक गई है।",
+          "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+        }
+      ]
+    }
+  ],
+  "language_error_patterns": {
+    "hinglish": {
+      "account_access->payment_failure": 38,
+      "general_query->payment_failure": 28,
+      "order_tracking->payment_failure": 25,
+      "order_cancel->refund_request": 22,
+      "product_complaint->refund_request": 17,
+      "refund_request->payment_failure": 16,
+      "general_query->refund_request": 14,
+      "order_cancel->payment_failure": 12
+    },
+    "lang_id:hinglish": {
+      "hindi": 37
+    },
+    "hindi": {
+      "technical_issue->payment_failure": 48,
+      "password_reset->payment_failure": 24,
+      "order_cancel->refund_request": 20,
+      "order_cancel->delivery_issue": 17,
+      "order_tracking->refund_request": 16,
+      "order_cancel->payment_failure": 15,
+      "password_reset->refund_request": 1
+    },
+    "lang_id:english": {
+      "hindi": 78
+    },
+    "english": {
+      "product_complaint->fraud_report": 15
+    }
+  },
+  "language_failure_examples": {
+    "hinglish": [
+      {
+        "ticket_id": null,
+        "gt": "order_tracking/medium/hinglish",
+        "pred": "delivery_issue/medium/hinglish",
+        "text": "Order ORD-743851 kab tak deliver hoga Jaipur me?",
+        "raw_output": "{\"category\": \"delivery_issue\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+      },
+      {
+        "ticket_id": null,
+        "gt": "order_tracking/low/hinglish",
+        "pred": "payment_failure/high/hinglish",
+        "text": "Arrey bhai Order ORD-513893 kab tak deliver hoga Hyderabad me?",
+        "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hinglish\", \"requires_human\": true}"
+      },
+      {
+        "ticket_id": null,
+        "gt": "order_cancel/high/hinglish",
+        "pred": "refund_request/medium/hinglish",
+        "text": "Arrey bhai Order cancel please",
+        "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+      },
+      {
+        "ticket_id": null,
+        "gt": "order_cancel/medium/hinglish",
+        "pred": "refund_request/medium/hinglish",
+        "text": "Arrey bhai Aadesh radd karo",
+        "raw_output": "{\"category\": \"refund_request\", \"priority\": \"medium\", \"language\": \"hinglish\", \"requires_human\": false}"
+      }
+    ],
+    "english": [
+      {
+        "ticket_id": null,
+        "gt": "product_complaint/low/english",
+        "pred": "fraud_report/high/english",
+        "text": "Counterfeit fake item",
+        "raw_output": "{\"category\": \"fraud_report\", \"priority\": \"high\", \"language\": \"english\", \"requires_human\": true}"
+      },
+      {
+        "ticket_id": null,
+        "gt": "product_complaint/medium/english",
+        "pred": "fraud_report/high/english",
+        "text": "Counterfeit fake item",
+        "raw_output": "{\"category\": \"fraud_report\", \"priority\": \"high\", \"language\": \"english\", \"requires_human\": true}"
+      },
+      {
+        "ticket_id": null,
+        "gt": "product_complaint/high/english",
+        "pred": "fraud_report/high/english",
+        "text": "Counterfeit fake item",
+        "raw_output": "{\"category\": \"fraud_report\", \"priority\": \"high\", \"language\": \"english\", \"requires_human\": true}"
+      },
+      {
+        "ticket_id": null,
+        "gt": "product_complaint/low/english",
+        "pred": "fraud_report/high/english",
+        "text": "Counterfeit fake item",
+        "raw_output": "{\"category\": \"fraud_report\", \"priority\": \"high\", \"language\": \"english\", \"requires_human\": true}"
+      }
+    ],
+    "hindi": [
+      {
+        "ticket_id": null,
+        "gt": "technical_issue/medium/hindi",
+        "pred": "payment_failure/high/hindi",
+        "text": "मोबाइल एप्लिकेशन पर चेकआउट करते समय बार-बार सर्वर त्रुटि प्रदर्शित हो रही है। कृपया इस तकनीकी खराबी को ठीक करें।",
+        "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+      },
+      {
+        "ticket_id": null,
+        "gt": "technical_issue/medium/hindi",
+        "pred": "payment_failure/high/hindi",
+        "text": "मोबाइल एप्लिकेशन पर चेकआउट करते समय बार-बार सर्वर त्रुटि प्रदर्शित हो रही है। कृपया इस तकनीकी खराबी को ठीक करें।",
+        "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+      },
+      {
+        "ticket_id": null,
+        "gt": "technical_issue/medium/hindi",
+        "pred": "payment_failure/high/hindi",
+        "text": "मोबाइल एप्लिकेशन पर चेकआउट करते समय बार-बार सर्वर त्रुटि प्रदर्शित हो रही है। कृपया इस तकनीकी खराबी को ठीक करें।",
+        "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+      },
+      {
+        "ticket_id": null,
+        "gt": "technical_issue/medium/hindi",
+        "pred": "payment_failure/high/hindi",
+        "text": "मोबाइल एप्लिकेशन पर चेकआउट करते समय बार-बार सर्वर त्रुटि प्रदर्शित हो रही है। कृपया इस तकनीकी खराबी को ठीक करें।",
+        "raw_output": "{\"category\": \"payment_failure\", \"priority\": \"high\", \"language\": \"hindi\", \"requires_human\": true}"
+      }
+    ]
+  }
+}

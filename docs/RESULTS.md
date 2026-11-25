@@ -77,9 +77,9 @@ The dataset suite resides in `data/v2_clean_template_grouped/`. A comprehensive 
   - Category Agreement: $\kappa = \mathbf{0.9648}$ (Near-perfect consensus)
   - Priority Agreement: $\kappa = \mathbf{0.9923}$
   - Escalation Agreement: $\kappa = \mathbf{1.0000}$ (Unanimous on safety-critical tickets)
-- **Empirical Evaluation on Human Scenarios ($N=184$):**
-  - Priority Accuracy: **59.78%** (+9.13% improvement over static baseline)
-  - Priority Macro-F1: **0.6519** (+0.1769 improvement)
+- **Empirical Evaluation on Dev-Exposed Human Scenarios ($N=184$):**
+  - Priority Accuracy: **59.78%** (+8.69% improvement over Policy V1 static baseline `51.09%`)
+  - Priority Macro-F1: **0.6519** (+0.1239 improvement over Policy V1 `0.5280`)
   - Critical Priority Recall: **100.00% (15/15)**, False Negatives = **0**
   - Total Escalation Rate: Reduced from **100.00%** to **58.70%** (**41.30% of routine tickets safely automated**)
 
@@ -93,32 +93,50 @@ Formal evaluation was executed under identical environment conditions:
 - **Environment:** Python 3.10.11, PyTorch 2.6.0+cu126, Windows host, 8 CPU worker threads.
 - **Rule Enforced:** No gradients, no test-set checkpoint selection, no test-set threshold tuning, no prompt iteration. Exactly one formal test run per candidate.
 
-### 3.1 Side-by-Side Performance Comparison
+### 3.1 Side-by-Side Performance Comparison (Synchronized from Evaluation Artifacts)
 
-| Metric | Heuristic Fallback v2 | Qwen2.5-0.5B LoRA Candidate | Delta / Analysis |
-|---|---:|---:|---|
-| **Category Accuracy** | 56.03% (418/746) | **69.17%** (516/746) | **+13.14%** (Neural superior) |
-| **Category Macro Precision** | **87.59%** | 65.34% | -22.25% (Heuristic more conservative) |
-| **Category Macro Recall** | 58.32% | **69.17%** | **+10.85%** (Neural broader coverage) |
-| **Category Macro-F1** | **0.6132** | 0.6044 | -0.0088 (Comparable) |
-| **Category Weighted-F1** | 0.6175 | **0.6630** | **+0.0455** (Neural superior on common classes) |
-| **Priority Accuracy** | 47.18% (352/746) | **47.86%** (357/746) | +0.68% (Both models struggle) |
-| **Priority Macro-F1** | **0.3980** | 0.2842 | -0.1138 (Neural collapses on low/high) |
-| **Priority Weighted-F1** | **0.4497** | 0.3864 | -0.0633 |
-| **Overall Language Accuracy** | 81.23% (606/746) | **96.78%** (722/746) | **+15.55%** (Neural massive win) |
-| - English Accuracy | 100.00% (231/231) | 100.00% (231/231) | Parity |
-| - Hindi Accuracy | 100.00% (232/232) | 100.00% (232/232) | Parity |
-| - Hinglish Accuracy | 49.82% (141/283) | **92.55%** (262/283) | **+42.73%** (Neural resolves Roman Hindi) |
-| **Valid JSON Generation** | 100.00% | **100.00%** | Parity (Zero schema failures) |
-| **Exact Field Match Rate** | 22.39% (167/746) | **35.52%** (265/746) | **+13.13%** |
-| **Escalation Recall** | **100.00%** (209/209) | 86.12% (180/209) | -13.88% (Neural has 29 false negatives) |
-| **Escalation Precision** | 28.02% (209/746) | **33.40%** (180/539) | +5.38% (Heuristic escalates everything) |
-| **Overall Escalation Rate** | 100.00% (746/746) | **72.25%** (539/746) | -27.75% (Neural saves 27.7% queue load) |
-| **Unnecessary Escalation Rate** | 100.00% (537/537) | **66.85%** (359/537) | -33.15% (Reduction in false alarms) |
-| **P50 Latency** | **0.05 ms** | 1,508.55 ms | Heuristic ~30,000x faster on CPU |
-| **P95 Latency** | **0.25 ms** | 2,212.92 ms | Heuristic ~8,800x faster on CPU |
-| **Throughput (CPU)** | **9,833.58 req/s** | 0.62 req/s (batch=16) | CPU throughput limitation for SLM |
-| **Model RAM Footprint** | **~5 MB** | 78.66 MB (LoRA delta) | Both highly memory efficient |
+<!-- SYNC:RESULTS_SUMMARY:START -->
+**Dataset:** Locked Synthetic Template-Grouped Clean Test (`data/v2_clean_template_grouped/test_clean.jsonl`, `N=746`, SHA-256 prefix `fc65071b1e9f3303...`)  
+**Exact Language Support Counts:** English `246`, Hindi (Devanagari) `178`, Hinglish (Romanized) `322`  
+**Archive Notice:** All historical snapshots (`Policy V1`, pre-PR#4 `13:47Z` run, and double-adapter stacked run) are preserved immutably under [`experiments/results/archive_v1/`](experiments/results/archive_v1/ARCHIVE_MANIFEST.json).
+
+### Locked Synthetic Test Benchmark ($N=746$)
+
+| Metric | Heuristic V2 (Policy V1 Archive) | Production Heuristic V2 (Refined Policy V2) | Qwen2.5-0.5B LoRA (True Uncontaminated HF Base) | Historical Qwen LoRA Stacked (`scratch_merged_qwen`, Contaminated) |
+|---|---:|---:|---:|---:|
+| **Category Accuracy** | 57.51% | **57.51%** | 53.89% | 69.17% |
+| **Category Macro-F1** | 0.6516 | **0.6516** | 0.5375 | 0.6044 |
+| **Priority Accuracy** | 35.79% | 36.46% | 44.24% | **47.86%** |
+| **Priority Macro-F1** | 0.3816 | **0.3827** | 0.2491 | 0.2842 |
+| **Language Accuracy** | 81.23% | 81.23% | 84.58% | **96.78%** |
+| - English ($N=246$) | 100.00% | 100.00% | 93.90% cat | 100.00% lang |
+| - Hindi Devanagari ($N=178$) | 100.00% | 100.00% | 20.79% cat | 100.00% lang |
+| - Hinglish Roman ($N=322$) | 56.52% | 56.52% | 41.61% cat | 92.55% lang |
+| **JSON Validity Rate** | 100.00% | 100.00% | 100.00% | 100.00% |
+| **High-Risk Escalation Recall** | 100.00% (0 FN) | 84.69% (32 FN) | 100.00% (0 FN, conf=None) | 86.12% (29 FN) |
+| **Critical Priority Recall** | 100.00% (0 FN) | **100.00% (0 FN)** | **100.00% (0 FN)** | — (unweighted critical in raw) |
+| **Overall Escalation Rate** | 100.00% | **70.64%** | 100.00% (policy conservative) | 72.25% |
+| **Direct CPU P50 Latency** | ~0.04 ms | **0.04 ms** (P95 0.18 ms) | — | 1508.55 ms (P95 2212.92 ms) |
+
+### Development-Exposed Human Scenario Audit ($N=184$ Active + $16$ Pending)
+
+| Metric | Heuristic V1 (Policy V1, $N=184$) | Production Heuristic V2 (Refined Policy V2, $N=184$) |
+|---|---:|---:|
+| **Category Accuracy / Macro-F1** | 56.52% / 0.5965 | **60.33% / 0.6278** |
+| **Priority Accuracy / Macro-F1** | 51.09% / 0.5280 | **59.78% / 0.6519** |
+| **Language Accuracy (EN 80 / HI 46 / HG 58)** | 97.28% | 97.28% |
+| **Overall Escalation Rate** | 100.00% | **58.70%** |
+| **High-Risk Recall / FN** | 100.00% (0 FN) | 85.71% (9 FN) |
+| **Critical Safety Recall** | 100.00% (0 FN) | **100.00% (0 FN)** |
+
+### Validation Sprint V3 Hardened Policy & Unpromoted Neural V2 Candidate
+
+| System Version | Dataset (`test_clean` N=746 / `human_v1` N=184) | Cat Acc | Cat Macro-F1 | Prio Acc / F1 | Lang Acc (Hinglish ID) | High-Risk Recall (FN) | Status |
+|---|---|---:|---:|---:|---:|---:|---|
+| **Hardened Policy V3** | `test_clean.jsonl` (`N=746`) | **69.57%** | **0.7365** | 39.14% / 0.4125 | 85.79% (67.08%) | 90.43% (20 FN) | Active Hardened Heuristic |
+| **Hardened Policy V3** | `human_eval_v1` (`N=184`, dev-exposed) | **72.28%** | **0.7419** | 64.13% / 0.6875 | 97.83% (93.10%) | 87.30% (8 FN) | Active Hardened Heuristic |
+| **`exp_v2_5_hybrid_qwen_lexical_fusion`** | `test_clean.jsonl` (`N=746`) | **89.14%** | **0.8558** | 48.66% / 0.4290 | 96.78% (92.55%) | 88.52% (24 FN, 0 crit FN) | `EXPERIMENTAL_NOT_PROMOTED` |
+<!-- SYNC:RESULTS_SUMMARY:END -->
 
 ---
 
@@ -203,16 +221,7 @@ The complete test suite was verified locally:
 - **Security & Remediation Tests:** Verified in `tests/test_security_remediation.py`.
 - **Heuristic & Safety Regression Tests:** Verified in `tests/test_safeguards_audit.py` and `tests/test_heuristic_and_safety_regression.py`.
 - **API & Probes Tests:** Verified `/health`, `/ready`, `/live` in `tests/test_api.py`.
-- **Final Local Verification Result:**
-  ```text
-  ============================= test session starts =============================
-  platform win32 -- Python 3.10.11, pytest-9.1.1, pluggy-1.6.0
-  collected 216 items
-
-  215 passed, 1 skipped in 55.57s
-  ============================= 215 passed, 1 skipped in 55.57s =============================
-  ```
-- **Execution Authenticity:** 1 skipped test is `test_redis_rate_limiter_atomic_concurrency_cannot_exceed_limit`, which gracefully skips when no live external Redis server is bound; zero mock predictions in production inference tests.
+- **PR #4 Baseline Reproduction:** `221 passed, 1 skipped` (`222` collected; `test_redis_rate_limiter_atomic_concurrency_cannot_exceed_limit` skipped locally without local Redis daemon, running in CI with Redis 7 service). For final sprint test totals, see [`FINAL_CI_ACCEPTANCE_REPORT.md`](FINAL_CI_ACCEPTANCE_REPORT.md).
 
 ---
 

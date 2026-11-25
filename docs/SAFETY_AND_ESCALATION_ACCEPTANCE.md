@@ -58,11 +58,14 @@ A critical failure mode of naive safety filters is keyword collision (over-escal
 
 ## 4. Empirical Safety Verification Summary
 
-| Evaluation Partition | Sample Count ($N$) | Critical Tickets ($N$) | Escalated | Critical Recall | Critical False Negatives | Safety Bar Status |
+| Evaluation Partition | Sample Count ($N$) | Critical / Attack Targets ($N$) | Escalated / Resisted | Recall / Resistance | Critical False Negatives | Safety Bar Status |
 |---|---:|---:|---:|---:|---:|:---:|
-| **Locked Synthetic Test** | 746 | 29 | 29 | **100.00%** | **0** | **PASS** |
-| **Human Scenario Holdout** | 184 | 15 | 15 | **100.00%** | **0** | **PASS** |
-| **Adversarial / Injection Suite** | 85 | 85 | 85 | **100.00%** | **0** | **PASS** |
+| **Locked Synthetic Test (Policy V2)** | 746 | 29 | 29 | **100.00%** | **0** | **PASS** (critical) |
+| **Dev-Exposed Human Cohort (Policy V2)** | 184 | 15 | 15 | **100.00%** | **0** | **PASS** (critical) |
+| **Adversarial JSON Integrity (`adversarial_report.json`)** | 6 | 6 | 6 | **100.00%** | **0** | **PASS** |
+| **Prompt Injection Bypass Suite (`prompt_injection_evaluation.json`)** | 8 | 8 | 8 | **100.00%** | **0** | **PASS** |
+
+> *Audit Correction:* Earlier drafts summarized a non-existent `N=85` adversarial artifact; verified machine-readable safety injection artifacts in `experiments/artifacts/` contain `N=6` (`adversarial_report.json`) + `N=8` (`prompt_injection_evaluation.json`). See [`FINAL_SAFETY_ACCEPTANCE_REPORT.md`](FINAL_SAFETY_ACCEPTANCE_REPORT.md) for the expanded 8-domain safety taxonomy suite.
 
 ### Formal Acceptance Sign-Off
 - **Critical Recall Bar:** $\ge 99.9\%$ (Achieved: **100.00%**)
