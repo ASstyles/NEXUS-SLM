@@ -1,0 +1,64 @@
+{
+  "audit_timestamp_utc": "2026-11-25T10:40:17.719408+00:00",
+  "guideline_version": "2.0.0",
+  "status": "PENDING",
+  "counts": {
+    "total_intake_slots": 400,
+    "authored_scenarios": 0,
+    "paired_blind_annotations": 0,
+    "adjudicated_total": 0,
+    "sealed_final_eval_ready": 0,
+    "dev_calibration_ready": 0,
+    "target_minimum_sealed": 300
+  },
+  "data_quality": {
+    "exact_duplicate_pairs": [],
+    "near_duplicate_pairs": [],
+    "cross_dataset_leakage_hits": [],
+    "provenance_errors": [],
+    "disagreements_total": 0,
+    "disagreements_unresolved": 0
+  },
+  "inter_annotator_agreement": {
+    "category": {
+      "n": 0,
+      "raw_agreement": null,
+      "kappa": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    "priority_unweighted": {
+      "n": 0,
+      "raw_agreement": null,
+      "kappa": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    "priority_linear_weighted": {
+      "n": 0,
+      "raw_agreement": null,
+      "kappa": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    "language": {
+      "n": 0,
+      "raw_agreement": null,
+      "kappa": null,
+      "status": "INSUFFICIENT_DATA"
+    },
+    "requires_human": {
+      "n": 0,
+      "raw_agreement": null,
+      "kappa": null,
+      "status": "INSUFFICIENT_DATA"
+    }
+  },
+  "support_counts_sealed_final": {
+    "category": {},
+    "priority": {},
+    "language": {}
+  },
+  "disagreements_queue": [],
+  "blocking_reasons": [
+    "No authored scenarios present; independent collection is PENDING.",
+    "Sealed ready count 0 < required 300"
+  ]
+}

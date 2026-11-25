@@ -17,13 +17,13 @@ Calibration was evaluated across 10 equal-width confidence bins ($M=10$). Expect
 $$\text{ECE} = \sum_{m=1}^M \frac{|B_m|}{N} \left| \text{acc}(B_m) - \text{conf}(B_m) \right|$$
 
 ### 2.1 Calibration Performance Summary
-| Metric | Raw Uncalibrated Qwen Candidate | Temperature Scaled ($T=1.15$) | Production Acceptance Target | Status |
+| Metric | Raw Uncalibrated Qwen Candidate (Stacked Baseline) | Temperature Scaled ($T=1.15$) | Production Acceptance Target | Status |
 |---|---:|---:|:---:|:---:|
-| **Empirical Category Accuracy** | 69.17% | 69.17% | $\ge 80.00\%$ | FAIL |
+| **Empirical Category Accuracy** | 69.17% (53.89% uncontaminated HF base) | 69.17% | $\ge 80.00\%$ | FAIL |
 | **Mean Model Confidence** | 97.68% | 96.29% | $\approx$ Empirical Accuracy | FAIL |
 | **Overconfidence Gap** | **+28.51%** | **+27.12%** | $\le \pm 3.00\%$ | **FAIL** |
 | **Expected Calibration Error (ECE)** | **0.2851** | **0.2712** | $\le 0.0800$ | **FAIL** |
-| **Brier Score (Multi-class)** | 0.2894 | 0.2781 | $\le 0.1500$ | **FAIL** |
+| **Brier Score (Multi-class, exact artifact)** | **0.2933** | **0.2852** | $\le 0.1500$ | **FAIL** |
 
 ### 2.2 Forensic Analysis: The Generative Token Logprob Fallacy
 1. **Token Likelihood vs Class Posterior:**

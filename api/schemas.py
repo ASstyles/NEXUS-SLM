@@ -111,6 +111,7 @@ class HealthResponse(BaseModel):
     model_version: str
     inference_mode: str = Field(description="Active inference mode: 'neural' or 'heuristic_fallback'")
     hardware: Dict[str, Any]
+    rate_limiter: Optional[Dict[str, Any]] = Field(default=None, description="Operational mode and health of rate limiter")
 
 
 class ModelInfoResponse(BaseModel):

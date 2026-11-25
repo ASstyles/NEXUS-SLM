@@ -25,7 +25,7 @@ interface TriageResult {
   priority: string;
   language: string;
   requires_human: boolean;
-  confidence: number;
+  confidence: number | null;
   latency_ms: number;
   model_version: string;
   raw_output?: string;
@@ -93,9 +93,12 @@ export default function Dashboard() {
   const [memoryData, setMemoryData] = useState<any>(null);
   const [throughputData, setThroughputData] = useState<any>(null);
   const [costData, setCostData] = useState<any>(null);
+  const [evalSummary, setEvalSummary] = useState<any>(null);
+  const [rateLimiterStatus, setRateLimiterStatus] = useState<any>(null);
 
   // Cost simulator state
   const [simVolume, setSimVolume] = useState<number>(50000);
+  const [adminToken, setAdminToken] = useState<string>('');
 
   const API_BASE = '/api/backend';
 
@@ -112,6 +115,9 @@ export default function Dashboard() {
         if (data.inference_mode) {
           setInferenceMode(data.inference_mode);
         }
+        if (data.rate_limiter) {
+          setRateLimiterStatus(data.rate_limiter);
+        }
       } else {
         setApiConnected(false);
       }
@@ -122,7 +128,7 @@ export default function Dashboard() {
 
   const fetchDashboardData = async () => {
     try {
-      const [bmRes, expRes, telRes, regRes, errRes, scoreRes, compRes, quantRes, latRes, memRes, tpRes, costRes] = await Promise.all([
+      const [bmRes, expRes, telRes, regRes, errRes, scoreRes, compRes, quantRes, latRes, memRes, tpRes, costRes, evalSumRes] = await Promise.all([
         fetch(`${API_BASE}/benchmark`),
         fetch(`${API_BASE}/experiments`),
         fetch(`${API_BASE}/metrics`),
@@ -135,6 +141,7 @@ export default function Dashboard() {
         fetch(`${API_BASE}/benchmark/memory`),
         fetch(`${API_BASE}/benchmark/throughput`),
         fetch(`${API_BASE}/benchmark/cost`),
+        fetch(`${API_BASE}/evaluation/summary`),
       ]);
 
       if (bmRes.ok) setBenchmarkData(await bmRes.json());
@@ -149,6 +156,7 @@ export default function Dashboard() {
       if (memRes.ok) setMemoryData(await memRes.json());
       if (tpRes.ok) setThroughputData(await tpRes.json());
       if (costRes.ok) setCostData(await costRes.json());
+      if (evalSumRes.ok) setEvalSummary(await evalSumRes.json());
     } catch (e) {
       console.warn('Dashboard data fetch error:', e);
     }
@@ -202,9 +210,15 @@ export default function Dashboard() {
   const handleRollback = async (targetVersion: string) => {
     setIsRollingBack(true);
     setRollbackSuccessMsg(null);
+    setAnalysisError(null);
     try {
+      const headers: Record<string, string> = {};
+      if (adminToken.trim()) {
+        headers['Authorization'] = `Bearer ${adminToken.trim()}`;
+      }
       const res = await fetch(`${API_BASE}/model/rollback?target_version=${encodeURIComponent(targetVersion)}`, {
         method: 'POST',
+        headers,
       });
       if (!res.ok) {
         const err = await res.json().catch(() => ({ detail: 'Rollback failed' }));
@@ -216,7 +230,7 @@ export default function Dashboard() {
       checkHealth();
       fetchDashboardData();
     } catch (err: any) {
-      setAnalysisError(`Rollback error: ${err.message}`);
+      setAnalysisError(`Rollback error: ${err.message} (Hint: protected endpoint requires NEXUS_ADMIN_KEY Bearer token in Admin Token input.)`);
     } finally {
       setIsRollingBack(false);
     }
@@ -407,15 +421,15 @@ export default function Dashboard() {
 
               <div className="glass-panel" style={{ padding: '22px' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Best Macro-F1
+                  Prod Macro-F1 (N=746)
                 </span>
                 <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px', color: '#a5f3fc', fontFamily: 'var(--font-heading)' }}>
-                  {registryModels[0]?.evaluation_results?.macro_f1
-                    ? registryModels[0].evaluation_results.macro_f1.toFixed(4)
-                    : (benchmarkData?.rows?.find(r => r.metric === 'Macro-F1')?.nexus_slm ?? '—')}
+                  {evalSummary?.heuristic_v2_synthetic?.category_metrics?.macro_f1 != null
+                    ? evalSummary.heuristic_v2_synthetic.category_metrics.macro_f1.toFixed(4)
+                    : '—'}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: '4px' }}>
-                  Locked Test Benchmark
+                  Heuristic V2 Locked Synthetic
                 </div>
               </div>
 
@@ -424,10 +438,12 @@ export default function Dashboard() {
                   P50 Latency
                 </span>
                 <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px', color: '#fed7aa', fontFamily: 'var(--font-heading)' }}>
-                  {telemetryStats?.p50_latency_ms ? `${telemetryStats.p50_latency_ms} ms` : '—'}
+                  {telemetryStats?.latency_percentiles?.p50 != null
+                    ? `${telemetryStats.latency_percentiles.p50} ms`
+                    : (telemetryStats?.mean_latency_ms != null ? `${telemetryStats.mean_latency_ms} ms` : '—')}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: '4px' }}>
-                  Median Response Time
+                  Median Live Telemetry Time
                 </div>
               </div>
 
@@ -436,8 +452,8 @@ export default function Dashboard() {
                   JSON Validity
                 </span>
                 <div style={{ fontSize: '2rem', fontWeight: 700, marginTop: '8px', color: '#86efac', fontFamily: 'var(--font-heading)' }}>
-                  {registryModels[0]?.evaluation_results?.json_validity_rate
-                    ? `${(registryModels[0].evaluation_results.json_validity_rate * 100).toFixed(1)}%`
+                  {telemetryStats?.json_validity_rate != null
+                    ? `${(telemetryStats.json_validity_rate * 100).toFixed(1)}%`
                     : '100.0%'}
                 </div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-faint)', marginTop: '4px' }}>
@@ -447,12 +463,12 @@ export default function Dashboard() {
 
               <div className="glass-panel" style={{ padding: '22px' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-                  Active Engine
+                  Active Engine & RL Mode
                 </span>
-                <div style={{ fontSize: '1.25rem', fontWeight: 600, marginTop: '8px', fontFamily: 'var(--font-heading)', color: '#c7d2fe' }}>
+                <div style={{ fontSize: '1.15rem', fontWeight: 600, marginTop: '8px', fontFamily: 'var(--font-heading)', color: '#c7d2fe' }}>
                   {activeModelVersion}
                 </div>
-                <div style={{ marginTop: '6px' }}>
+                <div style={{ marginTop: '6px', display: 'flex', gap: '6px', flexWrap: 'wrap' }}>
                   <span style={{
                     display: 'inline-block',
                     padding: '3px 8px',
@@ -463,7 +479,19 @@ export default function Dashboard() {
                     color: inferenceMode === 'neural' ? '#a5b4fc' : '#6ee7b7',
                     border: inferenceMode === 'neural' ? '1px solid rgba(99, 102, 241, 0.4)' : '1px solid rgba(16, 185, 129, 0.4)'
                   }}>
-                    {inferenceMode === 'neural' ? 'Neural Candidate (Experimental)' : 'Production Heuristic Fallback V2'}
+                    {inferenceMode === 'neural' ? 'Neural Candidate (Experimental)' : 'Production Heuristic V2'}
+                  </span>
+                  <span style={{
+                    display: 'inline-block',
+                    padding: '3px 8px',
+                    borderRadius: '4px',
+                    fontSize: '0.72rem',
+                    fontWeight: 600,
+                    background: rateLimiterStatus?.degraded ? 'rgba(245, 158, 11, 0.2)' : 'rgba(56, 189, 248, 0.15)',
+                    color: rateLimiterStatus?.degraded ? '#fcd34d' : '#7dd3fc',
+                    border: '1px solid rgba(56, 189, 248, 0.35)'
+                  }}>
+                    RL: {rateLimiterStatus?.mode || 'memory_local'}
                   </span>
                 </div>
               </div>
@@ -472,12 +500,13 @@ export default function Dashboard() {
             {/* Quick System Architecture Banner */}
             <div className="glass-panel" style={{ padding: '28px', background: 'linear-gradient(135deg, rgba(99, 102, 241, 0.08) 0%, rgba(6, 182, 212, 0.05) 100%)' }}>
               <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.2rem', marginBottom: '8px' }}>
-                Architecture & Core Research Premise
+                Architecture & Measured System Architecture
               </h2>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.92rem', lineHeight: 1.6, maxWidth: '1000px' }}>
-                Can a 1–3B parameter language model specialized using QLoRA achieve superior multilingual customer-support
-                ticket triage (English, Hindi, Hinglish) with lower latency, lower memory footprint, and ~90% lower operational cost than general-purpose LLMs?
-                NEXUS-SLM executes 4-bit quantized inference natively on edge or entry-tier GPUs while strictly producing validated JSON classifications.
+                NEXUS-SLM classifies support tickets across 14 categories, 4 operational priority levels, and 3 language modalities
+                (English, native Devanagari Hindi, Romanized Hinglish) under deterministic safety escalation gates (`HumanEscalationPolicy`).
+                Live production traffic executes on deterministic Heuristic Fallback V2 while experimental `0.5B` Qwen2.5 neural candidates
+                remain gated pending independent human V2 evaluation (`N &gt;= 300`, currently `PENDING`).
               </p>
               <div style={{ display: 'flex', gap: '16px', marginTop: '20px' }}>
                 <button className="btn-primary" onClick={() => setActiveTab('analyze')}>
@@ -530,7 +559,7 @@ export default function Dashboard() {
 
               <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
                 <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>Offline Air-Gapped</span>
-                <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>10 Categories</span>
+                <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>14 Categories</span>
                 <span className="badge badge-default" style={{ fontSize: '0.7rem' }}>EN / Hinglish / Hindi</span>
               </div>
             </div>
@@ -555,12 +584,33 @@ export default function Dashboard() {
                     Active Version: <strong style={{ color: '#818cf8' }}>{activeModelVersion}</strong>
                   </div>
 
-                  <div style={{ display: 'flex', gap: '8px' }}>
-                    {[
-                      { id: 'nexus-qlora-v1', label: 'nexus-qlora-v1 (Production LoRA)' },
-                      { id: 'baseline-smollm-135m', label: 'baseline-smollm-135m (Base Fallback)' },
-                      { id: 'nexus-qlora-v2', label: 'nexus-qlora-v2 (Retrained QLoRA)' },
-                    ].map((m) => (
+                  <input
+                    type="password"
+                    value={adminToken}
+                    onChange={(e) => setAdminToken(e.target.value)}
+                    placeholder="Bearer NEXUS_ADMIN_KEY"
+                    style={{
+                      padding: '6px 10px',
+                      borderRadius: '6px',
+                      border: '1px solid var(--border-subtle)',
+                      background: 'rgba(255,255,255,0.03)',
+                      color: 'var(--text-primary)',
+                      fontSize: '0.75rem',
+                      width: '185px',
+                    }}
+                  />
+
+                  <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    {(registryModels.length > 0
+                      ? registryModels.slice(0, 4).map((rm) => ({
+                          id: rm.version,
+                          label: `${rm.version} (${rm.deployment_status || rm.status || 'registered'})`,
+                        }))
+                      : [
+                          { id: 'nexus-qlora-v1', label: 'nexus-qlora-v1 (Production Fallback)' },
+                          { id: 'qwen25-05b-clean-v2-lora', label: 'qwen25-05b-clean-v2-lora (Experimental)' },
+                        ]
+                    ).map((m) => (
                       <button
                         key={m.id}
                         onClick={() => handleRollback(m.id)}
@@ -875,23 +925,29 @@ export default function Dashboard() {
                       </div>
                       <div style={{ fontSize: '0.74rem', color: 'var(--text-muted)', marginTop: '4px' }}>
                         {analysisResult.escalation_reason === 'native_hindi_devanagari_unreliable_tokenization' &&
-                          'Policy safeguard: Native Devanagari Hindi text detected. Due to BPE subword token fragmentation on non-Latin script, deterministic safety rules require human review.'}
+                          'Policy safeguard: Native Devanagari Hindi text detected. Safety rules trigger mandatory human escalation.'}
                         {analysisResult.escalation_reason === 'safety_critical_fraud_detection' &&
-                          'Policy safeguard: Zero-tolerance financial security pattern detected. Unauthorized transactions mandate human investigation.'}
-                        {analysisResult.escalation_reason === 'financial_dispute_keyword_match' &&
-                          'Policy safeguard: Double-charge / money deduction dispute detected. Requires human verification before financial adjustments.'}
-                        {analysisResult.escalation_reason === 'account_security_keyword_match' &&
-                          'Policy safeguard: Authentication lockout / MFA failure detected. Account security rules require human routing.'}
-                        {analysisResult.escalation_reason === 'delivery_integrity_compromise' &&
-                          'Policy safeguard: Tampered package, broken seal, or stolen parcel reported. Mandatory physical verification.'}
+                          'Policy safeguard: Unauthorized access or financial fraud detected. Critical escalation enforced.'}
+                        {analysisResult.escalation_reason === 'physical_safety_hazard_detected' &&
+                          'Policy safeguard: Physical hazard (smoke, sparks, fire, electric shock) detected. Critical escalation enforced.'}
+                        {analysisResult.escalation_reason === 'adversarial_prompt_injection_detected' &&
+                          'Policy safeguard: Prompt injection / role hijack pattern detected and quarantined.'}
+                        {analysisResult.escalation_reason === 'high_impact_financial_dispute' &&
+                          'Policy safeguard: Double-charge or unexpected deduction dispute requires human verification.'}
+                        {analysisResult.escalation_reason === 'account_security_lockout' &&
+                          'Policy safeguard: Account lockout / MFA verification failure requires human routing.'}
+                        {analysisResult.escalation_reason === 'delivery_theft_or_tampering' &&
+                          'Policy safeguard: Tampered package, broken seal, or missing contents reported.'}
                         {analysisResult.escalation_reason === 'legal_or_account_closure_action' &&
-                          'Policy safeguard: GDPR / right to erasure / formal account deletion requested. Legal compliance requires human review.'}
+                          'Policy safeguard: GDPR erasure, legal action, or permanent account deletion requested.'}
+                        {analysisResult.escalation_reason === 'confidence_unavailable_conservative_escalation' &&
+                          'Policy safeguard: True class probabilities are unavailable, triggering conservative human review.'}
                         {!analysisResult.requires_human &&
-                          'Standard operational routing: Ticket satisfies automated resolution criteria with no high-risk flags.'}
+                          'Standard operational routing: Routine low/medium ticket satisfies automated resolution criteria.'}
                       </div>
                     </div>
 
-                    {/* Model Confidence & Heuristic Warning Banner */}
+                    {/* Model Confidence & Null-Safe Notice Banner */}
                     <div style={{
                       padding: '12px 16px',
                       borderRadius: '10px',
@@ -905,11 +961,11 @@ export default function Dashboard() {
                         <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
                           <AlertTriangle size={14} color="#f59e0b" />
                           <span style={{ fontSize: '0.78rem', fontWeight: 600, color: '#fde68a' }}>
-                            Model Confidence: {(analysisResult.confidence * 100).toFixed(1)}%
+                            Model Confidence: {analysisResult.confidence != null ? `${(analysisResult.confidence * 100).toFixed(1)}%` : 'Unavailable (No Class Posteriors)'}
                           </span>
                         </div>
                         <span className="badge badge-refund" style={{ fontSize: '0.68rem' }}>
-                          {analysisResult.confidence_status || 'uncalibrated_heuristic'}
+                          {analysisResult.confidence != null ? (analysisResult.confidence_status || 'uncalibrated') : 'unavailable'}
                         </span>
                       </div>
 
@@ -921,14 +977,14 @@ export default function Dashboard() {
                         overflow: 'hidden'
                       }}>
                         <div style={{
-                          width: `${(analysisResult.confidence * 100).toFixed(0)}%`,
+                          width: `${analysisResult.confidence != null ? (analysisResult.confidence * 100).toFixed(0) : 0}%`,
                           height: '100%',
-                          background: analysisResult.confidence > 0.85 ? '#10b981' : '#f59e0b',
+                          background: analysisResult.confidence != null && analysisResult.confidence > 0.85 ? '#10b981' : '#f59e0b',
                         }} />
                       </div>
 
                       <div style={{ fontSize: '0.72rem', color: '#fde68a', lineHeight: 1.4 }}>
-                        <strong>Uncalibrated Heuristic Notice:</strong> Softmax output probability from language head. Does not reflect calibrated Bayesian posterior. Model confidence cannot bypass deterministic human escalation rules.
+                        <strong>Calibration Integrity Notice:</strong> When calibrated multiclass probabilities are absent (e.g., Heuristic V2 or autoregressive text decoding), confidence is emitted cleanly as <code>null</code> and never used to bypass deterministic human safety escalation.
                       </div>
                     </div>
 
@@ -1088,10 +1144,10 @@ export default function Dashboard() {
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '16px' }}>
               <div>
                 <h2 style={{ fontFamily: 'var(--font-heading)', fontSize: '1.35rem', fontWeight: 700 }}>
-                  Model Benchmarks & Efficiency Evaluation Suite
+                  Model Benchmarks & Artifact-Backed Evaluation Suite
                 </h2>
                 <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', marginTop: '4px' }}>
-                  Empirical trade-off evaluation on locked test benchmark (42 samples, SHA-256 verified) across accuracy, latency, memory, and cost.
+                  Live metrics sourced directly from `/evaluation/summary` (`test_clean.jsonl`, `N=746`, `runs_v2.json`, and `runtime_inference_benchmarks_v2.json`).
                 </p>
               </div>
 
@@ -1123,20 +1179,19 @@ export default function Dashboard() {
               </div>
             </div>
 
-            {/* Sub-View 1: Model Comparison (NEXUS-SLM vs Large LLM) */}
+            {/* Sub-View 1: Model Comparison (Live Artifact-Backed Matrix) */}
             {benchmarkSubTab === 'comparison' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                {/* Head-to-Head Comparison Table */}
                 <div className="glass-panel" style={{ padding: '24px' }}>
-                  <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                  <div style={{ marginBottom: '16px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '12px' }}>
                     <div>
-                      <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>NEXUS-SLM vs Large General-Purpose LLM</h3>
+                      <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>Locked Clean Test Benchmark ($N=746$)</h3>
                       <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem' }}>
-                        Locked test set evaluation (42 instances) comparing specialized 135M SLM against cloud LLM APIs.
+                        Reconciled Production Heuristic V2, True Uncontaminated HF Qwen2.5-0.5B LoRA, and Experimental V2 Neural Candidates.
                       </p>
                     </div>
                     <span className="badge badge-default" style={{ fontSize: '0.72rem' }}>
-                      Hash: sha256_edf3fa5c...
+                      Hash: {evalSummary?.heuristic_v2_synthetic?.metadata?.sha256 ? evalSummary.heuristic_v2_synthetic.metadata.sha256.slice(0, 12) + '...' : 'fc65071b...'}
                     </span>
                   </div>
 
@@ -1145,74 +1200,72 @@ export default function Dashboard() {
                       <thead>
                         <tr style={{ borderBottom: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.02)' }}>
                           <th style={{ padding: '12px 16px', color: 'var(--text-muted)', fontWeight: 600 }}>Metric</th>
-                          <th style={{ padding: '12px 16px', color: 'var(--text-muted)', fontWeight: 600 }}>Zero-Shot Base SLM</th>
-                          <th style={{ padding: '12px 16px', color: '#818cf8', fontWeight: 700 }}>NEXUS-SLM-135M-LoRA</th>
-                          <th style={{ padding: '12px 16px', color: 'var(--text-muted)', fontWeight: 600 }}>Large LLM (GPT-4o / Claude)</th>
-                          <th style={{ padding: '12px 16px', color: 'var(--text-muted)', fontWeight: 600 }}>Status / Measurement</th>
+                          <th style={{ padding: '12px 16px', color: '#34d399', fontWeight: 600 }}>Heuristic V2 (Prod)</th>
+                          <th style={{ padding: '12px 16px', color: '#fbbf24', fontWeight: 600 }}>Qwen LoRA (True Base)</th>
+                          <th style={{ padding: '12px 16px', color: '#818cf8', fontWeight: 700 }}>Best V2 Neural (Exp)</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {[
-                          { metric: 'Category Macro-F1', base: '0.0000', nexus: '0.4089 (40.89%)', large: '—', status: 'Measured (Local CPU)' },
-                          { metric: 'Weighted-F1', base: '0.0000', nexus: '0.4089 (40.89%)', large: '—', status: 'Measured (Local CPU)' },
-                          { metric: 'Category Accuracy', base: '0.0000', nexus: '0.4286 (42.86%)', large: '—', status: 'Measured (Local CPU)' },
-                          { metric: 'Priority Accuracy', base: '0.0000', nexus: '0.4762 (47.62%)', large: '—', status: 'Measured (Local CPU)' },
-                          { metric: 'Priority F1', base: '0.0000', nexus: '0.2739 (27.39%)', large: '—', status: 'Measured (Local CPU)' },
-                          { metric: 'Language Accuracy', base: '0.0000', nexus: '0.9524 (95.24%)', large: '—', status: 'Measured (Local CPU)' },
-                          { metric: 'Human Escalation F1', base: '0.6190', nexus: '0.5952 (59.52%)', large: '—', status: 'Measured (Local CPU)' },
-                          { metric: 'JSON Validity Rate', base: '0.0000', nexus: '0.9762 (97.62%)', large: '—', status: 'Measured (Local CPU)' },
-                          { metric: 'Exact Match Accuracy', base: '0.0000', nexus: '0.0714 (7.14%)', large: '—', status: 'Measured (Local CPU)' },
-                          { metric: 'P50 Request Latency', base: '4,888 ms', nexus: '1,204.5 ms', large: '—', status: 'Measured (12-thread CPU)' },
-                          { metric: 'P95 Request Latency', base: '5,396 ms', nexus: '1,306.5 ms', large: '—', status: 'Measured (12-thread CPU)' },
-                          { metric: 'Model Parameters', base: '516.6 MB', nexus: '516.6 MB', large: 'UNAVAILABLE (Cloud)', status: 'Measured Footprint' },
-                          { metric: 'Cost / 1K Requests', base: '$0.0058', nexus: '$0.0058', large: '$0.0450 (GPT-4o-mini)', status: '87.3% Lower Cost' },
-                          { metric: 'Local / Offline Capable', base: 'Yes', nexus: 'Yes', large: 'No (Cloud Required)', status: 'Air-Gapped Privacy' },
-                        ].map((r, idx) => (
-                          <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                            <td style={{ padding: '10px 16px', fontWeight: 600 }}>{r.metric}</td>
-                            <td style={{ padding: '10px 16px', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{r.base}</td>
-                            <td style={{ padding: '10px 16px', fontFamily: 'var(--font-mono)', color: '#c7d2fe', fontWeight: 600 }}>{r.nexus}</td>
-                            <td style={{ padding: '10px 16px', fontFamily: 'var(--font-mono)', color: 'var(--text-faint)' }}>{r.large}</td>
-                            <td style={{ padding: '10px 16px', fontSize: '0.78rem', color: 'var(--text-muted)' }}>{r.status}</td>
-                          </tr>
-                        ))}
+                        {(() => {
+                          const hv2 = evalSummary?.heuristic_v2_synthetic;
+                          const qtb = evalSummary?.qwen_true_base;
+                          const runs = evalSummary?.experiments_v2?.runs || [];
+                          const bestId = evalSummary?.experiments_v2?.selected_best_val_experiment;
+                          const bestRun = runs.find((r: any) => r.experiment_id === bestId)?.locked_test_clean || runs[runs.length - 1]?.locked_test_clean;
+                          const pct = (v: any) => (v != null ? `${(v * 100).toFixed(2)}%` : '—');
+                          const num = (v: any) => (v != null ? Number(v).toFixed(4) : '—');
+                          return [
+                            { metric: 'Category Accuracy', h: pct(hv2?.category_metrics?.accuracy), q: pct(qtb?.raw_model_metrics?.category?.accuracy), v2: pct(bestRun?.raw_category?.accuracy) },
+                            { metric: 'Category Macro-F1', h: num(hv2?.category_metrics?.macro_f1), q: num(qtb?.raw_model_metrics?.category?.macro_f1), v2: num(bestRun?.raw_category?.macro_f1) },
+                            { metric: 'Priority Accuracy', h: pct(hv2?.priority_metrics?.accuracy), q: pct(qtb?.raw_model_metrics?.priority?.accuracy), v2: pct(bestRun?.raw_priority?.accuracy) },
+                            { metric: 'Priority Macro-F1', h: num(hv2?.priority_metrics?.macro_f1), q: num(qtb?.raw_model_metrics?.priority?.macro_f1), v2: num(bestRun?.raw_priority?.macro_f1) },
+                            { metric: 'Language Accuracy', h: pct(hv2?.language_metrics?.overall_accuracy), q: pct(qtb?.raw_model_metrics?.language?.accuracy), v2: pct(bestRun?.raw_language?.accuracy) },
+                            { metric: 'Critical Priority Recall', h: pct(hv2?.critical_safety_metrics?.critical_recall), q: pct(qtb?.policy_applied_metrics?.escalation?.critical_recall), v2: pct(bestRun?.safety_policy?.critical_recall) },
+                            { metric: 'Overall Escalation Rate', h: pct(hv2?.escalation_metrics?.overall_escalation_rate), q: pct(qtb?.policy_applied_metrics?.escalation?.overall_escalation_rate), v2: pct(bestRun?.safety_policy?.overall_escalation_rate) },
+                            { metric: 'Independent Human V2 Status', h: evalSummary?.human_eval_v2_status?.status || 'PENDING', q: evalSummary?.human_eval_v2_status?.status || 'PENDING', v2: evalSummary?.experiments_v2?.promotion_decision || 'EXPERIMENTAL' },
+                          ].map((r, idx) => (
+                            <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                              <td style={{ padding: '10px 16px', fontWeight: 600 }}>{r.metric}</td>
+                              <td style={{ padding: '10px 16px', fontFamily: 'var(--font-mono)', color: '#6ee7b7' }}>{r.h}</td>
+                              <td style={{ padding: '10px 16px', fontFamily: 'var(--font-mono)', color: '#fde68a' }}>{r.q}</td>
+                              <td style={{ padding: '10px 16px', fontFamily: 'var(--font-mono)', color: '#c7d2fe', fontWeight: 600 }}>{r.v2}</td>
+                            </tr>
+                          ));
+                        })()}
                       </tbody>
                     </table>
                   </div>
 
                   <div style={{ marginTop: '16px', padding: '12px 16px', borderRadius: '8px', background: 'rgba(234,179,8,0.08)', border: '1px solid rgba(234,179,8,0.25)', fontSize: '0.82rem', color: '#fef08a' }}>
-                    <strong>Adapter Diagnostic Notice:</strong> Large LLM Benchmark Adapter is verified and configured for OpenAI, Gemini, Anthropic, and Groq. In offline environment without external API keys, execution is cleanly marked <em>NOT RUN (API Key Missing)</em> to preserve absolute zero-fabrication integrity.
+                    <strong>Governance & Integrity Notice:</strong> Independent Human Eval V2 (`N &gt;= 300`, `data/human_eval_v2/`) status is <strong>{evalSummary?.human_eval_v2_status?.status || 'PENDING'}</strong> ({evalSummary?.human_eval_v2_status?.counts?.sealed_final_eval_ready ?? 0}/300 ready). Historical `184` scenarios remain classified as development-exposed.
                   </div>
                 </div>
 
-                {/* Language Parity Breakdown */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
+                {/* Language Breakdown & Class Collapses */}
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '20px' }}>
                   <div className="glass-panel" style={{ padding: '24px' }}>
                     <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '12px' }}>
-                      Language Modality Parity
+                      Multilingual Breakdown (`N=746`, EN 246 / HI 178 / Hinglish 322)
                     </h3>
                     <div style={{ overflowX: 'auto' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
                         <thead>
                           <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
                             <th style={{ padding: '8px', textAlign: 'left', color: 'var(--text-muted)' }}>Language</th>
-                            <th style={{ padding: '8px', textAlign: 'center', color: '#818cf8' }}>NEXUS-SLM Acc</th>
-                            <th style={{ padding: '8px', textAlign: 'center', color: 'var(--text-muted)' }}>Macro-F1</th>
-                            <th style={{ padding: '8px', textAlign: 'center', color: 'var(--text-muted)' }}>Large LLM</th>
+                            <th style={{ padding: '8px', textAlign: 'center', color: '#34d399' }}>Heuristic Lang Acc</th>
+                            <th style={{ padding: '8px', textAlign: 'center', color: '#fde68a' }}>True Qwen Cat Acc</th>
                           </tr>
                         </thead>
                         <tbody>
                           {[
-                            { lang: 'English', acc: '57.14%', f1: '0.5429', large: '—' },
-                            { lang: 'Hinglish (Code-Switched)', acc: '57.14%', f1: '0.5429', large: '—' },
-                            { lang: 'Roman Hindi', acc: '35.71%', f1: '0.3390', large: '—' },
-                            { lang: 'Hindi (Devanagari)', acc: '14.29%', f1: '0.1429', large: '—' },
+                            { lang: 'English (N=246)', h: evalSummary?.heuristic_v2_synthetic?.language_metrics?.breakdown?.english?.accuracy, q: evalSummary?.qwen_true_base?.language_breakdown?.english?.raw_category_accuracy },
+                            { lang: 'Hindi Devanagari (N=178)', h: evalSummary?.heuristic_v2_synthetic?.language_metrics?.breakdown?.hindi?.accuracy, q: evalSummary?.qwen_true_base?.language_breakdown?.hindi?.raw_category_accuracy },
+                            { lang: 'Hinglish Roman (N=322)', h: evalSummary?.heuristic_v2_synthetic?.language_metrics?.breakdown?.hinglish?.accuracy, q: evalSummary?.qwen_true_base?.language_breakdown?.hinglish?.raw_category_accuracy },
                           ].map((l, i) => (
                             <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                               <td style={{ padding: '10px 8px', fontWeight: 500 }}>{l.lang}</td>
-                              <td style={{ padding: '10px 8px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#a5f3fc', fontWeight: 600 }}>{l.acc}</td>
-                              <td style={{ padding: '10px 8px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{l.f1}</td>
-                              <td style={{ padding: '10px 8px', textAlign: 'center', color: 'var(--text-faint)' }}>{l.large}</td>
+                              <td style={{ padding: '10px 8px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#6ee7b7' }}>{l.h != null ? `${(l.h * 100).toFixed(2)}%` : '—'}</td>
+                              <td style={{ padding: '10px 8px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#fde68a', fontWeight: 600 }}>{l.q != null ? `${(l.q * 100).toFixed(2)}%` : '—'}</td>
                             </tr>
                           ))}
                         </tbody>
@@ -1220,59 +1273,65 @@ export default function Dashboard() {
                     </div>
                   </div>
 
-                  {/* Category Strengths & Confusion Pairs */}
+                  {/* Category Weaknesses from Neural Error Taxonomy */}
                   <div className="glass-panel" style={{ padding: '24px' }}>
                     <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '12px' }}>
-                      Category Performance & Confusions
+                      Forensic Error Modes (`neural_error_taxonomy_v2.json`)
                     </h3>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.82rem' }}>
-                      <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}>
-                        <span style={{ color: '#34d399', fontWeight: 700 }}>NEXUS-SLM Strengths:</span>
-                        <div style={{ marginTop: '4px', color: '#e2e8f0' }}>payment_issue (F1=0.769), technical_support (F1=0.667), cancellation (F1=0.571)</div>
-                      </div>
                       <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(239,68,68,0.08)', border: '1px solid rgba(239,68,68,0.2)' }}>
-                        <span style={{ color: '#f87171', fontWeight: 700 }}>NEXUS-SLM Weaknesses:</span>
-                        <div style={{ marginTop: '4px', color: '#e2e8f0' }}>refund_request (F1=0.000), delivery_delay (F1=0.222)</div>
+                        <span style={{ color: '#f87171', fontWeight: 700 }}>True-Base Qwen LoRA Collapses (14-class Taxonomy):</span>
+                        <div style={{ marginTop: '4px', color: '#e2e8f0' }}>general_query (F1=0.0000), product_complaint (F1=0.0000), Hindi cat accuracy (20.79%)</div>
                       </div>
-                      <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
-                        <span style={{ color: '#93c5fd', fontWeight: 700 }}>Top Confused Category Pairs:</span>
-                        <div style={{ marginTop: '4px', color: 'var(--text-muted)' }}>1. refund_request ↔ cancellation | 2. delivery_delay ↔ tracking_query</div>
+                      <div style={{ padding: '10px 14px', borderRadius: '8px', background: 'rgba(16,185,129,0.08)', border: '1px solid rgba(16,185,129,0.2)' }}>
+                        <span style={{ color: '#34d399', fontWeight: 700 }}>Multiclass Calibration (V2 Hybrid Head vs Generative Token Prob):</span>
+                        <div style={{ marginTop: '4px', color: '#e2e8f0' }}>
+                          {evalSummary?.calibration_v2
+                            ? `Calibrated ECE=${evalSummary.calibration_v2.locked_test_temperature_scaled?.ece}, Brier=${evalSummary.calibration_v2.locked_test_temperature_scaled?.brier_score} (T=${evalSummary.calibration_v2.fitted_scalar_temperature})`
+                            : 'Load calibration summary via /evaluation/summary'}
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
 
-                {/* Robustness Degradation Table */}
+                {/* Multilingual Language Breakdown & Perturbation Summary */}
                 <div className="glass-panel" style={{ padding: '24px' }}>
-                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '12px' }}>
-                    Robustness & Real-World Perturbation Degradation
+                  <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '6px' }}>
+                    Multilingual Coverage & Safety Audit Summary
                   </h3>
+                  <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginBottom: '14px' }}>
+                    Live language breakdowns from Policy V3 / Hardened Multilingual Audit (`multilingual_and_safety_audit_v3.json`), falling back to Heuristic V2 locked synthetic breakdown when audit JSON is absent.
+                  </p>
                   <div style={{ overflowX: 'auto' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
                       <thead>
                         <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                          <th style={{ padding: '10px', textAlign: 'left', color: 'var(--text-muted)' }}>Perturbation Modality</th>
-                          <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>Clean Accuracy</th>
-                          <th style={{ padding: '10px', textAlign: 'center', color: '#818cf8' }}>Robust Accuracy</th>
-                          <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>Degradation Rate</th>
-                          <th style={{ padding: '10px', textAlign: 'left', color: 'var(--text-muted)' }}>Observed Behavior</th>
+                          <th style={{ padding: '10px', textAlign: 'left', color: 'var(--text-muted)' }}>Segment / Language</th>
+                          <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>Samples</th>
+                          <th style={{ padding: '10px', textAlign: 'center', color: '#818cf8' }}>Category / Lang Acc</th>
+                          <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>Macro-F1 / Notes</th>
                         </tr>
                       </thead>
                       <tbody>
-                        {[
-                          { mod: 'Normal English', clean: '57.14%', rob: '57.14%', deg: '0.00%', note: 'Standard syntactic phrasing baseline' },
-                          { mod: 'Hinglish Colloquial', clean: '57.14%', rob: '57.14%', deg: '0.00%', note: 'Zero degradation; robust Romanized code-switching' },
-                          { mod: 'Noisy Punctuation (????/!!!!)', clean: '42.86%', rob: '42.86%', deg: '0.00%', note: 'Resilient against punctuation bursts' },
-                          { mod: 'Typos & Misspellings', clean: '42.86%', rob: '38.10%', deg: '-4.76%', note: 'Subword tokenizer buffers minor typos' },
-                          { mod: 'Short Inputs (<5 words)', clean: '42.86%', rob: '28.57%', deg: '-14.29%', note: 'Context sparsity leads to generic intent confusion' },
-                          { mod: 'Devanagari Hindi Script', clean: '42.86%', rob: '14.29%', deg: '-28.57%', note: 'SmolLM BPE byte fragmentation breaks representations' },
-                        ].map((r, i) => (
+                        {(evalSummary?.multilingual_safety_v3?.multilingual_end_to_end?.heuristic_summary
+                          ? Object.entries(evalSummary.multilingual_safety_v3.multilingual_end_to_end.heuristic_summary).map(([langKey, s]: any) => ({
+                              seg: `Heuristic V3 Hardened (${langKey.toUpperCase()})`,
+                              n: s.count ?? '—',
+                              acc: s.category_accuracy != null ? `${(s.category_accuracy * 100).toFixed(2)}%` : '—',
+                              note: `Lang ID ${(s.language_detection_accuracy * 100).toFixed(1)}% • Escalation Agreement ${(s.escalation_agreement * 100).toFixed(1)}%`,
+                            }))
+                          : [
+                              { seg: 'English (Locked Test)', n: evalSummary?.heuristic_v2_synthetic?.language_metrics?.breakdown?.english?.support ?? '—', acc: evalSummary?.heuristic_v2_synthetic?.language_metrics?.breakdown?.english?.accuracy != null ? `${(evalSummary.heuristic_v2_synthetic.language_metrics.breakdown.english.accuracy * 100).toFixed(2)}%` : '—', note: 'Heuristic V2 Reference (Lang Acc)' },
+                              { seg: 'Hinglish (Locked Test)', n: evalSummary?.heuristic_v2_synthetic?.language_metrics?.breakdown?.hinglish?.support ?? '—', acc: evalSummary?.heuristic_v2_synthetic?.language_metrics?.breakdown?.hinglish?.accuracy != null ? `${(evalSummary.heuristic_v2_synthetic.language_metrics.breakdown.hinglish.accuracy * 100).toFixed(2)}%` : '—', note: 'Heuristic V2 Reference (Lang Acc)' },
+                              { seg: 'Hindi Devanagari (Locked Test)', n: evalSummary?.heuristic_v2_synthetic?.language_metrics?.breakdown?.hindi?.support ?? '—', acc: evalSummary?.heuristic_v2_synthetic?.language_metrics?.breakdown?.hindi?.accuracy != null ? `${(evalSummary.heuristic_v2_synthetic.language_metrics.breakdown.hindi.accuracy * 100).toFixed(2)}%` : '—', note: 'Mandated human escalation by policy' },
+                            ]
+                        ).map((r: any, i: number) => (
                           <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                            <td style={{ padding: '10px', fontWeight: 600 }}>{r.mod}</td>
-                            <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{r.clean}</td>
-                            <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#c7d2fe', fontWeight: 600 }}>{r.rob}</td>
-                            <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: r.deg === '0.00%' ? '#34d399' : '#f87171' }}>{r.deg}</td>
-                            <td style={{ padding: '10px', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{r.note}</td>
+                            <td style={{ padding: '10px', fontWeight: 600 }}>{r.seg}</td>
+                            <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{r.n}</td>
+                            <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#c7d2fe', fontWeight: 600 }}>{r.acc}</td>
+                            <td style={{ padding: '10px', textAlign: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>{r.note}</td>
                           </tr>
                         ))}
                       </tbody>
@@ -1282,24 +1341,26 @@ export default function Dashboard() {
               </div>
             )}
 
-            {/* Sub-View 2: Quantization Benchmark */}
+            {/* Sub-View 2: Quantization & Runtime Formats Benchmark */}
             {benchmarkSubTab === 'quantization' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                 <div className="glass-panel" style={{ padding: '24px' }}>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '6px' }}>
-                    Precision Formats Benchmark: FP32 vs INT8 vs Hardware Limits
+                    Runtime & Precision Formats Benchmark (V2 Live Suite + Archived V1 Reference)
                   </h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginBottom: '18px' }}>
-                    Evaluating compression vs accuracy trade-offs across supported inference precision formats on host CPU.
+                    {evalSummary?.runtime_benchmarks_v2
+                      ? 'Measured current runtimes across Heuristic, GGUF Q4_K_M/Q8_0, ONNX INT8, and V2 PyTorch Head.'
+                      : 'Loading current V2 runtime benchmark suite; table also displays archived Oct 2026 SmolLM-135M (42-sample) baseline metrics where V2 is pending.'}
                   </p>
 
                   <div style={{ overflowX: 'auto', marginBottom: '24px' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', fontSize: '0.88rem' }}>
                       <thead>
                         <tr style={{ borderBottom: '1px solid var(--border-subtle)', background: 'rgba(255,255,255,0.02)' }}>
-                          <th style={{ padding: '12px', color: 'var(--text-muted)' }}>Precision</th>
-                          <th style={{ padding: '12px', textAlign: 'center', color: 'var(--text-muted)' }}>Model Size</th>
-                          <th style={{ padding: '12px', textAlign: 'center', color: '#818cf8' }}>Macro-F1</th>
+                          <th style={{ padding: '12px', color: 'var(--text-muted)' }}>Runtime / Precision</th>
+                          <th style={{ padding: '12px', textAlign: 'center', color: 'var(--text-muted)' }}>Artifact Size</th>
+                          <th style={{ padding: '12px', textAlign: 'center', color: '#818cf8' }}>Macro-F1 / Notes</th>
                           <th style={{ padding: '12px', textAlign: 'center', color: 'var(--text-muted)' }}>JSON Validity</th>
                           <th style={{ padding: '12px', textAlign: 'center', color: 'var(--text-muted)' }}>P95 Latency</th>
                           <th style={{ padding: '12px', textAlign: 'center', color: 'var(--text-muted)' }}>Throughput</th>
@@ -1307,12 +1368,43 @@ export default function Dashboard() {
                         </tr>
                       </thead>
                       <tbody>
-                        {[
-                          { prec: 'FP32 (Baseline)', size: '516.6 MB', f1: '0.4089', valid: '97.62%', p95: '1,324.7 ms', tp: '0.82 req/s', status: 'PRODUCTION', badge: 'badge-low' },
-                          { prec: 'INT8 (Dynamic Linear)', size: '108.1 MB', f1: '0.0944', valid: '40.48%', p95: '2,005.5 ms', tp: '0.70 req/s', status: 'EXPERIMENTAL', badge: 'badge-medium' },
-                          { prec: 'FP16 / BF16', size: '257.5 MB', f1: '—', valid: '—', p95: '—', tp: '—', status: 'UNSUPPORTED (CPU)', badge: 'badge-default' },
-                          { prec: 'INT4 (NF4 BitsAndBytes)', size: '135.0 MB', f1: '—', valid: '—', p95: '—', tp: '—', status: 'UNSUPPORTED (CUDA)', badge: 'badge-default' },
-                        ].map((q, idx) => (
+                        {(evalSummary?.runtime_benchmarks_v2?.benchmarks
+                          ? evalSummary.runtime_benchmarks_v2.benchmarks.map((b: any) => {
+                              const acc = b.probe_cat_accuracy_v2 ?? b.probe_cat_accuracy ?? b.probe_cat_accuracy_seed42;
+                              return {
+                                prec: b.runtime || b.runtime_name || b.id,
+                                size: b.weight_disk_mb != null ? `${Number(b.weight_disk_mb).toFixed(1)} MB` : (b.artifact_size_mb != null ? `${Number(b.artifact_size_mb).toFixed(1)} MB` : 'N/A'),
+                                f1: acc != null ? `Acc ${(acc * 100).toFixed(1)}% (n=${b.probe_n ?? '?'})` : (b.status || b.note || 'Benchmarked'),
+                                valid: b.json_validity_rate != null ? `${(b.json_validity_rate * 100).toFixed(1)}%` : '—',
+                                p95: b.latency_p95_ms != null ? `${Number(b.latency_p95_ms).toFixed(2)} ms` : '—',
+                                tp: b.throughput_req_per_sec != null ? `${Number(b.throughput_req_per_sec).toFixed(2)} req/s` : '—',
+                                status: b.status || (b.runtime?.includes('heuristic') ? 'PRODUCTION' : 'MEASURED'),
+                                badge: b.status === 'ERROR' || b.status === 'MISSING' ? 'badge-critical' : (b.runtime?.includes('heuristic') ? 'badge-low' : 'badge-medium'),
+                              };
+                            })
+                          : [
+                              ...(quantizationData?.formats_benchmarked || []).map((f: any) => ({
+                                prec: `${f.precision} (Archived SmolLM V1)`,
+                                size: f.model_size_mb != null ? `${f.model_size_mb} MB` : '—',
+                                f1: f.macro_f1 != null ? f.macro_f1.toFixed(4) : '—',
+                                valid: f.json_validity_rate != null ? `${(f.json_validity_rate * 100).toFixed(2)}%` : '—',
+                                p95: f.latency_p95_ms != null ? `${f.latency_p95_ms} ms` : '—',
+                                tp: f.throughput_req_per_sec != null ? `${f.throughput_req_per_sec} req/s` : '—',
+                                status: 'ARCHIVED_V1',
+                                badge: 'badge-default',
+                              })),
+                              ...(quantizationData?.hardware_limited_formats || []).map((f: any) => ({
+                                prec: f.precision,
+                                size: f.model_size_mb != null ? `${f.model_size_mb} MB` : '—',
+                                f1: '—',
+                                valid: '—',
+                                p95: '—',
+                                tp: '—',
+                                status: f.status || 'UNSUPPORTED_ON_CPU',
+                                badge: 'badge-default',
+                              })),
+                            ]
+                        ).map((q: any, idx: number) => (
                           <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
                             <td style={{ padding: '12px', fontWeight: 600 }}>{q.prec}</td>
                             <td style={{ padding: '12px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>{q.size}</td>
@@ -1328,174 +1420,88 @@ export default function Dashboard() {
                       </tbody>
                     </table>
                   </div>
-
-                  {/* Visual Chart & Findings */}
-                  <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '24px', alignItems: 'center' }}>
-                    <div style={{ textAlign: 'center' }}>
-                      <img
-                        src="/api/backend/artifacts/quantization_comparison.png"
-                        alt="Quantization Comparison Chart"
-                        style={{ maxWidth: '100%', borderRadius: '12px', border: '1px solid var(--border-subtle)', boxShadow: '0 8px 30px rgba(0,0,0,0.4)' }}
-                        onError={(e: any) => { e.target.style.display = 'none'; }}
-                      />
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '0.84rem' }}>
-                      <div style={{ padding: '14px', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
-                        <strong style={{ color: '#818cf8' }}>1. Dynamic INT8 Regression:</strong>
-                        <p style={{ marginTop: '4px', color: 'var(--text-muted)' }}>
-                          INT8 compressed weights by 4.8x (108 MB), but degraded Macro-F1 to 0.0944 and JSON validity to 40.5% due to activation quantization sensitivity in small 135M architectures. P95 latency also increased due to CPU dequantization overhead.
-                        </p>
-                      </div>
-                      <div style={{ padding: '14px', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
-                        <strong style={{ color: '#38bdf8' }}>2. Production Verdict:</strong>
-                        <p style={{ marginTop: '4px', color: 'var(--text-muted)' }}>
-                          FP32 remains the recommended production deployment format on CPU, preserving 97.6% JSON validity and 1,324 ms P95 latency within 516 MB memory footprint.
-                        </p>
-                      </div>
-                    </div>
-                  </div>
                 </div>
               </div>
             )}
 
-            {/* Sub-View 3: Latency & Efficiency & Memory */}
+            {/* Sub-View 3: Latency & Live HTTP Concurrency */}
             {benchmarkSubTab === 'efficiency' && (
               <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                {/* Latency Phase Decomposition */}
                 <div className="glass-panel" style={{ padding: '24px' }}>
                   <h3 style={{ fontSize: '1.1rem', fontWeight: 600, marginBottom: '6px' }}>
-                    Detailed Inference Latency Decomposition
+                    Latency & Concurrency Profile (Production Heuristic V2 vs Archived V1 SmolLM Baseline)
                   </h3>
                   <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginBottom: '18px' }}>
-                    Decomposing one-time cold initialization, prompt tokenization, autoregressive generation, and output validation.
+                    Live HTTP concurrency metrics sourced from `distributed_reliability_live_audit.json`; heuristic direct-call SLA from `eval_synthetic_test_refined_v2.json`.
                   </p>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px', marginBottom: '24px' }}>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '16px', marginBottom: '24px' }}>
                     <div style={{ padding: '16px', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
-                      <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Cold Model Load</span>
-                      <div style={{ fontSize: '1.4rem', fontWeight: 700, marginTop: '4px', color: '#c7d2fe' }}>1,654.8 ms</div>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--text-faint)' }}>One-time initialization</span>
+                      <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Heuristic V2 Direct P50</span>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 700, marginTop: '4px', color: '#34d399' }}>
+                        {evalSummary?.heuristic_v2_synthetic?.latency_ms?.p50 != null ? `${evalSummary.heuristic_v2_synthetic.latency_ms.p50.toFixed(4)} ms` : '—'}
+                      </div>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-faint)' }}>Refined V2 direct call</span>
                     </div>
                     <div style={{ padding: '16px', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
-                      <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>P50 Request Latency</span>
-                      <div style={{ fontSize: '1.4rem', fontWeight: 700, marginTop: '4px', color: '#38bdf8' }}>1,204.5 ms</div>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--text-faint)' }}>Median inference response</span>
+                      <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Heuristic V2 Direct P95</span>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 700, marginTop: '4px', color: '#38bdf8' }}>
+                        {evalSummary?.heuristic_v2_synthetic?.latency_ms?.p95 != null ? `${evalSummary.heuristic_v2_synthetic.latency_ms.p95.toFixed(4)} ms` : '—'}
+                      </div>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-faint)' }}>Refined V2 N=746</span>
                     </div>
                     <div style={{ padding: '16px', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
-                      <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>P95 Request Latency</span>
-                      <div style={{ fontSize: '1.4rem', fontWeight: 700, marginTop: '4px', color: '#818cf8' }}>1,306.5 ms</div>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--text-faint)' }}>95th percentile SLA</span>
+                      <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Archived V1 SmolLM P95</span>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 700, marginTop: '4px', color: '#c7d2fe' }}>
+                        {latencyData?.total_request_latency?.p95_ms != null ? `${latencyData.total_request_latency.p95_ms} ms` : '—'}
+                      </div>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-faint)' }}>Historical Oct 2026 (N=42)</span>
                     </div>
                     <div style={{ padding: '16px', borderRadius: '10px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
-                      <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Generation Speed</span>
-                      <div style={{ fontSize: '1.4rem', fontWeight: 700, marginTop: '4px', color: '#34d399' }}>23.63 tps</div>
-                      <span style={{ fontSize: '0.72rem', color: 'var(--text-faint)' }}>Tokens per second on CPU</span>
+                      <span style={{ fontSize: '0.75rem', textTransform: 'uppercase', color: 'var(--text-muted)' }}>Live API Peak Concurrency</span>
+                      <div style={{ fontSize: '1.4rem', fontWeight: 700, marginTop: '4px', color: '#818cf8' }}>
+                        {evalSummary?.distributed_reliability?.live_uvicorn_http_audit?.live_http_concurrency_benchmarks?.length
+                          ? `${evalSummary.distributed_reliability.live_uvicorn_http_audit.live_http_concurrency_benchmarks.slice(-1)[0].throughput_req_per_sec} req/s`
+                          : 'Pending live audit'}
+                      </div>
+                      <span style={{ fontSize: '0.72rem', color: 'var(--text-faint)' }}>Uvicorn HTTP POST /predict</span>
                     </div>
                   </div>
 
-                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '24px', alignItems: 'center' }}>
+                  {/* Live HTTP Concurrency Table */}
+                  {evalSummary?.distributed_reliability?.live_uvicorn_http_audit?.live_http_concurrency_benchmarks && (
                     <div style={{ overflowX: 'auto' }}>
                       <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.85rem' }}>
                         <thead>
                           <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                            <th style={{ padding: '10px', textAlign: 'left', color: 'var(--text-muted)' }}>Inference Phase</th>
-                            <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>P50</th>
-                            <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>P95</th>
-                            <th style={{ padding: '10px', textAlign: 'center', color: '#818cf8' }}>Share (%)</th>
+                            <th style={{ padding: '10px', textAlign: 'left', color: 'var(--text-muted)' }}>Concurrency</th>
+                            <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>Requests</th>
+                            <th style={{ padding: '10px', textAlign: 'center', color: '#818cf8' }}>Throughput</th>
+                            <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>HTTP P50</th>
+                            <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>HTTP P95</th>
+                            <th style={{ padding: '10px', textAlign: 'center', color: 'var(--text-muted)' }}>Errors</th>
                           </tr>
                         </thead>
                         <tbody>
-                          {[
-                            { phase: 'Prompt Tokenization', p50: '0.80 ms', p95: '0.98 ms', share: '0.07%' },
-                            { phase: 'Autoregressive Generation', p50: '1,203.5 ms', p95: '1,305.8 ms', share: '99.92%' },
-                            { phase: 'JSON Parsing & Validation', p50: '0.10 ms', p95: '0.13 ms', share: '0.01%' },
-                          ].map((p, idx) => (
-                            <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                              <td style={{ padding: '10px', fontWeight: 600 }}>{p.phase}</td>
-                              <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>{p.p50}</td>
-                              <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>{p.p95}</td>
-                              <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#a5f3fc', fontWeight: 600 }}>{p.share}</td>
-                            </tr>
-                          ))}
+                          {evalSummary.distributed_reliability.live_uvicorn_http_audit.live_http_concurrency_benchmarks.map((row: any, i: number) => {
+                            const reqCount = row.requests ?? row.total_requests ?? 0;
+                            const okCount = row.status_counts?.['200'] ?? row.status_counts?.[200] ?? reqCount;
+                            const errCount = row.failed_requests ?? Math.max(0, reqCount - okCount);
+                            return (
+                              <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
+                                <td style={{ padding: '10px', fontWeight: 600 }}>{row.concurrency} concurrent</td>
+                                <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>{reqCount}</td>
+                                <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#a5f3fc', fontWeight: 600 }}>{row.throughput_req_per_sec} req/s</td>
+                                <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>{row.latency_p50_ms ?? row.p50_ms} ms</td>
+                                <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>{row.latency_p95_ms ?? row.p95_ms} ms</td>
+                                <td style={{ padding: '10px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>{errCount}</td>
+                              </tr>
+                            );
+                          })}
                         </tbody>
                       </table>
                     </div>
-                    <div style={{ textAlign: 'center' }}>
-                      <img
-                        src="/api/backend/artifacts/latency_distribution.png"
-                        alt="Latency Distribution"
-                        style={{ maxWidth: '100%', borderRadius: '12px', border: '1px solid var(--border-subtle)' }}
-                        onError={(e: any) => { e.target.style.display = 'none'; }}
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                {/* Resident Memory & Concurrency Benchmarks */}
-                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px' }}>
-                  {/* Memory Profile */}
-                  <div className="glass-panel" style={{ padding: '24px' }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '14px' }}>
-                      Resident Memory Allocation (RAM / VRAM)
-                    </h3>
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '0.85rem' }}>
-                      {[
-                        { label: 'Python Runtime Baseline', val: '386.8 MB' },
-                        { label: 'Model Parameters (FP32)', val: '516.6 MB' },
-                        { label: 'Idle Resident Footprint', val: '953.3 MB' },
-                        { label: 'Dynamic KV-Cache Activation', val: '28.9 MB' },
-                        { label: 'Peak Inference RAM', val: '982.2 MB' },
-                        { label: 'GPU VRAM Allocation', val: '0.0 MB (Pure CPU)' },
-                      ].map((m, i) => (
-                        <div key={i} style={{ display: 'flex', justifyContent: 'space-between', padding: '10px 14px', borderRadius: '8px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
-                          <span style={{ color: 'var(--text-muted)' }}>{m.label}</span>
-                          <span style={{ fontFamily: 'var(--font-mono)', fontWeight: 600, color: '#c7d2fe' }}>{m.val}</span>
-                        </div>
-                      ))}
-                    </div>
-                  </div>
-
-                  {/* Concurrency Throughput Saturation */}
-                  <div className="glass-panel" style={{ padding: '24px' }}>
-                    <h3 style={{ fontSize: '1rem', fontWeight: 600, marginBottom: '14px' }}>
-                      Concurrency & Saturation Scaling
-                    </h3>
-                    <div style={{ overflowX: 'auto', marginBottom: '14px' }}>
-                      <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: '0.82rem' }}>
-                        <thead>
-                          <tr style={{ borderBottom: '1px solid var(--border-subtle)' }}>
-                            <th style={{ padding: '6px', textAlign: 'center', color: 'var(--text-muted)' }}>Workers</th>
-                            <th style={{ padding: '6px', textAlign: 'center', color: '#818cf8' }}>Throughput</th>
-                            <th style={{ padding: '6px', textAlign: 'center', color: 'var(--text-muted)' }}>P95 Latency</th>
-                            <th style={{ padding: '6px', textAlign: 'center', color: 'var(--text-muted)' }}>Peak RAM</th>
-                          </tr>
-                        </thead>
-                        <tbody>
-                          {[
-                            { w: '1 Worker', tp: '0.81 req/s', p95: '1,350.6 ms', ram: '1,004 MB' },
-                            { w: '4 Workers', tp: '0.81 req/s', p95: '5,267.5 ms', ram: '1,078 MB' },
-                            { w: '8 Workers', tp: '0.71 req/s', p95: '12,086.1 ms', ram: '1,167 MB' },
-                            { w: '16 Workers', tp: '0.63 req/s', p95: '25,546.3 ms', ram: '1,304 MB' },
-                          ].map((c, i) => (
-                            <tr key={i} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)' }}>
-                              <td style={{ padding: '8px', textAlign: 'center', fontWeight: 600 }}>{c.w}</td>
-                              <td style={{ padding: '8px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: '#a5f3fc', fontWeight: 600 }}>{c.tp}</td>
-                              <td style={{ padding: '8px', textAlign: 'center', fontFamily: 'var(--font-mono)' }}>{c.p95}</td>
-                              <td style={{ padding: '8px', textAlign: 'center', fontFamily: 'var(--font-mono)', color: 'var(--text-muted)' }}>{c.ram}</td>
-                            </tr>
-                          ))}
-                        </tbody>
-                      </table>
-                    </div>
-                    <div style={{ textAlign: 'center' }}>
-                      <img
-                        src="/api/backend/artifacts/concurrency_throughput.png"
-                        alt="Concurrency Scaling Chart"
-                        style={{ maxWidth: '100%', borderRadius: '8px', border: '1px solid var(--border-subtle)' }}
-                        onError={(e: any) => { e.target.style.display = 'none'; }}
-                      />
-                    </div>
-                  </div>
+                  )}
                 </div>
               </div>
             )}
@@ -1507,11 +1513,11 @@ export default function Dashboard() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '8px' }}>
                     <DollarSign size={20} color="#10b981" />
                     <h3 style={{ fontSize: '1.1rem', fontWeight: 600 }}>
-                      Economic Cost Model & Volume Projections
+                      Modeled Infrastructure Cost Projection (Illustrative Estimate)
                     </h3>
                   </div>
-                  <p style={{ color: 'var(--text-muted)', fontSize: '0.82rem', marginBottom: '20px' }}>
-                    Measured input tokens: 165 | Measured output tokens: 35 | Comparison across self-hosted CPU and cloud providers.
+                  <p style={{ color: '#fbbf24', fontSize: '0.82rem', marginBottom: '20px' }}>
+                    Notice: Analytical cost model using public API list prices and assumed 165 input / 35 output tokens per ticket — NOT live cloud billing receipts. Production Heuristic V2 CPU compute cost per ticket is negligible relative to API token pricing.
                   </p>
 
                   <div style={{ overflowX: 'auto', marginBottom: '28px' }}>
@@ -1901,20 +1907,21 @@ export default function Dashboard() {
                 <div style={{ padding: '16px 20px', borderRadius: '12px', background: 'rgba(99,102,241,0.08)', border: '1px solid rgba(99,102,241,0.3)', marginBottom: '24px', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div>
                     <span style={{ fontSize: '0.78rem', textTransform: 'uppercase', color: 'var(--accent-primary)', fontWeight: 700 }}>
-                      Selected NEXUS-SLM Production Candidate (Group I Decision)
+                      Historical Archive Evaluation Scorecard (Group I)
                     </span>
                     <h3 style={{ fontSize: '1.2rem', fontWeight: 700, marginTop: '4px', color: '#ffffff' }}>
-                      {scorecard?.selected_candidate?.configuration?.model ?? 'SmolLM-135M'} + LoRA (r={scorecard?.selected_candidate?.configuration?.lora_r ?? '16'}, lr={scorecard?.selected_candidate?.configuration?.learning_rate ?? '5e-4'})
+                      {scorecard?.selected_candidate?.configuration?.model ?? 'Loading recorded candidate...'}
+                      {scorecard?.selected_candidate?.configuration?.lora_r ? ` + LoRA (r=${scorecard.selected_candidate.configuration.lora_r})` : ''}
                     </h3>
                     <p style={{ fontSize: '0.82rem', color: 'var(--text-muted)', marginTop: '4px' }}>
-                      {scorecard?.selected_candidate?.decision_rationale ?? 'Highest composite score balancing Macro-F1, strict JSON validity, multilingual parity, and microsecond CPU inference.'}
+                      {scorecard?.selected_candidate?.decision_rationale ?? 'Historical scorecard loaded from experiments/artifacts/evaluation_scorecard.json. Production runtime currently uses Heuristic V2 until neural gates pass.'}
                     </p>
                   </div>
                   <div style={{ textAlign: 'right' }}>
                     <div style={{ fontSize: '1.8rem', fontWeight: 700, color: '#86efac', fontFamily: 'var(--font-mono)' }}>
-                      {scorecard?.selected_candidate?.composite_score?.toFixed(1) ?? '91.8'}/100
+                      {scorecard?.selected_candidate?.composite_score != null ? `${scorecard.selected_candidate.composite_score.toFixed(1)}/100` : '—'}
                     </div>
-                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Composite Score</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>Archived Score</span>
                   </div>
                 </div>
 
@@ -2051,10 +2058,11 @@ export default function Dashboard() {
                   </thead>
                   <tbody>
                     {registryModels.map((m, idx) => {
-                      const stage = m.status || m.lifecycle_stage || 'candidate';
-                      const badgeClass = stage === 'production' ? 'badge-low' : stage === 'experimental' ? 'badge-medium' : 'badge-default';
+                      const stage = m.deployment_status || m.status || m.lifecycle_stage || 'candidate';
+                      const stageLower = String(stage).toLowerCase();
+                      const badgeClass = stageLower.includes('prod') ? 'badge-low' : (stageLower.includes('exp') || stageLower.includes('cand')) ? 'badge-medium' : 'badge-default';
                       return (
-                        <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: stage === 'production' ? 'rgba(99,102,241,0.04)' : 'transparent' }}>
+                        <tr key={idx} style={{ borderBottom: '1px solid rgba(255,255,255,0.04)', background: stageLower.includes('prod') ? 'rgba(99,102,241,0.04)' : 'transparent' }}>
                           <td style={{ padding: '12px 14px' }}>
                             <span className={`badge ${badgeClass}`} style={{ fontWeight: 700, textTransform: 'uppercase', fontSize: '0.72rem' }}>
                               {stage}
@@ -2101,7 +2109,7 @@ export default function Dashboard() {
               Privacy-preserving metrics tracking real-time API performance without storing ticket content.
             </p>
 
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '20px', marginBottom: '28px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '20px', marginBottom: '28px' }}>
               <div style={{ padding: '18px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total Executions</span>
                 <div style={{ fontSize: '1.6rem', fontWeight: 700, marginTop: '6px' }}>
@@ -2112,14 +2120,24 @@ export default function Dashboard() {
               <div style={{ padding: '18px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Error Rate</span>
                 <div style={{ fontSize: '1.6rem', fontWeight: 700, marginTop: '6px', color: telemetryStats?.error_rate > 0 ? '#f87171' : '#34d399' }}>
-                  {telemetryStats ? `${(telemetryStats.error_rate * 100).toFixed(2)}%` : '0.00%'}
+                  {telemetryStats?.error_rate != null ? `${(telemetryStats.error_rate * 100).toFixed(2)}%` : '0.00%'}
                 </div>
               </div>
 
               <div style={{ padding: '18px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Human Escalation Rate</span>
                 <div style={{ fontSize: '1.6rem', fontWeight: 700, marginTop: '6px', color: '#fde047' }}>
-                  {telemetryStats ? `${(telemetryStats.human_escalation_rate * 100).toFixed(1)}%` : '0.0%'}
+                  {telemetryStats?.human_escalation_rate != null ? `${(telemetryStats.human_escalation_rate * 100).toFixed(1)}%` : '0.0%'}
+                </div>
+              </div>
+
+              <div style={{ padding: '18px', borderRadius: '12px', background: 'rgba(255,255,255,0.02)', border: '1px solid var(--border-subtle)' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Rate Limiter Operational Mode</span>
+                <div style={{ fontSize: '1.2rem', fontWeight: 700, marginTop: '8px', color: rateLimiterStatus?.degraded ? '#fbbf24' : '#7dd3fc', fontFamily: 'var(--font-mono)' }}>
+                  {rateLimiterStatus?.mode || 'memory_local'}
+                </div>
+                <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', marginTop: '4px' }}>
+                  P95 Latency: {telemetryStats?.latency_percentiles?.p95 != null ? `${telemetryStats.latency_percentiles.p95} ms` : '—'}
                 </div>
               </div>
             </div>

@@ -1,0 +1,78 @@
+{
+  "schema_version": "nexus_model_artifact_manifest_v1",
+  "generated_at_utc": "2026-11-25T10:46:21.482340+00:00",
+  "production_active_engine": "heuristic_fallback_v2 (deterministic Python modules under src/inference/, 0 external binary weights required for clean clone)",
+  "clean_clone_neural_reproducibility_note": "Large binary weights (*.safetensors, *.gguf, *.onnx, *.pt) are excluded from Git via .gitignore. Clean clones run Heuristic Fallback out of the box and can deterministically train V2 multitask heads via scripts/experiments_v2/run_v2_architecture_experiments.py once HF base Qwen/Qwen2.5-0.5B-Instruct is available.",
+  "hf_base_snapshot_verified": {
+    "repo_id": "Qwen/Qwen2.5-0.5B-Instruct",
+    "revision_dir": "7ae557604adf67be50417f59c2c2f167def9a775",
+    "size_bytes": 988097824,
+    "sha256": "fdf756fa7fcbe7404d5c60e26bff1a0c8b8aa1f72ced49e7dd0210fe288fb7fe"
+  },
+  "local_weight_artifacts": [
+    {
+      "key": "qwen25_05b_lora_seed42",
+      "path": "models/qwen25_05b_lora_seed42/adapter_model.safetensors",
+      "present_on_disk": true,
+      "size_bytes": 35237104,
+      "sha256": "8a30ceafc32c2180d7414a7bdaa5199162921f4960ecd7eef34eed3a49f91a0a",
+      "note": "V1 template-trained Qwen2.5-0.5B LoRA adapter (gitignored)"
+    },
+    {
+      "key": "qwen25_05b_clean_v2_lora",
+      "path": "experiments/artifacts/training_runs/qwen25_05b_clean_v2_lora_run_20261030_190017/adapter/adapter_model.safetensors",
+      "present_on_disk": true,
+      "size_bytes": 35237104,
+      "sha256": "9b677b8d488ccd402505ccd7293074aa16104236eecf8b370e5fde15ac4161d2",
+      "note": "Clean V2 Qwen2.5-0.5B LoRA adapter (gitignored, Experimental)"
+    },
+    {
+      "key": "qwen25_05b_seed42_f16_gguf",
+      "path": "models/qwen25_05b_lora_seed42_gguf/qwen25_05b_lora_seed42_f16.gguf",
+      "present_on_disk": true,
+      "size_bytes": 994156448,
+      "sha256": "03babe1c2645dc13faa7c8a1db97853d41b435274edcc678bbc70054a3499caf",
+      "note": "F16 GGUF converted from seed42 merge (gitignored)"
+    },
+    {
+      "key": "qwen25_05b_seed42_q8_0_gguf",
+      "path": "models/qwen25_05b_lora_seed42_gguf_q8_0/qwen25_05b_lora_seed42_q8_0.gguf",
+      "present_on_disk": true,
+      "size_bytes": 531067808,
+      "sha256": "b0c891dca80498f95e97d37ace60b574860fbfc3100574aeb76bae524e79f6d8",
+      "note": "Q8_0 GGUF converted from seed42 merge (gitignored)"
+    },
+    {
+      "key": "qwen25_05b_seed42_q4_k_m_gguf",
+      "path": "models/qwen25_05b_lora_seed42_gguf_q4_k_m/qwen25_05b_lora_seed42_q4_k_m.gguf",
+      "present_on_disk": true,
+      "size_bytes": 397807520,
+      "sha256": "69a7c3d640566738cbeaafa2400ebc5d9e19d5d3034e045369bb018e86a0a22d",
+      "note": "Q4_K_M GGUF converted from seed42 merge (gitignored)"
+    },
+    {
+      "key": "qwen25_05b_seed42_onnx_int8",
+      "path": "models/qwen25_05b_lora_seed42_int8/model_quantized.onnx",
+      "present_on_disk": true,
+      "size_bytes": 496023750,
+      "sha256": "d38a4d687101c2529da7ad38a00d9fdfc69d113902ec6609e92877cfef61080f",
+      "note": "Dynamic INT8 ONNX converted from seed42 merge (gitignored)"
+    },
+    {
+      "key": "nexus_v2_hybrid_multitask_head",
+      "path": "experiments/artifacts/v2_models/nexus_v2_hybrid_multitask_head.pt",
+      "present_on_disk": true,
+      "size_bytes": 5601365,
+      "sha256": "29156d3904293c0fa60819144cd4fa87b8bed4093135fd24cea989772ba680b6",
+      "note": "V2 PyTorch Hybrid Multitask + Ordinal head weights (regenerable via run_v2_architecture_experiments.py)"
+    },
+    {
+      "key": "nexus_v2_lexical_featurizer",
+      "path": "experiments/artifacts/v2_models/nexus_v2_lexical_featurizer.joblib",
+      "present_on_disk": true,
+      "size_bytes": 62095489,
+      "sha256": "4f1531e10c13cd8e2c28b88260b694648c4d6e26a33c3a220eebb2d3ad5bdbde",
+      "note": "V2 Multilingual TF-IDF + SVD featurizer"
+    }
+  ]
+}

@@ -224,7 +224,10 @@ def run_evaluation(
         t_load_start = time.perf_counter()
         tok_dir = model_path if model_path.is_dir() else model_path.parent
         if not (tok_dir / "tokenizer.json").exists():
-            tok_dir = PROJECT_ROOT / "models" / "scratch_merged_qwen"
+            hf_snaps = sorted(
+                (Path.home() / ".cache" / "huggingface" / "hub" / "models--Qwen--Qwen2.5-0.5B-Instruct" / "snapshots").glob("*")
+            )
+            tok_dir = str(hf_snaps[-1]) if hf_snaps else "Qwen/Qwen2.5-0.5B-Instruct"
         tokenizer = AutoTokenizer.from_pretrained(str(tok_dir))
         if tokenizer.pad_token is None:
             tokenizer.pad_token = tokenizer.eos_token

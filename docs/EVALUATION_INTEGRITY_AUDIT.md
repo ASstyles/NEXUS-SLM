@@ -27,7 +27,7 @@ To establish ground-truth clarity, all four permutations were executed using `sc
 |---|---|---|---|---|
 | **Sample Size ($N$)** | 184 | 184 | 746 | 746 |
 | **Dataset File** | `annotation_template.jsonl` | `annotation_template.jsonl` | `test_clean.jsonl` | `test_clean.jsonl` |
-| **Dataset SHA-256** | `e26d4eec...` | `e26d4eec...` | `86cae5be...` | `86cae5be...` |
+| **Dataset SHA-256** | `e26d4eec...` | `e26d4eec...` | `fc65071b...` | `fc65071b...` |
 | **Category Accuracy** | 56.52% | 60.33% | 57.51% | 57.51% |
 | **Category Macro-F1** | 0.5965 | 0.6278 | 0.6516 | 0.6516 |
 | **Category Weighted-F1** | 0.5898 | 0.6268 | 0.6267 | 0.6267 |

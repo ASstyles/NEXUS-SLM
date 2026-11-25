@@ -1,0 +1,96 @@
+{
+  "archive_version": "v1_pre_independent_validation_sprint",
+  "created_at_utc": "2026-11-25T10:46:16.509369+00:00",
+  "source_commit": "e290a69214834bf3e4d48bc34601ff15581790d5",
+  "note": "Immutable historical baseline snapshots preserved for audit traceability. Do not overwrite or delete.",
+  "artifacts": [
+    {
+      "archived_file": "heuristic_clean_v2_test_results.json",
+      "source_path": "experiments/artifacts/heuristic_clean_v2_test_results.json",
+      "sha256": "c4e613c77a62b9339db963d5066b6bd355a6df63f75eb5bd520bd4b412bc889d",
+      "sha256_canonical_lf": "cc85d9164f89de49b63948c1499a5c5621236e25ed93f7d1d7116e4a71858be1",
+      "size_bytes": 10013,
+      "provenance_note": "Heuristic Fallback V2 under Policy V1 (100% fallback escalation, 2026-11-24T13:47:19Z)"
+    },
+    {
+      "archived_file": "qwen25_05b_clean_v2_lora_test_results.json",
+      "source_path": "experiments/artifacts/qwen25_05b_clean_v2_lora_test_results.json",
+      "sha256": "b1bb27cf86778e4a8b3c5853af168e27f3387e5ed4270a56bf3e63892cfd8a08",
+      "sha256_canonical_lf": "77f29db836c4ac9bdc68bb96ce1e52646394e00a6b7cba7bfe16934d4835468d",
+      "size_bytes": 10372,
+      "provenance_note": "Qwen2.5-0.5B Clean V2 LoRA loaded on double-LoRA contaminated scratch_merged_qwen base with preset 0.90 confidence (2026-11-24T14:10:53Z)"
+    },
+    {
+      "archived_file": "final_clean_v2_model_evaluation.json",
+      "source_path": "experiments/artifacts/final_clean_v2_model_evaluation.json",
+      "sha256": "6513686e5cce2b5c4ef0839568243ef471fc0c7c817391c569f4616bfee1c52a",
+      "sha256_canonical_lf": "12e2e0ee3465181b7024fbc1fee59643909cec2e2537dcd3648367597bf9f26e",
+      "size_bytes": 19002,
+      "provenance_note": "Clean V2 comparison run on scratch_merged_qwen + simulated +35ms heuristic baseline (2026-10-30T20:02:04Z)"
+    },
+    {
+      "archived_file": "qwen25_05b_evaluation_report.json",
+      "source_path": "experiments/artifacts/qwen25_05b_evaluation_report.json",
+      "sha256": "010f0756c5bdb4a9e73e151eef5e9961dffb4b248dacdfda48ff30fcf59c7130",
+      "sha256_canonical_lf": "c4c20696109a1dc002efa3993b0e46d661f5c588b99310956ec42f67e8432664",
+      "size_bytes": 8745,
+      "provenance_note": "Early Qwen2.5-0.5B seed42 validation on V1 N=44 split (2026-10-11T18:32:23Z)"
+    },
+    {
+      "archived_file": "qwen25_05b_gguf_q4_k_m_evaluation_report.json",
+      "source_path": "experiments/artifacts/qwen25_05b_gguf_q4_k_m_evaluation_report.json",
+      "sha256": "47e1986535c8bbdf58f2b08fbd38bdac4bb1658214c3d329973ecd9e91ccd45d",
+      "sha256_canonical_lf": "36b5d0523334132001c6eb824a9b5105edb4cd33545cbe7f48810a7220dc1343",
+      "size_bytes": 8846,
+      "provenance_note": "Early Q4_K_M GGUF seed42 evaluation on V1 N=44 validation split (2026-10-12T15:19:01Z)"
+    },
+    {
+      "archived_file": "final_calibration_metrics.json",
+      "source_path": "experiments/artifacts/final_calibration_metrics.json",
+      "sha256": "7889174841bd6ccd3a16a2ec5632cb03512a637f06542e083017e75ea8e3573f",
+      "sha256_canonical_lf": "587966297e90ef96c55686018e69070773da72af56ee5746bd76cd8d17d23131",
+      "size_bytes": 5777,
+      "provenance_note": "Sequence token probability ECE/Brier baseline without class posteriors (2026-10-30T20:02:04Z)"
+    },
+    {
+      "archived_file": "escalation_safety_evaluation.json",
+      "source_path": "experiments/artifacts/escalation_safety_evaluation.json",
+      "sha256": "74ffcbbfc8c4123e6d910cbbe1216f0c1adeab06359de1b9ff596ce3751476dd",
+      "sha256_canonical_lf": "6cff84968d1fb21eae53832e2f54a8eddea987f9b579056432e7fb37817e0fa3",
+      "size_bytes": 13188,
+      "provenance_note": "V1 escalation policy benchmark on V1 N=42 test & N=70 challenge set (2026-10-11T14:44:35Z)"
+    },
+    {
+      "archived_file": "eval_synthetic_test_baseline_v1.json",
+      "source_path": "experiments/results/eval_synthetic_test_baseline_v1.json",
+      "sha256": "d295b67d30abe47c8763da229010e1361df77aa15f2b9b66191eb7750125316e",
+      "sha256_canonical_lf": "df6874d6300372b37cb0d6a48028736147ac01d18e761c7735655a2e5c6c68a8",
+      "size_bytes": 1647,
+      "provenance_note": "PR #4 Historical Baseline Policy V1 on test_clean.jsonl N=746 (commit 3e5a1ea / e290a69)"
+    },
+    {
+      "archived_file": "eval_synthetic_test_refined_v2.json",
+      "source_path": "experiments/results/eval_synthetic_test_refined_v2.json",
+      "sha256": "bcbb7f723f9ebcc20908074ee5d9582e963299cf16f01c22411fdde5ecf98f98",
+      "sha256_canonical_lf": "e74e97e69618cf6ec99b6bc34f4a19a8ca5a011934e56e8e0fc16be7d7453539",
+      "size_bytes": 1664,
+      "provenance_note": "PR #4 Production Heuristic V2 + Refined Policy V2 on test_clean.jsonl N=746 (commit 3e5a1ea / e290a69)"
+    },
+    {
+      "archived_file": "eval_human_holdout_baseline_v1.json",
+      "source_path": "experiments/results/eval_human_holdout_baseline_v1.json",
+      "sha256": "28b29dd1b03c30014baf6543b1ba82599c8703879dfac2b1731dc8461d1fb147",
+      "sha256_canonical_lf": "64294c67b92056c7481701b96cc37f65daae10d2b1ca5f2f6aa41d13ed2b35a1",
+      "size_bytes": 1650,
+      "provenance_note": "PR #4 Historical Baseline Policy V1 on N=184 dev-exposed scenarios (commit 3e5a1ea / e290a69)"
+    },
+    {
+      "archived_file": "eval_human_holdout_refined_v2.json",
+      "source_path": "experiments/results/eval_human_holdout_refined_v2.json",
+      "sha256": "2306eedd3a237669ef547527fd422ca20155a8683a2beafa7156ba24441a2c0f",
+      "sha256_canonical_lf": "c180152a21487d8b1647d796a62a1445808871cb0a754de134384ff3e8a7d5e3",
+      "size_bytes": 1654,
+      "provenance_note": "PR #4 Production Heuristic V2 + Refined Policy V2 on N=184 dev-exposed scenarios (commit 3e5a1ea / e290a69)"
+    }
+  ]
+}

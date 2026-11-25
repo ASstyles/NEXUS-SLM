@@ -201,7 +201,7 @@
       "macro_f1": 0.88
     },
     "deployment_status": "STAGING",
-    "registered_at": "2026-11-24T14:19:19.516790"
+    "registered_at": "2026-11-25T10:41:05.160897"
   },
   {
     "version": "qwen25_05b_lora_seed42_int8",
@@ -323,5 +323,43 @@
     "selection_rationale": "Highest fidelity evaluated candidate. Weight-only 8-bit quantization achieves 100.0% retention of unquantized FP32 Macro-F1 (0.8974) and Category Accuracy (0.9091) with 100% JSON validity. CPU P95 latency is 1374.8 ms (2.98x faster than FP32, well within 2500 ms SLA) and peak RAM is 1479.4 MB (< 2048 MB SLA). Passes all 6 acceptance gates. Retained as experimental per governance rules; highest quality candidate.",
     "registered_at": "2026-10-12T15:25:00Z",
     "updated_at": "2026-10-12T15:25:00Z"
+  },
+  {
+    "version": "nexus-v2-hybrid-multitask",
+    "status": "experimental",
+    "lifecycle_stage": "experimental",
+    "deployment_status": "EXPERIMENTAL_NOT_PROMOTED",
+    "base_model": "Qwen/Qwen2.5-0.5B-Instruct",
+    "adapter_path": "experiments/artifacts/v2_models/nexus_v2_hybrid_multitask_head.pt",
+    "model_hash": "sha256_29156d3904293c0fa60819144cd4fa87b8bed4093135fd24cea989772ba680b6",
+    "dataset_version": "v2_dedup_plus_v3_diverse_mix",
+    "quantization": "fp32_single_forward_encoder_head",
+    "training_config": {
+      "experiment_id": "exp_v2_5_hybrid_qwen_lexical_fusion",
+      "architecture": "Qwen2.5-0.5B (1792-d) + Multilingual TF-IDF SVD (384-d) + Script (8-d) -> Multitask Residual + Ordinal Priority + Temp Scaling T=0.5446"
+    },
+    "evaluation_results": {
+      "model_name": "NEXUS-V2-Hybrid-Multitask-Ordinal",
+      "test_sample_count": 746,
+      "category_accuracy": 0.8914,
+      "macro_f1": 0.8558,
+      "weighted_f1": 0.8558,
+      "priority_accuracy": 0.4866,
+      "priority_f1": 0.429,
+      "language_accuracy": 0.9678,
+      "json_validity_rate": 1.0,
+      "calibrated_ece": 0.0534,
+      "calibrated_brier": 0.151
+    },
+    "hardware_benchmark": {
+      "latency_p50_ms": 186.37,
+      "latency_p95_ms": 288.78,
+      "throughput_req_per_sec": 4.9,
+      "head_weight_disk_mb": 5.34,
+      "peak_ram_mb": 2429.93
+    },
+    "selection_rationale": "EXPERIMENTAL_NOT_PROMOTED. Passes category accuracy (89.14% >= 85%), category Macro-F1 (0.8558 >= 0.80), structured output (100%), and single-forward CPU latency (288.78 ms P95 vs 2212.92 ms autoregressive Qwen), with calibrated ECE=0.0534. Held in experimental status because priority gate failed on test_clean (48.66% / 0.4290 F1 vs >=80% / 0.75) and independent Human Eval V2 (N>=300) is PENDING.",
+    "registered_at": "2026-11-25T16:08:00Z",
+    "updated_at": "2026-11-25T16:08:00Z"
   }
 ]

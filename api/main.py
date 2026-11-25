@@ -8,12 +8,13 @@ from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
-from fastapi import Depends, FastAPI, HTTPException, Request, status
+from fastapi import Depends, FastAPI, HTTPException, Request, Response, status
 from api.auth import verify_admin_access
 from api.middleware import (
     ConcurrencyAndTimeoutMiddleware,
     RateLimitingMiddleware,
     RequestTracingMiddleware,
+    get_active_rate_limiter_status,
 )
 from src.utils.config import get_config
 from src.utils.security import inspect_prompt_injection, sanitize_pii
@@ -49,9 +50,23 @@ from contextlib import asynccontextmanager
 
 ACTIVE_VERSION = os.getenv("ACTIVE_MODEL_VERSION", "nexus-qlora-v1")
 inference_engine: Optional[InferenceEngine] = None
-telemetry = TelemetryLogger()
+telemetry = TelemetryLogger(log_file=os.getenv("NEXUS_TELEMETRY_LOG_FILE", "monitoring/telemetry.jsonl"))
 registry = ModelRegistry()
 human_evaluator = HumanEvaluator()
+
+
+def _resolve_hf_base_target(model_id: str) -> str:
+    """Resolve a HuggingFace repo ID to a cached snapshot if present cleanly (never contaminated merged weights)."""
+    p = Path(model_id)
+    if p.exists():
+        return str(p)
+    if "/" in model_id:
+        snap_root = Path.home() / ".cache" / "huggingface" / "hub" / f"models--{model_id.replace('/', '--')}" / "snapshots"
+        if snap_root.exists():
+            snaps = sorted([d for d in snap_root.iterdir() if d.is_dir()])
+            if snaps:
+                return str(snaps[-1])
+    return model_id
 
 
 def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
@@ -85,8 +100,12 @@ def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
                 from transformers import AutoTokenizer
                 logger.info(f"Loading GGUF weights from {gguf_files[0]} for version {version_name}...")
                 cand_dir = cand.parent if cand.is_file() else cand
-                tok_dir = cand_dir if (cand_dir / "tokenizer.json").exists() else Path("models/scratch_merged_qwen")
-                tokenizer = AutoTokenizer.from_pretrained(str(tok_dir))
+                tok_target = (
+                    str(cand_dir)
+                    if (cand_dir / "tokenizer.json").exists()
+                    else _resolve_hf_base_target("Qwen/Qwen2.5-0.5B-Instruct")
+                )
+                tokenizer = AutoTokenizer.from_pretrained(tok_target)
                 if tokenizer.pad_token is None:
                     tokenizer.pad_token = tokenizer.eos_token
                 model = llama_cpp.Llama(
@@ -138,12 +157,6 @@ def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
             from transformers import AutoModelForCausalLM, AutoTokenizer
             import torch
 
-            logger.info(f"Loading weights from {adapter_path} for version {version_name}...")
-            tok_dir = adapter_path if (adapter_path / "tokenizer.json").exists() else Path("models/scratch_merged_qwen")
-            tokenizer = AutoTokenizer.from_pretrained(str(tok_dir))
-            if tokenizer.pad_token is None:
-                tokenizer.pad_token = tokenizer.eos_token
-
             base_model_id = "HuggingFaceTB/SmolLM-135M-Instruct"
             adapter_cfg_file = adapter_path / "adapter_config.json"
             if adapter_cfg_file.exists():
@@ -154,10 +167,16 @@ def load_model_instance(version_name: str) -> Optional[InferenceEngine]:
                 except Exception:
                     pass
 
-            if "qwen" in base_model_id.lower() and Path("models/scratch_merged_qwen").exists():
-                base_load_target = "models/scratch_merged_qwen"
-            else:
-                base_load_target = base_model_id
+            base_load_target = _resolve_hf_base_target(base_model_id)
+            tok_target = (
+                str(adapter_path)
+                if (adapter_path / "tokenizer.json").exists()
+                else base_load_target
+            )
+            logger.info(f"Loading weights from {adapter_path} on clean base {base_load_target} for version {version_name}...")
+            tokenizer = AutoTokenizer.from_pretrained(tok_target)
+            if tokenizer.pad_token is None:
+                tokenizer.pad_token = tokenizer.eos_token
 
             base_model = AutoModelForCausalLM.from_pretrained(
                 base_load_target,
@@ -199,7 +218,8 @@ app = FastAPI(
 @app.exception_handler(RequestValidationError)
 async def validation_exception_handler(request: Request, exc: RequestValidationError):
     req_id = getattr(request.state, "request_id", str(uuid.uuid4()))
-    logger.warning(f"Request validation rejection [ID={req_id}]: {exc}")
+    err_summary = "; ".join(str(e.get("msg", "Invalid input")) for e in exc.errors()) or "Invalid request payload"
+    logger.warning(f"Request validation rejection [ID={req_id}]: {err_summary}")
     telemetry.log_request(
         category="general_query",
         priority="medium",
@@ -211,7 +231,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         request_id=req_id,
         is_error=True,
         error_type="VALIDATION_ERROR",
-        error_msg=str(exc),
+        error_msg=err_summary[:256],
         output_validity=False,
     )
     return JSONResponse(
@@ -219,7 +239,7 @@ async def validation_exception_handler(request: Request, exc: RequestValidationE
         content={
             "error": "Request validation failed",
             "error_code": "INVALID_INPUT_SCHEMA",
-            "detail": str(exc),
+            "detail": err_summary,
             "request_id": req_id,
             "timestamp": datetime.utcnow().isoformat(),
         },
@@ -283,7 +303,7 @@ from src.inference.rules import get_fallback_prediction
     },
     summary="Triage a customer support ticket",
 )
-async def predict_ticket(req: PredictRequest, request: Request):
+async def predict_ticket(req: PredictRequest, request: Request, response: Response):
     """
     Accepts raw customer ticket text and returns strictly validated structured triage predictions.
     Deterministic safeguards enforce human escalation for safety-critical inputs.
@@ -291,9 +311,16 @@ async def predict_ticket(req: PredictRequest, request: Request):
     start_time = time.perf_counter()
     req_id = str(uuid.uuid4())
     ticket_text = req.ticket or req.text or ""
+    active_cfg = get_config()
 
     try:
         is_neural = (inference_engine is not None)
+        if active_cfg.strict_neural_mode and not is_neural:
+            raise HTTPException(
+                status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+                detail="Strict neural mode enabled and neural inference engine is not loaded; silent heuristic fallback prohibited.",
+            )
+        response.headers["X-Nexus-Inference-Mode"] = "neural" if is_neural else "heuristic_fallback"
         raw_category = None
         raw_priority = None
         raw_language = None
@@ -320,7 +347,7 @@ async def predict_ticket(req: PredictRequest, request: Request):
             lang_str = fb["language"]
             raw_conf = fb["confidence"]
             raw_out = json.dumps(fb)
-            model_latency = round((time.perf_counter() - start_time) * 1000 + 35.0, 2)
+            model_latency = round((time.perf_counter() - start_time) * 1000, 2)
             is_parse_err = False
             model_req_human = fb.get("requires_human")
             raw_category = cat_str
@@ -381,6 +408,8 @@ async def predict_ticket(req: PredictRequest, request: Request):
         )
         return resp
 
+    except HTTPException:
+        raise
     except Exception as e:
         total_latency = round((time.perf_counter() - start_time) * 1000, 2)
         telemetry.log_request(
@@ -398,34 +427,56 @@ async def predict_ticket(req: PredictRequest, request: Request):
             output_validity=False,
             ticket_length=len(ticket_text),
         )
+        logger.error(f"Inference execution failure [ID={req_id}]: {e}", exc_info=True)
         raise HTTPException(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
-            detail=f"Inference execution failure: {str(e)}",
+            detail=f"Inference execution error. Trace request ID: {req_id}",
         )
 
 
 @app.get("/health", response_model=HealthResponse, summary="System health check")
 async def health_check():
-    """Returns system diagnostic status and hardware availability."""
+    """Returns system diagnostic status, rate-limiter mode, and hardware availability."""
     hw = get_hardware_info()
+    rl_status = get_active_rate_limiter_status()
+    overall = "degraded" if rl_status.get("degraded") else "healthy"
     return HealthResponse(
-        status="healthy",
+        status=overall,
         model_loaded=(inference_engine is not None),
         model_version=ACTIVE_VERSION,
         inference_mode="neural" if inference_engine is not None else "heuristic_fallback",
         hardware=hw,
+        rate_limiter=rl_status,
     )
 
 
 @app.get("/ready", summary="System readiness probe")
 async def readiness_check():
     """Readiness probe certifying service is initialized and accepting inference traffic."""
+    active_cfg = get_config()
+    rl_status = get_active_rate_limiter_status()
+    strict_rl_down = rl_status.get("mode") == "strict_reject" and not rl_status.get("healthy", True)
+    strict_neural_down = active_cfg.strict_neural_mode and (inference_engine is None)
+    if strict_rl_down or strict_neural_down:
+        return JSONResponse(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            content={
+                "status": "not_ready",
+                "timestamp": datetime.utcnow().isoformat(),
+                "active_model_version": ACTIVE_VERSION,
+                "model_loaded": (inference_engine is not None),
+                "inference_mode": "neural" if inference_engine is not None else "heuristic_fallback",
+                "rate_limiter": rl_status,
+                "ready": False,
+            },
+        )
     return {
         "status": "ready",
         "timestamp": datetime.utcnow().isoformat(),
         "active_model_version": ACTIVE_VERSION,
         "model_loaded": (inference_engine is not None),
         "inference_mode": "neural" if inference_engine is not None else "heuristic_fallback",
+        "rate_limiter": rl_status,
         "ready": True,
     }
 
@@ -450,7 +501,7 @@ async def get_model_info():
             base_model=active["base_model"],
             quantization=active["quantization"],
             model_hash=active["model_hash"],
-            deployment_status=active.get("status", "production"),
+            deployment_status=active.get("deployment_status", active.get("status", "STAGED")),
             dataset_version=active.get("dataset_version", "dataset_v1"),
             metrics=active.get("evaluation_results", {}),
         )
@@ -501,6 +552,10 @@ async def get_metrics(request: Request, format: Optional[str] = None):
     is_prom = (format == "prometheus") or ("text/plain" in request.headers.get("accept", ""))
     if is_prom:
         from fastapi.responses import PlainTextResponse
+        lat_pct = stats.get("latency_percentiles", {})
+        p50_ms = lat_pct.get("p50", stats.get("latency_p50_ms", 0.0))
+        p95_ms = lat_pct.get("p95", stats.get("latency_p95_ms", 0.0))
+        esc_rate = stats.get("human_escalation_rate", stats.get("escalation_rate", 0.0))
         lines = [
             "# HELP nexus_requests_total Total triage inference requests processed",
             "# TYPE nexus_requests_total counter",
@@ -510,13 +565,13 @@ async def get_metrics(request: Request, format: Optional[str] = None):
             f"nexus_error_rate {stats.get('error_rate', 0.0)}",
             "# HELP nexus_latency_p50_ms 50th percentile inference latency",
             "# TYPE nexus_latency_p50_ms gauge",
-            f"nexus_latency_p50_ms {stats.get('latency_p50_ms', 0.0)}",
+            f"nexus_latency_p50_ms {p50_ms}",
             "# HELP nexus_latency_p95_ms 95th percentile inference latency",
             "# TYPE nexus_latency_p95_ms gauge",
-            f"nexus_latency_p95_ms {stats.get('latency_p95_ms', 0.0)}",
+            f"nexus_latency_p95_ms {p95_ms}",
             "# HELP nexus_escalation_rate Ratio of tickets routed to human review",
             "# TYPE nexus_escalation_rate gauge",
-            f"nexus_escalation_rate {stats.get('escalation_rate', 0.0)}",
+            f"nexus_escalation_rate {esc_rate}",
         ]
         return PlainTextResponse("\n".join(lines) + "\n")
     return stats
@@ -564,7 +619,7 @@ async def get_taxonomy_labels():
 
 @app.get("/demo/fixtures", summary="Documented synthetic demo ticket fixtures")
 async def get_demo_fixtures():
-    """Returns curated synthetic demo tickets across 10 categories and 3 languages."""
+    """Returns curated synthetic demo tickets across 14 categories and 3 languages."""
     fixtures_file = Path("data/demo_fixtures.json")
     if fixtures_file.exists():
         with open(fixtures_file, "r", encoding="utf-8") as f:
@@ -684,6 +739,34 @@ async def submit_human_review(review_data: Dict[str, Any]):
     )
 
 
+@app.get("/evaluation/summary", summary="Unified machine-readable evaluation & governance summary")
+async def get_evaluation_summary():
+    """Returns verified evaluation, calibration, safety, runtime, and human eval artifacts for dashboard UI."""
+    def _read(rel: str):
+        p = Path(rel)
+        if p.exists():
+            try:
+                return json.loads(p.read_text(encoding="utf-8"))
+            except Exception:
+                return None
+        return None
+
+    return {
+        "heuristic_v2_synthetic": _read("experiments/results/eval_synthetic_test_refined_v2.json"),
+        "heuristic_v2_human_dev": _read("experiments/results/eval_human_holdout_refined_v2.json"),
+        "qwen_true_base": _read("experiments/results/eval_qwen_clean_v2_true_base.json"),
+        "qwen_stacked_archive": _read("experiments/artifacts/qwen25_05b_clean_v2_lora_test_results.json"),
+        "experiments_v2": _read("experiments/runs_v2.json"),
+        "calibration_v2": _read("experiments/artifacts/v2_multiclass_calibration_report.json"),
+        "error_taxonomy_v2": _read("experiments/artifacts/neural_error_taxonomy_v2.json"),
+        "multilingual_safety_v3": _read("experiments/artifacts/multilingual_and_safety_audit_v3.json"),
+        "runtime_benchmarks_v2": _read("experiments/artifacts/runtime_inference_benchmarks_v2.json"),
+        "distributed_reliability": _read("experiments/artifacts/distributed_reliability_live_audit.json"),
+        "human_eval_v2_status": _read("experiments/artifacts/human_eval_v2_validation_status.json"),
+        "rate_limiter_status": get_active_rate_limiter_status(),
+    }
+
+
 @app.get("/human-eval", summary="Human evaluation summary")
 async def get_human_eval_summary():
     return human_evaluator.compute_human_agreement()
@@ -700,6 +783,7 @@ app.add_api_route("/api/v1/metrics", get_metrics, methods=["GET"], include_in_sc
 app.add_api_route("/api/v1/monitoring/drift", get_data_drift, methods=["GET"], include_in_schema=True)
 app.add_api_route("/api/v1/monitoring/alerts", get_monitoring_alerts, methods=["GET"], include_in_schema=True)
 app.add_api_route("/api/v1/labels", get_taxonomy_labels, methods=["GET"], include_in_schema=True)
+app.add_api_route("/api/v1/evaluation/summary", get_evaluation_summary, methods=["GET"], include_in_schema=True)
 
 
 def start():

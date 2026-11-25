@@ -117,9 +117,9 @@ To prevent data contamination and subtle test-set overfitting:
 
 ---
 
-## 6. Sample Size Limitations & Statistical Power
+## 6. Sample Size Limitations & Statistical Power (V1 Development-Exposed Cohort)
 
-- The current benchmark consists of 164 records ($N=154$ adjudicated, $N=10$ reserved pending intake).
-- **Statistical Uncertainty:** With $N \approx 150$, a 95% Clopper-Pearson confidence interval for an observed category accuracy of 75% spans $[67.3\%, 81.7\%]$.
-- **Support per Class:** Across 14 categories, mean support is approximately 11 tickets per category. Statistical claims of per-category significance must be reported with explicit sample counts and standard errors.
-- **Reporting Rule:** Never report overall accuracy without reporting per-class support and adjacent priority confusion matrices.
+- The V1 human benchmark consists of **200 records** in `data/human_eval/annotation_template.jsonl` ($N=184$ active adjudicated, $N=16$ pending live-intake slots) — now classified as **development-exposed** (`EVALUATION_INTEGRITY_AUDIT.md`).
+- **Statistical Uncertainty:** With $N=184$, a 95% Wilson confidence interval around 60% category accuracy spans roughly $[53.1\%, 67.1\%]$.
+- **Support per Class:** Across 14 categories, support ranges from 11 to 17 scenarios per category. Statistical claims of per-category significance must be reported with explicit sample counts and standard errors.
+- **V2 Independent Cohort:** Independent evaluation governance ($N \ge 300$) is defined in [`FINAL_HUMAN_EVALUATION_PROTOCOL.md`](FINAL_HUMAN_EVALUATION_PROTOCOL.md) (`data/human_eval_v2/`).

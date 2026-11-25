@@ -4,39 +4,41 @@
 
 This report provides a forensic error analysis of the experimental `qwen25_05b_clean_v2_lora` candidate evaluated on the locked clean test partition ($N=746$ tickets, SHA-256 `fc65071b...`).
 
+> **Contamination Disclosure:** The Nov 24 artifact (`qwen25_05b_clean_v2_lora_test_results.json`, `69.17%`) loaded the clean adapter over `models/scratch_merged_qwen` (double-LoRA stacked with V1 `seed42`), whereas uncontaminated `Qwen/Qwen2.5-0.5B-Instruct` yields `53.89%` (`0.5375` Macro-F1). Both measurements are shown accurately below; the erroneous `528 != 746` support table from PR #4 has been corrected directly against JSON artifacts.
+
 ### Summary Scorecard on Locked Test Set ($N=746$)
-| Metric | Production Heuristic Fallback V2 | Qwen2.5-0.5B LoRA Candidate | Delta / Operational Assessment | Production Bar | Status |
-|---|---:|---:|---|:---:|:---:|
-| **Category Accuracy** | 56.03% (418/746) | **69.17%** (516/746) | +13.14% (Substantial neural gain) | $\ge 80.00\%$ | **FAIL** |
-| **Category Macro-F1** | 0.6132 | **0.6044** | -0.0088 (Comparable; penalized by empty classes) | $\ge 0.7500$ | **FAIL** |
-| **Category Weighted-F1** | 0.6175 | **0.6630** | +0.0455 (Strong on high-volume classes) | — | PASS |
-| **Language Accuracy** | 81.23% | **96.78%** | +15.55% (Superior multilingual subwords) | $\ge 95.00\%$ | **PASS** |
-| **JSON Structural Validity** | 100.00% | **100.00%** | Maintained across all 746 records | $100.00\%$ | **PASS** |
-| **Critical Safety Recall** | **100.00% (FN=0)** | 86.12% (FN=29) | -13.88% (Unacceptable safety leak) | **100.00% (FN=0)** | **FAIL** |
-| **Inference Latency (P50)**| **< 10 ms** | 1,508.55 ms | 150x slower on CPU | $\le 200$ ms | **FAIL** |
+| Metric | Heuristic V2 (Refined Policy V2) | Qwen Clean LoRA (True Uncontaminated Base) | Historical Stacked Run (`scratch_merged_qwen`) | Production Target | Status |
+|---|---:|---:|---:|:---:|:---:|
+| **Category Accuracy** | 57.51% (429/746) | **53.89%** (402/746) | 69.17% (516/746) | $\ge 85.00\%$ | **FAIL** |
+| **Category Macro-F1** | 0.6516 | **0.5375** | 0.6044 | $\ge 0.8000$ | **FAIL** |
+| **Priority Accuracy** | 36.46% (272/746) | **44.24%** (330/746) | 47.86% (357/746) | $\ge 80.00\%$ | **FAIL** |
+| **Language Accuracy** | 81.23% | **84.58%** | 96.78% | $\ge 95.00\%$ | **FAIL (true base)** |
+| **JSON Structural Validity** | 100.00% | **100.00%** | 100.00% | $100.00\%$ | **PASS** |
+| **High-Risk Escalation Recall (Raw)** | — | — | 86.12% (29 FN) | $100.00\%$ | **FAIL (raw)** |
+| **High-Risk Recall (Policy Wrapped, conf=None)** | 84.69% (32 FN, 0 crit FN) | **100.00% (0 FN)** | — | PASS | Wrapped safe |
 
 ---
 
-## 2. Granular Class-Level Error Analysis
+## 2. Granular Class-Level Error Analysis (Exact Test Supports Sum = 746)
 
-### 2.1 Per-Class Performance Breakdown
+### 2.1 Historical Stacked Artifact (`qwen25_05b_clean_v2_lora_test_results.json`, Sum = 746)
 
-| Category | Test Support ($N$) | Precision | Recall | F1-Score | Primary Confusion Mode |
-|---|---:|---:|---:|---:|---|
-| `account_access` | 44 | 0.8846 | 0.9318 | 0.9075 | Occasional confusion with `fraud_report` |
-| `account_closure` | 2 | 1.0000 | 1.0000 | 1.0000 | Perfectly classified on small support |
-| `billing` | 42 | 0.9882 | 0.9976 | 0.9927 | Highest-performing category |
-| `delivery_issue` | 42 | 0.8444 | 0.9048 | 0.8736 | Confused with `order_tracking` |
-| `fraud_report` | 42 | 0.7419 | 0.9524 | 0.8340 | High false-positive attractor |
-| `general_query` | 42 | 0.2222 | **0.0000** | **0.0000** | **Collapsed** into `fraud_report` / `refund_request` |
-| `order_cancel` | 42 | 0.7857 | 0.7857 | 0.7857 | Confused with `refund_request` |
-| `order_tracking` | 42 | 0.8750 | 0.9231 | 0.8986 | Robust performance |
-| `password_reset` | 42 | 1.0000 | 1.0000 | 1.0000 | Perfect classification |
-| `payment_failure` | 42 | 0.8261 | 0.8571 | 0.8412 | Confused with `billing` |
-| `product_complaint`| 44 | 0.0000 | **0.0000** | **0.0000** | **Collapsed** into `refund_request` |
-| `refund_request` | 44 | 0.5238 | 0.9545 | 0.6769 | High false-positive sponge |
-| `subscription` | 2 | 0.0000 | **0.0000** | **0.0000** | Zero recall due to extreme class sparsity ($N=2$) |
-| `technical_issue` | 42 | 0.8125 | 0.9286 | 0.8667 | Robust performance |
+| Category | Test Support ($N$) | Precision | Recall | F1-Score | True-Base Uncontaminated F1 (for contrast) | Primary Confusion Mode |
+|---|---:|---:|---:|---:|---:|---|
+| `account_access` | 50 | 0.5833 | 0.2800 | 0.3784 | **0.3871** (P=1.000, R=0.240) | Collapses into `payment_failure` (38/50 true base) |
+| `account_closure` | 55 | 1.0000 | 1.0000 | 1.0000 | **0.4156** (P=0.800, R=0.291) | Relied on stacked adapter overlap |
+| `billing` | 69 | 1.0000 | 0.9855 | 0.9927 | **0.7547** (P=1.000, R=0.609) | Confused with `payment_failure` |
+| `delivery_issue` | 30 | 0.6383 | 1.0000 | 0.7792 | **0.3333** (P=0.200, R=1.000) | High FP magnet on true base (`refund`/`order_cancel`) |
+| `fraud_report` | 47 | 0.4087 | 1.0000 | 0.5802 | **0.8624** (P=0.758, R=1.000) | False-positive attractor for policy/security words |
+| `general_query` | 42 | **0.0000** | **0.0000** | **0.0000** | **0.0000** (P=0.000, R=0.000) | **Total Collapse** into `payment_failure` (28) / `refund_request` (14) |
+| `order_cancel` | 110 | 1.0000 | 0.4091 | 0.5806 | **0.3582** (P=1.000, R=0.218) | Confused with `refund_request` & `payment_failure` |
+| `order_tracking` | 76 | 1.0000 | 0.8158 | 0.8986 | **0.6909** (P=1.000, R=0.526) | Confused with `delivery_issue` / `refund_request` |
+| `password_reset` | 64 | 1.0000 | 1.0000 | 1.0000 | **0.5862** (P=1.000, R=0.415) | Hindi prompts misrouted |
+| `payment_failure` | 28 | 1.0000 | 0.4286 | 0.6000 | **0.2022** (P=0.112, R=1.000) | True-base over-predicts `payment_failure` (250/746!) |
+| `product_complaint`| 44 | **0.0000** | **0.0000** | **0.0000** | **0.0000** (P=0.000, R=0.000) | **Total Collapse** into `refund_request` (17), `fraud_report` (15), `payment_failure` (12) |
+| `refund_request` | 78 | 0.3920 | 1.0000 | 0.5632 | **0.5391** (P=0.408, R=0.795) | Absorbs complaints & cancellations |
+| `subscription` | 2 | **0.1250** | **1.0000** | **0.2222** | **1.0000** (sparse $N=2$) | Extreme test class sparsity ($N=2$) |
+| `technical_issue` | 51 | 1.0000 | 0.7647 | 0.8667 | **0.4932** (P=0.818, R=0.353) | Hindi bugs misrouted |
 
 ---
 

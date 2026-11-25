@@ -1,0 +1,70 @@
+{
+  "reproduced_at_utc": "2026-11-25T09:53:27.806509+00:00",
+  "engine": "heuristic_fallback_v2_refined_policy_v2_unmodified_baseline",
+  "synthetic_test_n746": {
+    "file": "data/v2_clean_template_grouped/test_clean.jsonl",
+    "sha256": "fc65071b1e9f3303facf64711e72f8bb0f31b450c7f6a3c381bd4a9f8408cf9b",
+    "sample_count": 746,
+    "category_accuracy": 0.5751,
+    "category_macro_f1": 0.6516,
+    "priority_accuracy": 0.3646,
+    "priority_macro_f1": 0.3827,
+    "language_accuracy": 0.8123,
+    "language_breakdown": {
+      "english": {
+        "support": 246,
+        "recall": 1.0
+      },
+      "hindi": {
+        "support": 178,
+        "recall": 1.0
+      },
+      "hinglish": {
+        "support": 322,
+        "recall": 0.5652
+      }
+    },
+    "overall_escalation_rate": 0.7064,
+    "unnecessary_escalation_rate": 0.6518,
+    "high_risk_recall": 0.8469,
+    "high_risk_false_negatives": 32,
+    "critical_recall": 1.0,
+    "critical_false_negatives": 0,
+    "latency_p50_ms": 0.0396,
+    "latency_p95_ms": 0.1807,
+    "latency_p99_ms": 0.2194
+  },
+  "human_eval_dev_exposed_n184": {
+    "file": "data/human_eval/annotation_template.jsonl",
+    "sha256": "e26d4eec99ddd247d3037652466df0024100b0cc85b9ca48e0fa32ed300923d3",
+    "sample_count": 184,
+    "category_accuracy": 0.6033,
+    "category_macro_f1": 0.6278,
+    "priority_accuracy": 0.5978,
+    "priority_macro_f1": 0.6519,
+    "language_accuracy": 0.9728,
+    "language_breakdown": {
+      "english": {
+        "support": 80,
+        "recall": 1.0
+      },
+      "hindi": {
+        "support": 46,
+        "recall": 1.0
+      },
+      "hinglish": {
+        "support": 58,
+        "recall": 0.9138
+      }
+    },
+    "overall_escalation_rate": 0.587,
+    "unnecessary_escalation_rate": 0.4463,
+    "high_risk_recall": 0.8571,
+    "high_risk_false_negatives": 9,
+    "critical_recall": 1.0,
+    "critical_false_negatives": 0,
+    "latency_p50_ms": 0.099,
+    "latency_p95_ms": 0.2215,
+    "latency_p99_ms": 0.8727
+  }
+}

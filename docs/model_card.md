@@ -58,31 +58,25 @@
 
 ## 5. Measured Independent Evaluation Benchmark (Locked Test Set, $N=746$)
 
-Evaluated on the locked 746-sample clean test benchmark with zero mock dependencies:
+Evaluated on the locked 746-sample clean test benchmark (`data/v2_clean_template_grouped/test_clean.jsonl`, EN 246 / HI 178 / Hinglish 322):
 
-| Metric | Measured Clean-Test Value ($N=746$) | Baseline Fallback Comparison |
-|---|---:|---:|
-| **Category Accuracy** | **69.17%** (516/746) | 56.03% (418/746) |
-| **Category Macro Precision** | **65.34%** | 87.59% |
-| **Category Macro Recall** | **69.17%** | 58.32% |
-| **Category Macro-F1** | **0.6044** | 0.6132 |
-| **Category Weighted-F1** | **0.6630** | 0.6175 |
-| **Priority Accuracy** | **47.86%** (357/746) | 47.18% (352/746) |
-| **Priority Macro-F1** | **0.2842** | 0.3980 |
-| **Priority Weighted-F1** | **0.3864** | 0.4497 |
-| **Overall Language Accuracy** | **96.78%** (722/746) | 81.23% (606/746) |
-| - English Language Accuracy | **100.00%** (231/231) | 100.00% (231/231) |
-| - Hindi Language Accuracy | **100.00%** (232/232) | 100.00% (232/232) |
-| - Hinglish Language Accuracy | **92.55%** (262/283) | 49.82% (141/283) |
-| **Structured JSON Validity** | **100.00%** (746/746) | 100.00% (746/746) |
-| **Exact 4-Field Match Rate** | **35.52%** (265/746) | 22.39% (167/746) |
-| **Escalation Recall** | **86.12%** (180/209) | 100.00% (209/209) |
-| **Escalation Precision** | **33.40%** (180/539) | 28.02% (209/746) |
-| **Overall Escalation Rate** | **72.25%** (539/746) | 100.00% (746/746) |
-| **Latency P50 (CPU, Batch 16)** | **1,508.55 ms** | 0.05 ms |
-| **Latency P95 (CPU, Batch 16)** | **2,212.92 ms** | 0.25 ms |
-| **Throughput (CPU)** | **0.62 req/s** | 9,833.58 req/s |
-| **RAM Footprint (LoRA Delta)** | **78.66 MB** | ~5 MB |
+| Metric | Qwen2.5-0.5B True HF Base + Clean LoRA | Stacked Historical Run (`scratch_merged_qwen`, Contaminated) | Production Heuristic V2 (Refined Policy V2) |
+|---|---:|---:|---:|
+| **Category Accuracy** | **53.89%** (402/746) | 69.17% (516/746) | **57.51%** (429/746) |
+| **Category Macro-F1** | **0.5375** | 0.6044 | **0.6516** |
+| **Priority Accuracy** | **44.24%** (330/746) | 47.86% (357/746) | 36.46% (272/746) |
+| **Priority Macro-F1** | **0.2491** | 0.2842 | **0.3827** |
+| **Language Accuracy** | **84.58%** | 96.78% (722/746) | 81.23% (606/746) |
+| - English ($N=246$) | 93.90% cat | 100.00% lang | 100.00% lang |
+| - Hindi Devanagari ($N=178$) | 20.79% cat | 100.00% lang | 100.00% lang |
+| - Hinglish Roman ($N=322$) | 41.61% cat | 92.55% lang | 56.52% lang |
+| **Structured JSON Validity** | **100.00%** (746/746) | 100.00% (746/746) | 100.00% (746/746) |
+| **High-Risk Escalation Recall** | **100.00% (0 FN, conf=None)** | 86.12% (180/209, 29 FN) | 84.69% (177/209, 32 FN) |
+| **Critical Safety Recall** | **100.00% (0 FN)** | — | **100.00% (0 FN)** |
+| **Overall Escalation Rate** | **100.00% (Rule 12 conservative)** | 72.25% (539/746) | **70.64%** (527/746) |
+| **Latency P50 / P95 (CPU)** | CPU batch=16 (~1.1s/item) | 1,508.55 ms / 2,212.92 ms | **0.04 ms / 0.18 ms** (direct) |
+
+> *Audit Correction:* Earlier drafts reported `69.17%` without flagging `scratch_merged_qwen` V1 `seed42` adapter leakage (+15.28 pp inflation over uncontaminated `Qwen/Qwen2.5-0.5B-Instruct` `53.89%`).
 
 ---
 

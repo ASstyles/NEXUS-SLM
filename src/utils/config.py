@@ -11,6 +11,8 @@ import yaml
 # Known insecure, placeholder, and default keys that must never be permitted in production
 KNOWN_INSECURE_KEYS = {
     "nexus-admin-secret-key-change-in-prod",
+    "nexus-test-environment-key-min-32-chars-long",
+    "nexus-dev-environment-key-min-32-chars-long",
     "admin",
     "secret",
     "password",
@@ -120,6 +122,15 @@ class AppConfig:
     redis_url: Optional[str] = field(
         default_factory=lambda: os.getenv("REDIS_URL") or os.getenv("NEXUS_REDIS_URL")
     )
+    rate_limit_failure_mode: str = field(
+        default_factory=lambda: os.getenv("NEXUS_RATE_LIMIT_FAILURE_MODE", "degraded_local").lower()
+    )
+    redis_recovery_cooldown_seconds: float = field(
+        default_factory=lambda: float(os.getenv("NEXUS_REDIS_RECOVERY_COOLDOWN_SECONDS", "5.0"))
+    )
+    strict_neural_mode: bool = field(
+        default_factory=lambda: os.getenv("NEXUS_STRICT_NEURAL_MODE", "false").lower() in ("true", "1", "yes")
+    )
 
     def __post_init__(self):
         # In test or development environments, provide a default isolated key if unspecified
@@ -133,6 +144,11 @@ class AppConfig:
 
     def validate(self) -> None:
         """Enforces strict production security constraints."""
+        if self.rate_limit_failure_mode not in ("degraded_local", "strict_reject"):
+            raise ValueError(
+                f"Invalid NEXUS_RATE_LIMIT_FAILURE_MODE='{self.rate_limit_failure_mode}'. "
+                "Must be 'degraded_local' or 'strict_reject'."
+            )
         if self.is_production():
             if not self.enforce_admin_auth:
                 raise ValueError(

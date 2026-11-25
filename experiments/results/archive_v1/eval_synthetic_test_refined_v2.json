@@ -1,0 +1,62 @@
+{
+  "metadata": {
+    "dataset_key": "v2_clean_template_grouped_test",
+    "file": "data/v2_clean_template_grouped/test_clean.jsonl",
+    "sha256": "fc65071b1e9f3303facf64711e72f8bb0f31b450c7f6a3c381bd4a9f8408cf9b",
+    "policy_version": "refined_policy_v2",
+    "engine": "heuristic_fallback_v2_contextual_priority",
+    "code_commit_sha": "3e5a1ea",
+    "timestamp_utc": "2026-11-24T23:00:00Z",
+    "description": "Production Heuristic Fallback V2 evaluated on locked synthetic test set"
+  },
+  "sample_count": 746,
+  "category_metrics": {
+    "accuracy": 0.5751,
+    "macro_precision": 0.8761,
+    "macro_recall": 0.6113,
+    "macro_f1": 0.6516,
+    "weighted_f1": 0.6378
+  },
+  "priority_metrics": {
+    "accuracy": 0.3646,
+    "macro_f1": 0.3827,
+    "weighted_f1": 0.3647,
+    "per_class_recall": {
+      "low": 0.5687,
+      "medium": 0.3554,
+      "high": 0.1444,
+      "critical": 0.7241
+    }
+  },
+  "language_metrics": {
+    "overall_accuracy": 0.8123,
+    "breakdown": {
+      "english": {
+        "support": 246,
+        "accuracy": 1.0
+      },
+      "hindi": {
+        "support": 178,
+        "accuracy": 1.0
+      },
+      "hinglish": {
+        "support": 322,
+        "accuracy": 0.5652
+      }
+    }
+  },
+  "escalation_metrics": {
+    "overall_escalation_rate": 0.7064,
+    "unnecessary_escalation_rate": 0.6518,
+    "high_risk_recall": 0.8469,
+    "high_risk_false_negatives": 32
+  },
+  "critical_safety_metrics": {
+    "critical_recall": 1.0,
+    "critical_false_negatives": 0,
+    "safety_violation_count": 0
+  },
+  "composite_metrics": {
+    "exact_4field_match_rate": 0.1421
+  }
+}

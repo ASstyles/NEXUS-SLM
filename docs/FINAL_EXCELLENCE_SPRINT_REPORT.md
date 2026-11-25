@@ -25,47 +25,50 @@ Rather than generating another speculative audit report or conducting an uncontr
 
 ---
 
-## 2. Priority One: Genuine Human Evaluation Benchmark
+> **Historical Reconciliation Note:** This report records the PR #4 sprint (`commit e290a69`). Language counts (`80 EN / 46 HI / 58 Hinglish`), Policy V1 Priority baseline (`51.09% / 0.5280`), and 184-scenario development-exposure status were corrected in the subsequent [`FINAL_METRIC_CONSISTENCY_AUDIT.md`](FINAL_METRIC_CONSISTENCY_AUDIT.md).
+
+## 2. Priority One: Historical Human Evaluation Benchmark (Development-Exposed V1)
 
 ### 2.1 Inventory & Partitioning
-The human evaluation repository under `data/human_eval/` was expanded into a complete, schema-compliant evaluation suite:
-- **Total Records:** Exactly **200 records** in `data/human_eval/annotation_template.jsonl`.
-- **Active Evaluated Scenarios:** **184 records** authored across all 14 categories and 3 language formats:
-  - English: 70 tickets
-  - Romanized Hinglish: 60 tickets
-  - Native Devanagari Hindi: 54 tickets
-- **Reserved Pending Live Intake Slots:** **16 records** (`HUMAN-PND001` to `HUMAN-PND016`) marked `notes: "PENDING_LIVE_INTAKE"`, reserved for ongoing enterprise customer intake and DPA execution.
-- **Integrity Compliance:** Validated 100% compliant against `data/human_eval/annotation_schema.json`.
+The historical human evaluation repository under `data/human_eval/` contains a schema-compliant development-exposed evaluation suite:
+- **Total Records:** Exactly **200 records** in `data/human_eval/annotation_template.jsonl` (SHA-256: `e26d4eec99ddd247d3037652466df0024100b0cc85b9ca48e0fa32ed300923d3`).
+- **Active Evaluated Scenarios:** **184 records** authored across all 14 categories and 3 language formats (used during Refined Policy V2 threshold tuning):
+  - English: **80** tickets
+  - Romanized Hinglish: **58** tickets
+  - Native Devanagari Hindi: **46** tickets
+- **Reserved Pending Live Intake Slots:** **16 records** (`HUMAN-PND001` to `HUMAN-PND016`) marked `PENDING_LIVE_INTAKE`, reserved for consented live customer intake after DPA approval.
+- **Integrity Compliance:** Validated 100% compliant against `data/human_eval/annotation_schema.json`. Fresh independent V2 evaluation (`N >= 300`, strictly zero overlap with these 184 scenarios) is governed under `data/human_eval_v2/` (`PENDING` external human reviewers).
 
 ### 2.2 Inter-Rater Reliability (IRR) Measurement
-Every human scenario was independently annotated by two blind reviewers (`annotator_alpha`, `annotator_beta`) and reviewed by a lead adjudicator (`lead_evaluator_01`):
+Every human scenario was independently annotated by two reviewers (`annotator_alpha`, `annotator_beta`) and reviewed by a lead adjudicator (`lead_evaluator_01`):
 
 $$\kappa = \frac{P_o - P_e}{1 - P_e}$$
 
-- **Category Agreement:** $\kappa = \mathbf{0.9648}$ (Near-perfect inter-rater consensus; minor disputes confined to ambiguous multi-intent edge cases)
+- **Category Agreement:** $\kappa = \mathbf{0.9648}$
 - **Priority Agreement:** $\kappa = \mathbf{0.9923}$
-- **Escalation Agreement:** $\kappa = \mathbf{1.0000}$ (100% unanimous agreement on safety-critical tickets)
+- **Escalation Agreement:** $\kappa = \mathbf{1.0000}$
 
 ---
 
 ## 3. Priority Two: Priority Classification Intelligence
 
 ### 3.1 Objective 4-Tier Operational Impact Rubric
-Previous iterations mapped categories statically to priorities (e.g. all `account_access` tickets mapped to `high`), yielding ~47% accuracy. We implemented `determine_contextual_priority(text, category)` in `src/inference/rules.py` applying a 4-tier rubric:
+Previous iterations mapped categories statically to priorities, yielding `51.09%` accuracy on $N=184$ (`35.79%` on synthetic $N=746$). We implemented `determine_contextual_priority(text, category)` in `src/inference/rules.py` applying a 4-tier rubric:
 - **Critical:** Active account compromise, unauthorized fund deductions without OTP, card theft, physical safety hazards (fire, smoke).
 - **High:** Complete service lockout with valid credentials, failed delivery of urgent goods, time-sensitive payment disputes.
 - **Medium:** Normal service requests, delayed order shipments, return requests, minor app errors.
 - **Low:** General information requests, tax invoice copies, educational inquiries, feedback.
 
-### 3.2 Empirical Verification on Sealed Human Holdout ($N=184$)
+### 3.2 Empirical Verification on Development-Exposed Human Cohort ($N=184$)
 
-| Metric | Static Baseline Fallback | Contextual Priority Rubric | Delta / Improvement |
+From [`eval_human_holdout_baseline_v1.json`](../experiments/results/eval_human_holdout_baseline_v1.json) vs [`eval_human_holdout_refined_v2.json`](../experiments/results/eval_human_holdout_refined_v2.json):
+
+| Metric | Static Baseline Fallback (Policy V1) | Contextual Priority Rubric (Refined Policy V2) | Delta / Improvement |
 |---|---:|---:|:---|
-| **Priority Accuracy** | 50.65% (93/184) | **59.78%** (110/184) | **+9.13%** |
-| **Priority Macro-F1** | 0.4750 | **0.6519** | **+0.1769** |
-| **Critical Priority Recall** | 80.00% (12/15) | **100.00%** (15/15) | **+20.00%** (0 Missed) |
-| **Low Priority Recall** | 28.57% (12/42) | **52.38%** (22/42) | **+23.81%** |
-| **Adjacent-Class Accuracy** | 84.78% | **92.39%** | **+7.61%** |
+| **Priority Accuracy** | 51.09% (94/184) | **59.78%** (110/184) | **+8.69%** |
+| **Priority Macro-F1** | 0.5280 | **0.6519** | **+0.1239** |
+| **Critical Priority Recall** | 100.00% policy / 40.00% raw priority | **100.00% (15/15)** | **0 Missed Critical** |
+| **Low Priority Recall** | 70.83% (34/48) | **85.42%** (41/48) | **+14.59%** |
 
 *Finding:* On realistic customer phrasing with consistent ground-truth labels, the contextual priority rubric achieves substantial gains (+17.7 points in Macro-F1) while ensuring critical urgency incidents are never downgraded.
 
