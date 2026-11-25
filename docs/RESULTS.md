@@ -96,7 +96,7 @@ Formal evaluation was executed under identical environment conditions:
 ### 3.1 Side-by-Side Performance Comparison (Synchronized from Evaluation Artifacts)
 
 <!-- SYNC:RESULTS_SUMMARY:START -->
-**Dataset:** Locked Synthetic Template-Grouped Clean Test (`data/v2_clean_template_grouped/test_clean.jsonl`, `N=746`, SHA-256 prefix `fc65071b1e9f3303...`)  
+**Dataset:** Locked Synthetic Template-Grouped Clean Test (`data/v2_clean_template_grouped/test_clean.jsonl`, `N=746`, Canonical Git/LF SHA-256 prefix `7e32c5111284db50...` / Windows CRLF `fc65071b1e9f3303...`)  
 **Exact Language Support Counts:** English `246`, Hindi (Devanagari) `178`, Hinglish (Romanized) `322`  
 **Archive Notice:** All historical snapshots (`Policy V1`, pre-PR#4 `13:47Z` run, and double-adapter stacked run) are preserved immutably under [`experiments/results/archive_v1/`](experiments/results/archive_v1/ARCHIVE_MANIFEST.json).
 

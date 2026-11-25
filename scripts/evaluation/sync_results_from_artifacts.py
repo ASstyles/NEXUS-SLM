@@ -16,6 +16,11 @@ def sha256_file(path: Path) -> str:
     return h.hexdigest()
 
 
+def sha256_canonical_lf(path: Path) -> str:
+    """Line-ending-invariant SHA-256 matching Git/POSIX LF checkouts."""
+    return hashlib.sha256(path.read_bytes().replace(b"\r\n", b"\n")).hexdigest()
+
+
 def load_json(path: Path) -> dict:
     return json.loads(path.read_text(encoding="utf-8"))
 
@@ -27,7 +32,7 @@ def build_authoritative_summary_block() -> str:
     qwen_stacked = load_json(ARTIFACTS / "qwen25_05b_clean_v2_lora_test_results.json")
     repro = load_json(RESULTS / "reproduced_refined_v2_baseline.json")
 
-    test_hash = sha256_file(ROOT / "data/v2_clean_template_grouped/test_clean.jsonl")[:16]
+    test_hash = sha256_canonical_lf(ROOT / "data/v2_clean_template_grouped/test_clean.jsonl")[:16]
     hum_syn = load_json(RESULTS / "eval_human_holdout_refined_v2.json")
     hum_v1 = load_json(RESULTS / "eval_human_holdout_baseline_v1.json")
 
@@ -45,7 +50,7 @@ def build_authoritative_summary_block() -> str:
 
     lines = [
         "<!-- SYNC:RESULTS_SUMMARY:START -->",
-        f"**Dataset:** Locked Synthetic Template-Grouped Clean Test (`data/v2_clean_template_grouped/test_clean.jsonl`, `N={ref_v2_syn['sample_count']}`, SHA-256 prefix `{test_hash}...`)  ",
+        f"**Dataset:** Locked Synthetic Template-Grouped Clean Test (`data/v2_clean_template_grouped/test_clean.jsonl`, `N={ref_v2_syn['sample_count']}`, Canonical Git/LF SHA-256 prefix `{test_hash}...` / Windows CRLF `fc65071b1e9f3303...`)  ",
         f"**Exact Language Support Counts:** English `{en_sup}`, Hindi (Devanagari) `{hi_sup}`, Hinglish (Romanized) `{hg_sup}`  ",
         "**Archive Notice:** All historical snapshots (`Policy V1`, pre-PR#4 `13:47Z` run, and double-adapter stacked run) are preserved immutably under [`experiments/results/archive_v1/`](experiments/results/archive_v1/ARCHIVE_MANIFEST.json).",
         "",
